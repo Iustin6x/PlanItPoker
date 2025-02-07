@@ -1,0 +1,11 @@
+<div class="home-container">
+    <h1>Plan It Poker</h1>
+    
+    <button (click)="createRoom()">Crează Cameră</button>
+    
+    <form (ngSubmit)="joinRoom()">
+      <input type="text" [(ngModel)]="roomId" placeholder="ID Cameră" required>
+      <input type="text" [(ngModel)]="username" placeholder="Nume" required>
+      <button type="submit">Intră în Cameră</button>
+    </form>
+  </div>
