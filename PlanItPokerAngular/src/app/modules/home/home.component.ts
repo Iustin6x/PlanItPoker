@@ -18,11 +18,10 @@ import { WebSocketService } from '../../core/services/websocket.service';
 import { CreateRoomComponent } from '../create-room/create-room.component';
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule,CreateRoomComponent],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+    selector: 'app-home',
+    imports: [MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule, CreateRoomComponent],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.scss'
 })
 export class HomeComponent {
   readonly animal = signal('');

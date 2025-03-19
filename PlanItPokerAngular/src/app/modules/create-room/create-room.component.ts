@@ -20,20 +20,19 @@ export interface DialogData {
 
 
 @Component({
-  selector: 'app-create-room',
-  standalone: true,
-  imports: [
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    MatButtonModule,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
-  ],
-  templateUrl: './create-room.component.html',
-  styleUrl: './create-room.component.scss'
+    selector: 'app-create-room',
+    imports: [
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatButtonModule,
+        MatDialogTitle,
+        MatDialogContent,
+        MatDialogActions,
+        MatDialogClose,
+    ],
+    templateUrl: './create-room.component.html',
+    styleUrl: './create-room.component.scss'
 })
 export class CreateRoomComponent {
   readonly dialogRef = inject(MatDialogRef<CreateRoomComponent>);
