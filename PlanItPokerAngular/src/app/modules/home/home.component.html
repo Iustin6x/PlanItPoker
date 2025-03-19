@@ -1,11 +1,20 @@
 <div class="home-container">
     <h1>Plan It Poker</h1>
+    <ol>
+      <li>
+        <mat-form-field>
+          <mat-label>What's your name?</mat-label>
+          <input matInput [(ngModel)]="name" />
+        </mat-form-field>
+      </li>
+      <li>
+        <button mat-raised-button (click)="openDialog()">Pick one</button>
+      </li>
+      @if (animal()) {
+        <li>
+          You chose: <em>{{animal()}}</em>
+        </li>
+      }
+    </ol>
     
-    <button (click)="createRoom()">Crează Cameră</button>
-    
-    <form (ngSubmit)="joinRoom()">
-      <input type="text" [(ngModel)]="roomId" placeholder="ID Cameră" required>
-      <input type="text" [(ngModel)]="username" placeholder="Nume" required>
-      <button type="submit">Intră în Cameră</button>
-    </form>
-  </div>
+</div>
