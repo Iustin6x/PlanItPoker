@@ -21,6 +21,7 @@ export interface DialogData {
 
 @Component({
     selector: 'app-create-room',
+    standalone: true,
     imports: [
         MatFormFieldModule,
         MatInputModule,

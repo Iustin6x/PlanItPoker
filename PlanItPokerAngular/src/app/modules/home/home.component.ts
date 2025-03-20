@@ -19,6 +19,7 @@ import { CreateRoomComponent } from '../create-room/create-room.component';
 
 @Component({
     selector: 'app-home',
+    standalone: true,
     imports: [MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule, CreateRoomComponent],
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss'
