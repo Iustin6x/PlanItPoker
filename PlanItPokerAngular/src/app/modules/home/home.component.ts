@@ -16,6 +16,8 @@ import {MatInputModule} from '@angular/material/input';
 import { Router } from '@angular/router';
 import { WebSocketService } from '../../core/services/websocket.service';
 import { CreateRoomComponent } from '../create-room/create-room.component';
+import { RoomComponent } from '../room/room.component';
+import { RoomData } from '../../shared/models/room.model';
 
 @Component({
     selector: 'app-home',
@@ -25,21 +27,28 @@ import { CreateRoomComponent } from '../create-room/create-room.component';
     styleUrl: './home.component.scss'
 })
 export class HomeComponent {
-  readonly animal = signal('');
-  readonly name = model('');
+  readonly roomData = model<RoomData>({
+    name: '',
+    cardType: 'scrum',
+  })
   readonly dialog = inject(MatDialog);
 
   constructor(private router: Router, private wsService: WebSocketService) {}
 
   openDialog(): void {
     const dialogRef = this.dialog.open(CreateRoomComponent, {
-      data: {name: this.name(), animal: this.animal()},
+      data: this.roomData()
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
+      
       if (result !== undefined) {
-        this.animal.set(result);
+        const jsonString = JSON.stringify(result);
+console.log(jsonString);
+        console.log(result);
+        this.roomData.set(result);
+        console.log(this.roomData());
       }
     });
   }

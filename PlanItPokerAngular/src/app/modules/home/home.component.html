@@ -1,18 +1,13 @@
 <div class="home-container">
     <h1>Plan It Poker</h1>
     <ol>
-      <li>
-        <mat-form-field>
-          <mat-label>What's your name?</mat-label>
-          <input matInput [(ngModel)]="name" />
-        </mat-form-field>
-      </li>
+
       <li>
         <button mat-raised-button (click)="openDialog()">Pick one</button>
       </li>
-      @if (animal()) {
+       @if (roomData()) {
         <li>
-          You chose: <em>{{animal()}}</em>
+          You chose: <em>{{roomData().name}}</em>
         </li>
       }
     </ol>
