@@ -1,6 +1,7 @@
 import { CardType } from "../types/card-type";
 
-export interface RoomData {
+export interface Room {
+    id?: string;
     name: string;
     cardType: CardType;
     participants?: string[];

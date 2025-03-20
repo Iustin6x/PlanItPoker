@@ -1,0 +1,50 @@
+<div class="container">
+    <h1>Planning Rooms</h1>
+    
+    @if (isLoading()) {
+      <mat-spinner diameter="50"></mat-spinner>
+    } @else {
+      <app-rooms-list 
+        [rooms]="rooms()"
+        (delete)="deleteRoom($event)"
+      />
+    }
+  </div>
+
+<main class="container">
+    <section class="actions">
+      <h1>Active Rooms</h1>
+      <!-- <button (click)="handleCreateRoom()">New Room</button> -->
+    </section>
+  
+    <!-- <nav class="filters">
+      <button *ngFor="let filter of filters" 
+              [class.active]="activeFilter === filter.id"
+              (click)="setFilter(filter.id)">
+        {{ filter.label }}
+      </button>
+    </nav> -->
+  
+    <!-- @if (isLoading()) {
+      <app-rooms-skeleton />
+    } @else if (error()) {
+      <app-error-message [message]="error()" />
+    } @else {
+      <app-rooms-list [rooms]="rooms()" />
+    }
+  </main> -->
+  <div class="home-container">
+      <h1>Plan It Poker</h1>
+      <ol>
+  
+        <li>
+          <button mat-raised-button (click)="openDialog()">Pick one</button>
+        </li>
+         @if (roomData()) {
+          <li>
+            You chose: <em>{{roomData().name}}</em>
+          </li>
+        }
+      </ol>
+      
+  </div>

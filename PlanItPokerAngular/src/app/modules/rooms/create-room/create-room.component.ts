@@ -14,13 +14,9 @@ import {
 import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
-import { CardType } from '../../shared/types/card-type';
-import { RoomData } from '../../shared/models/room.model';
-
-export interface DialogData {
-  name: string;
-  cardType: CardType;
-}
+import { CardType } from '../../../shared/types/card-type';
+import { Room } from '../../../shared/models/room.model';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 @Component({
@@ -36,7 +32,7 @@ export interface DialogData {
       MatDialogTitle,
       MatDialogContent,
       MatDialogActions,
-      MatDialogClose,
+      MatDialogModule,
     ],
     templateUrl: './create-room.component.html',
     styleUrl: './create-room.component.scss',
@@ -44,13 +40,13 @@ export interface DialogData {
 })
 export class CreateRoomComponent {
   protected readonly dialogRef = inject(MatDialogRef<CreateRoomComponent>);
-  protected readonly initialData = inject<RoomData>(MAT_DIALOG_DATA);
+  protected readonly initialData = inject<Room>(MAT_DIALOG_DATA);
 
-  roomData = model<RoomData>(this.initialData);
+  roomData = model<Room>(this.initialData);
 
   protected readonly cardTypes: readonly CardType[] = ['scrum', 'fibonacci', 'hours'] as const;
   protected readonly cardTypeLabels: Record<CardType, string> = {
-    scrum: 'Scrum (0-10)',
+    scrum: 'Scrum',
     fibonacci: 'Fibonacci Sequence',
     hours: 'Working Hours'
   };

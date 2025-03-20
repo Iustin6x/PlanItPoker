@@ -1,0 +1,8 @@
+<div class="room-list">
+    @for (room of rooms; track room.id) {
+      <app-room-item 
+        [room]="room"
+        (delete)="handleDelete($event)"
+      />
+    }
+  </div>
