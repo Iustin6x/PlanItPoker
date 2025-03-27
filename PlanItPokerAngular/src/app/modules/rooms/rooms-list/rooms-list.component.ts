@@ -1,22 +1,33 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Room } from '../../../shared/models/room.model';
-import { NgFor } from '@angular/common';
-import { RoomItemComponent } from '../room-item/room-item.component';
+import { MatTableModule} from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { CommonModule} from '@angular/common';
 
 
 @Component({
   selector: 'app-rooms-list',
   standalone: true,
-  imports: [NgFor, RoomItemComponent],
+  imports: [
+    MatTableModule, 
+    MatTableModule,
+    MatIconModule,
+    MatButtonModule,
+    CommonModule,
+  ],
   templateUrl: './rooms-list.component.html',
   styleUrl: './rooms-list.component.scss'
 })
 export class RoomsListComponent {
-  @Input({ required: true }) rooms: Room[] = [];
+  @Input() rooms: Room[] = []
   @Output() delete = new EventEmitter<string>();
 
-  handleDelete(roomId: string) {
-    this.delete.emit(roomId); // Retransmitere ID către părinte
+  displayedColumns: string[] = ['name', 'cardType', 'actions'];
+  isLoading = false;
+
+  onDelete(roomId: string) {
+    this.delete.emit(roomId);
   }
 
 }

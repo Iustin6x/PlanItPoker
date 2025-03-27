@@ -6,7 +6,7 @@ import {
 } from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
-
+import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { NgFor, CommonModule } from '@angular/common'; 
@@ -20,7 +20,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-rooms-page',
   standalone: true,
-  imports: [MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule, CommonModule, RoomsListComponent, MatProgressSpinnerModule],
+  imports: [MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule, CommonModule, RoomsListComponent, MatProgressSpinnerModule, RoomsListComponent, MatIconModule ],
   templateUrl: './rooms-page.component.html',
   styleUrl: './rooms-page.component.scss'
 })
