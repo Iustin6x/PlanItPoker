@@ -1,0 +1,48 @@
+<h2 mat-dialog-title>Create Planning Room</h2>
+<mat-dialog-content>
+  <form #form="ngForm" class="form-container">
+  <mat-form-field class="full-width-field">
+    <mat-label>Room Name</mat-label>
+    <input
+      matInput
+      [(ngModel)]="roomData().name"
+      name="roomName"
+      required
+      minlength="3"
+      #nameInput="ngModel"
+    >
+    <mat-error *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)">
+      <span *ngIf="nameInput.errors?.['required']">Room name is required</span>
+      <span *ngIf="nameInput.errors?.['minlength']">Minimum 3 characters required</span>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="full-width-field">
+    <mat-label>Estimation Style</mat-label>
+    <mat-select 
+      [(ngModel)]="roomData().cardType"
+      name="cardType"
+      required
+    >
+      <mat-option 
+        *ngFor="let type of cardTypes" 
+        [value]="type"
+      >
+        {{ getCardLabel(type) }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="closeDialog()">Cancel</button>
+  <button 
+    mat-raised-button 
+    color="primary"
+    (click)="submit()"
+    [disabled]="!isFormValid"
+  >
+    Create Room
+  </button>
+</mat-dialog-actions>

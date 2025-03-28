@@ -1,0 +1,18 @@
+  <div class="container">
+    <div class="header">
+        <h1>Planning Rooms</h1>
+        <button mat-raised-button color="primary" (click)="openDialog()">
+          <mat-icon>add</mat-icon>
+          New Room
+        </button>
+      </div>
+    
+    <app-rooms-list 
+      [rooms]="rooms()"
+      (delete)="deleteRoom($event)"
+    />
+
+    @if (isLoading()) {
+      <mat-spinner diameter="50"></mat-spinner>
+    }
+  </div>
