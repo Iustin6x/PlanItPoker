@@ -1,48 +1,85 @@
-<h2 mat-dialog-title>Create Planning Room</h2>
+<h2 mat-dialog-title>
+  {{ roomData().id ? 'Edit Room' : 'Create Planning Room' }}
+</h2>
+
 <mat-dialog-content>
   <form #form="ngForm" class="form-container">
-  <mat-form-field class="full-width-field">
-    <mat-label>Room Name</mat-label>
-    <input
-      matInput
-      [(ngModel)]="roomData().name"
-      name="roomName"
-      required
-      minlength="3"
-      #nameInput="ngModel"
-    >
-    <mat-error *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)">
-      <span *ngIf="nameInput.errors?.['required']">Room name is required</span>
-      <span *ngIf="nameInput.errors?.['minlength']">Minimum 3 characters required</span>
-    </mat-error>
-  </mat-form-field>
-
-  <mat-form-field class="full-width-field">
-    <mat-label>Estimation Style</mat-label>
-    <mat-select 
-      [(ngModel)]="roomData().cardType"
-      name="cardType"
-      required
-    >
-      <mat-option 
-        *ngFor="let type of cardTypes" 
-        [value]="type"
+    <!-- Room Name -->
+    <mat-form-field class="full-width-field">
+      <mat-label>Room Name</mat-label>
+      <input
+        matInput
+        [(ngModel)]="roomData().name"
+        name="roomName"
+        required
+        minlength="3"
+        #nameInput="ngModel"
       >
-        {{ getCardLabel(type) }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-</form>
+      <mat-error *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)">
+        <span *ngIf="nameInput.errors?.['required']">Room name is required</span>
+        <span *ngIf="nameInput.errors?.['minlength']">Minimum 3 characters required</span>
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Card Type Selection -->
+    <mat-form-field class="full-width-field">
+      <mat-label>Estimation Style</mat-label>
+      <mat-select 
+        [(ngModel)]="roomData().cardType"
+        name="cardType"
+        required
+        (selectionChange)="onCardTypeChange()"
+      >
+        <mat-option *ngFor="let type of cardTypes" [value]="type">
+          {{ getCardLabel(type) }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Custom Cards Section -->
+    <ng-container *ngIf="roomData().cardType === 'custom'">
+      <div class="custom-cards-section">
+        <div class="section-header">
+          <h4>Custom Cards</h4>
+          <button mat-icon-button type="button" (click)="addCustomCard()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+
+        <div *ngFor="let card of roomData().customCards; let index = index" class="card-input">
+          <mat-form-field>
+            <input
+              matInput
+              [(ngModel)]="roomData().customCards[index]"
+              [name]="'customCard' + index"
+              required
+            >
+            <mat-error>Card value is required</mat-error>
+          </mat-form-field>
+
+          <button 
+            *ngIf="index !== roomData().customCards.length - 1"
+            mat-icon-button 
+            type="button" 
+            (click)="removeCustomCard(index)"
+          >
+            <mat-icon>remove</mat-icon>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </form>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button (click)="closeDialog()">Cancel</button>
+  <button mat-button type="button" (click)="closeDialog()">Cancel</button>
   <button 
     mat-raised-button 
     color="primary"
+    type="submit"
     (click)="submit()"
     [disabled]="!isFormValid"
   >
-    Create Room
+    {{ roomData().id ? 'Save Changes' : 'Create Room' }}
   </button>
 </mat-dialog-actions>

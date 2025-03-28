@@ -4,5 +4,6 @@ export interface Room {
     id?: string;
     name: string;
     cardType: CardType;
-    participants?: string[];
+    customCards: string[];
+    createdAt: Date;
   }

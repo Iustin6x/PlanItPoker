@@ -1,77 +1,61 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, inject, model, Output, signal} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {MatButtonModule} from '@angular/material/button';
-import {
-  MatDialog,
-} from '@angular/material/dialog';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { lastValueFrom } from 'rxjs';
-import { NgFor, CommonModule } from '@angular/common'; 
+import { CommonModule } from '@angular/common';
 import { CreateRoomComponent } from '../create-room/create-room.component';
 import { RoomsService } from '../../../core/services/rooms.service';
 import { Room } from '../../../shared/models/room.model';
 import { RoomsListComponent } from '../rooms-list/rooms-list.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-rooms-page',
   standalone: true,
-  imports: [MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule, CommonModule, RoomsListComponent, MatProgressSpinnerModule, RoomsListComponent, MatIconModule ],
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    CommonModule,
+    RoomsListComponent,
+    MatProgressSpinnerModule,
+    MatIconModule
+  ],
   templateUrl: './rooms-page.component.html',
-  styleUrl: './rooms-page.component.scss'
+  styleUrl: './rooms-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RoomsPageComponent {
-  readonly roomData = model<Room>({
-      name: '',
-      cardType: 'scrum',
-    })
-  
-    rooms = signal<Room[]>([]);
-    isLoading = signal(true);
-  
-    readonly dialog = inject(MatDialog);
-  
-    constructor(private router: Router, private roomsService: RoomsService) {
-      this.loadRooms();
-    }
-  
-    private loadRooms() {
-      this.roomsService.getRooms().subscribe({
-        next: (rooms) => {
-          this.rooms.set(rooms);
-          this.isLoading.set(false);
-        },
-        error: (err) => {
-          console.error('Error loading rooms:', err);
-          this.isLoading.set(false);
-        }
-      });
-    }
+  private roomsService = inject(RoomsService);
+  private router = inject(Router);
+  private dialog = inject(MatDialog);
 
-    deleteRoom(roomId: string) {
-      this.roomsService.deleteRoom(roomId).subscribe({
-        next: () => {
-          this.rooms.update(rooms => rooms.filter(r => r.id !== roomId));
-        },
-        error: (err) => console.error('Delete failed:', err)
-      });
+  // Folosim direct signals din serviciu
+  rooms = this.roomsService.rooms;
+  isLoading = this.roomsService.loading;
+
+  async deleteRoom(roomId: string) {
+    try {
+      await this.roomsService.deleteRoom(roomId).toPromise();
+    } catch (err) {
+      console.error('Delete failed:', err);
     }
-  
-    openDialog(): void {
-      const dialogRef = this.dialog.open(CreateRoomComponent, {
-        data: this.roomData()
-      });
-  
-      dialogRef.afterClosed().subscribe(result => {
-        console.log('The dialog was closed');
-        
-        if (result !== undefined) {
-          this.roomData.set(result);
-        }
-      });
-    }
+  }
+
+  openCreateDialog(): void {
+    const dialogRef = this.dialog.open(CreateRoomComponent);
+
+    dialogRef.afterClosed().subscribe((newRoom?: Room) => {
+      if (newRoom) {
+        this.roomsService.createRoom(newRoom).subscribe({
+          next: () => this.router.navigate(['/room', newRoom.id]),
+          error: (err) => console.error('Create failed:', err)
+        });
+      }
+    });
+  }
 }

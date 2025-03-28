@@ -20,11 +20,11 @@ import { CommonModule} from '@angular/common';
   styleUrl: './rooms-list.component.scss'
 })
 export class RoomsListComponent {
-  @Input() rooms: Room[] = []
+  @Input() rooms: Room[] = [];
+  @Input() isLoading = false;
   @Output() delete = new EventEmitter<string>();
 
   displayedColumns: string[] = ['name', 'cardType', 'actions'];
-  isLoading = false;
 
   onDelete(roomId: string) {
     this.delete.emit(roomId);
