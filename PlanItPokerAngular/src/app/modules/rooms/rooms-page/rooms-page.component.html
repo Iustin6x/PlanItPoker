@@ -7,10 +7,10 @@
         </button>
       </div>
     
-    <app-rooms-list 
+      <app-rooms-list
       [rooms]="rooms()"
-      (delete)="deleteRoom($event)"
-    />
+      (delete)="handleDeleteRoom($event)"
+    ></app-rooms-list>
 
     @if (isLoading()) {
       <mat-spinner diameter="50"></mat-spinner>

@@ -1,0 +1,35 @@
+.rooms-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .rooms-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+  }
+  
+  .rooms-table th, .rooms-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .rooms-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  .rooms-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .mat-chip {
+    font-size: 12px;
+    margin-right: 4px;
+  }
+  
+  .mat-icon {
+    vertical-align: middle;
+  }
+  

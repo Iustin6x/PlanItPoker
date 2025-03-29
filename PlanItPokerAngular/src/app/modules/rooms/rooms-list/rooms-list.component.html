@@ -1,35 +1,71 @@
-<table mat-table [dataSource]="rooms" class="mat-elevation-z8">
-    <!-- Nume Column -->
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef> Room Name </th>
-      <td mat-cell *matCellDef="let room"> {{ room.name }} </td>
-    </ng-container>
-
-    <!-- Card Type Column -->
-    <ng-container matColumnDef="cardType">
-      <th mat-header-cell *matHeaderCellDef> Estimation Type </th>
-      <td mat-cell *matCellDef="let room"> 
-        <span class="type-badge">{{ room.cardType | titlecase }}</span>
-      </td>
-    </ng-container>
-
-    <!-- Actions Column -->
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef> Actions </th>
-      <td mat-cell *matCellDef="let room">
-        <button mat-icon-button (click)="onDelete(room.id)">
-          <mat-icon color="warn">delete</mat-icon>
-        </button>
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
-
-  @if (!rooms.length && !isLoading) {
-    <div class="no-data">
-      <mat-icon>meeting_room</mat-icon>
-      <p>No rooms found</p>
+<div class="rooms-container">
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="loading-state">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading rooms...</p>
     </div>
   }
+
+  <!-- Empty State -->
+  @if (!isLoading && !rooms.length) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">meeting_room</mat-icon>
+      <h3>No active rooms found</h3>
+      <p>Start by creating a new planning session</p>
+    </div>
+  }
+
+  <!-- Rooms List -->
+  @if (!isLoading && rooms.length) {
+    <div class="rooms-table">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Room Name</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Participants</th>
+            <th>Estimation Type</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (room of rooms; track room.id) {
+            <tr>
+              <td>
+                <a [routerLink]="['/room', room.id]">{{ room.name }}</a>
+              </td>
+              <td>
+                <mat-chip [style.backgroundColor]="getStatusColor(room.status)">
+                  {{ room.status | titlecase }}
+                </mat-chip>
+              </td>
+              <td>{{ room.createdAt | date: 'mediumDate' }}</td>
+              <td>
+                <mat-icon>people</mat-icon>
+                {{ room.participants.length }}
+              </td>
+              <td>{{ cardTypeLabels[room.cardType] || 'Unknown' }}</td>
+              <td>
+                <button mat-icon-button [matMenuTriggerFor]="roomMenu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #roomMenu="matMenu">
+                  <button mat-menu-item (click)="delete.emit(room.id)">
+                    <mat-icon color="warn">delete</mat-icon>
+                    Delete
+                  </button>
+                  <button mat-menu-item [routerLink]="['/room', room.id]">
+                    <mat-icon>open_in_new</mat-icon>
+                    Open
+                  </button>
+                </mat-menu>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

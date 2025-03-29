@@ -9,7 +9,7 @@ import {MatInputModule} from '@angular/material/input';
 
 import { Router } from '@angular/router';
 import { CreateRoomComponent } from '../rooms/create-room/create-room.component';
-import { Room } from '../../shared/models/room.model';
+import { Room } from '../../shared/models/room/room.model';
 import { RoomsService } from '../../core/services/rooms.service';
 import { lastValueFrom } from 'rxjs';
 import { NgFor, CommonModule } from '@angular/common'; 
