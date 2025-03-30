@@ -7,13 +7,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CreateRoomDialogComponent } from '../create-room-dialog/create-room-dialog.component';
-import { RoomsService } from '../../../core/services/rooms.service';
-import { Room } from '../../../shared/models/room/room.model';
 import { RoomsListComponent } from '../rooms-list/rooms-list.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
 import { filter } from 'rxjs/operators';
-import { UUID } from '../../../shared/types';
+import { isUUID, UUID } from '../../../shared/types';
+import { RoomService } from '../../../core/services/room.service';
+import { CreateRoomDTO, Room } from '../../../shared/models/room';
 
 @Component({
   selector: 'app-landing-page',
@@ -32,19 +31,18 @@ import { UUID } from '../../../shared/types';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LandingPageComponent {
-  private roomsService = inject(RoomsService);
+  private roomService = inject(RoomService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
 
-  // Expozare directă a signal-urilor din serviciu
-  rooms = this.roomsService.rooms;
-  isLoading = this.roomsService.loading;
+  rooms = this.roomService.rooms;
+  isLoading = this.roomService.loading;
 
-  // rooms-page.component.ts
-  protected handleDeleteRoom(roomId: UUID): void {
-    this.roomsService.deleteRoom(roomId).subscribe();
+  handleDeleteRoom(roomId: UUID): void {
+    this.roomService.deleteRoom(roomId).subscribe({
+      error: (err) => console.error('Ștergerea a eșuat:', err)
+    });
   }
-
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(CreateRoomDialogComponent, {
@@ -53,20 +51,34 @@ export class LandingPageComponent {
     });
 
     dialogRef.afterClosed()
-      .pipe(filter(Boolean)) // Ignoră rezultatele nule
-      .subscribe((newRoomData: Omit<Room, 'id' | 'createdAt' | 'updatedAt'>) => {
-        this.roomsService.createRoom(newRoomData).subscribe({
-          next: (createdRoom) => this.navigateToRoom(createdRoom.id),
-          error: (err) => console.error('Create room failed:', err)
-        });
+      .pipe(filter(room => this.isValidCreateDTO(room)))
+      .subscribe((dto: CreateRoomDTO) => {
+        this.createRoom(dto);
       });
   }
 
-  navigateToRoom(roomId: UUID): void {
-    this.router.navigate(['/room', roomId]);
+  private isValidCreateDTO(dto: unknown): dto is CreateRoomDTO {
+    return !!dto && 
+           typeof dto === 'object' &&
+           'name' in dto &&
+           'cardType' in dto &&
+           'cards' in dto &&
+           Array.isArray((dto as CreateRoomDTO).cards);
+  }
+
+  private createRoom(dto: CreateRoomDTO): void {
+    this.roomService.createRoom(dto).subscribe({
+      next: (createdRoom) => this.handleCreatedRoom(createdRoom),
+      error: (err) => console.error('Crearea camerei a eșuat:', err)
+    });
+  }
+
+  private handleCreatedRoom(room: Room): void {
+    this.router.navigate(['/room', room.id]);
+    this.refreshRooms();
   }
 
   refreshRooms(): void {
-    this.roomsService.getRooms().subscribe();
+    this.roomService.getRooms().subscribe();
   }
 }

@@ -1,18 +1,19 @@
+import { UUID } from "crypto";
+import { CardValue } from "../../types";
+import { VotingSession } from "../room";
 
-import { UUID } from '../../types';
-import { StoryStatus } from './story-status.enum';
+export enum StoryStatus {
+  ACTIVE = 'active',
+  COMPLETED = 'completed',
+  SKIPPED = 'skipped'
+}
 
 export interface Story {
   id: UUID;
-  title: string;
-  description: string;
   roomId: UUID;
+  title: string;
   status: StoryStatus;
-  points?: number;
-  votes: Record<UUID, number>;
-  history: {
-    created: Date;
-    updated: Date;
-    completed?: Date;
-  };
+  sessions: VotingSession[]; // Istoric sesiuni
+  currentSessionId?: UUID; // Sesiunea activă
+  finalResult?: string;
 }

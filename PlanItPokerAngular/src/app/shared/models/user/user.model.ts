@@ -4,14 +4,9 @@ import { GuestSession } from '../guest/guest.model';
 import { UserRole } from './user-role.enum';
 
 export interface User {
-  id: UUID;
-  email: string;
-  roles: UserRole[];
-  originalGuestId?: UUID;
-  history: {
-    guestActivities: GuestSession['history'];
-    ownedRooms: UUID[];
-    moderatedRooms: UUID[];
-  };
-  createdAt: Date;
-}
+    id: UUID;
+    name: string;
+    email?: string;
+    isGuest: boolean;
+    avatar?: string;
+  }

@@ -1,20 +1,19 @@
 import { ChangeDetectionStrategy, Component, inject, input, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { CommonModule } from '@angular/common';
+import { v4 as uuidv4 } from 'uuid';
+import { UUID } from 'crypto';
 
-import { CardSetService } from '../../../core/services/card-set.service';
 import { UserService } from '../../../core/services/user.service';
-import { Room, RoomStatus } from '../../../shared/models/room';
-import { CARD_SETS, CardType, generateUUID } from '../../../shared/types';
-import { SaveConfigDialogComponent } from './save-config-dialog.components';
-
+import { Room } from '../../../shared/models/room';
+import { CardType, CardValue, PREDEFINED_CARD_SETS } from '../../../shared/types';
 
 @Component({
   selector: 'app-create-room-dialog',
@@ -35,60 +34,46 @@ import { SaveConfigDialogComponent } from './save-config-dialog.components';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateRoomDialogComponent {
-  private dialog = inject(MatDialog);
-  private cardSetService = inject(CardSetService);
   private userService = inject(UserService);
   protected dialogRef = inject(MatDialogRef<CreateRoomDialogComponent>);
   protected initialData = input<Partial<Room>>(inject(MAT_DIALOG_DATA));
 
   roomData = model<Room>({
-    id: generateUUID(),
+    id: uuidv4() as UUID,
     name: '',
-    cardType: 'fibonacci' as CardType,
-    customCards: [],
-    adminIds: [this.userService.currentUserId],
-    participants: [this.userService.currentUserId],
-    votingSessions: [],
-    status: RoomStatus.ACTIVE,
-    settings: {
-      requireAuth: false,
-      allowSpectators: true,
-      maxParticipants: 20,
-      votingTimeLimit: 300,
-      allowRevotes: true,
-      hideResultsUntilEnd: false
-    },
+    ownerId: this.userService.currentUserId, // Use correct property name
+    cardType: CardType.FIBONACCI, // Use enum value
+    cards: PREDEFINED_CARD_SETS[CardType.FIBONACCI],
+    players: [],
+    stories: [],
+    inviteLink: '',
     createdAt: new Date(),
-    updatedAt: new Date(),
-    ...this.initialData
+    ...this.initialData()
   });
 
-  protected readonly cardTypeLabels: Record<CardType, string> = {
-    sequential: 'Scrum',
-    fibonacci: 'Fibonacci',
-    hours: 'Working Hours',
-    custom: 'Custom Cards'
+  
+
+  protected readonly cardTypeLabels = {
+    [CardType.SEQUENTIAL]: 'Scrum',
+    [CardType.FIBONACCI]: 'Fibonacci',
+    [CardType.HOURS]: 'Working Hours',
+    [CardType.CUSTOM]: 'Custom Cards'
   };
 
-  protected editingCards = signal<(number | '?')[]>([]);
-  protected availableConfigs = signal<CardType[]>([]);
+  protected editingCards = signal<CardValue[]>([]);
+  protected availableConfigs = signal<CardType[]>(Object.keys(PREDEFINED_CARD_SETS) as CardType[]);
   protected showCustomizationPanel = signal(false);
 
   constructor() {
-    this.initializeConfigs();
     this.initializeEditingState();
-  }
-
-  private initializeConfigs(): void {
-    this.availableConfigs.set(Object.keys(CARD_SETS) as CardType[]);
   }
 
   private initializeEditingState(): void {
     const currentType = this.roomData().cardType;
     if (currentType === 'custom') {
-      this.editingCards.set([...(this.roomData().customCards ?? [])]);
+      this.editingCards.set([...this.roomData().cards]);
     } else {
-      this.editingCards.set([...CARD_SETS[currentType]]);
+      this.editingCards.set([...PREDEFINED_CARD_SETS[currentType]]);
     }
   }
 
@@ -96,17 +81,13 @@ export class CreateRoomDialogComponent {
     this.roomData.update(data => ({
       ...data,
       cardType: newType,
-      customCards: newType === 'custom' ? this.editingCards() : []
+      cards: newType === 'custom' ? this.editingCards() : PREDEFINED_CARD_SETS[newType as Exclude<CardType, 'custom'>]
     }));
     
     if (newType !== 'custom') {
-      this.editingCards.set([...CARD_SETS[newType]]);
+      this.editingCards.set([...PREDEFINED_CARD_SETS[newType as Exclude<CardType, 'custom'>]]);
       this.showCustomizationPanel.set(false);
     }
-  }
-
-  protected toggleCustomization(): void {
-    this.showCustomizationPanel.update(v => !v);
   }
 
   protected addCard(): void {
@@ -119,22 +100,13 @@ export class CreateRoomDialogComponent {
 
   protected updateCardValue(index: number, event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    const numericValue = value === '?' ? '?' : Number(value);
-    this.editingCards.update(cards => 
-      cards.map((c, i) => i === index ? numericValue : c)
-    );
-  }
-
-  protected saveCustomConfig(): void {
-    const dialogRef = this.dialog.open(SaveConfigDialogComponent);
-    dialogRef.afterClosed().subscribe(name => {
-      if (name) {
-        this.cardSetService.addCustomConfig({
-          name,
-          cards: this.editingCards()
-        });
-      }
-    });
+    let cardValue: CardValue = value === '?' ? '?' : Number(value);
+    
+    if (value === '?' || !isNaN(Number(value))) {
+      this.editingCards.update(cards => 
+        cards.map((c, i) => i === index ? cardValue : c)
+      );
+    }
   }
 
   protected get isValidForm(): boolean {
@@ -151,10 +123,9 @@ export class CreateRoomDialogComponent {
   protected submit(): void {
     const room: Room = {
       ...this.roomData(),
-      updatedAt: new Date(),
-      customCards: this.roomData().cardType === 'custom' 
-        ? this.editingCards() ?? []
-        : []
+      cards: this.roomData().cardType === 'custom' 
+        ? this.editingCards() 
+        : PREDEFINED_CARD_SETS[this.roomData().cardType as Exclude<CardType, 'custom'>]
     };
 
     this.dialogRef.close(room);

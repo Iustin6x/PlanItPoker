@@ -9,14 +9,6 @@ export function validateRoom(room: Partial<Room>): string[] {
     errors.push('Room name is required');
   }
 
-  if (room.cardType === 'custom' && (!room.customCards || room.customCards.length === 0)) {
-    errors.push('Custom cards are required for custom card type');
-  }
-
-  if (room.adminIds?.length === 0) {
-    errors.push('At least one admin is required');
-  }
-
   return errors;
 }
 

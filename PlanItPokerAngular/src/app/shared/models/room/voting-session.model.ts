@@ -3,10 +3,19 @@ import { CardValue, UUID } from "../../types";
 
 
 export interface VotingSession {
-  id: UUID;
-  startTime: Date;
-  endTime?: Date;
-  votes: Record<UUID, CardValue>;
-  average?: number;
-  revealed: boolean;
-}
+    id: UUID;
+    roomId: UUID;
+    storyId: UUID;
+    startTime: Date;
+    endTime?: Date;
+    status: 'pending' | 'active' | 'completed';
+    votes: Record<UUID, CardValue>; // { [userId]: cardValue }
+    revealed: boolean;
+  }
+
+export enum SessionStatus {
+    Pending = 'pending',
+    InProgress = 'inProgress',
+    Completed = 'completed'
+  }
+

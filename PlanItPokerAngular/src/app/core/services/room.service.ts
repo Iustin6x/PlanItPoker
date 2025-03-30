@@ -3,13 +3,11 @@ import { delay, finalize, Observable, of, throwError } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { Room, RoomStatus } from '../../shared/models/room';
 import { UserService } from './user.service';
-import { generateUUID, UUID } from '../../shared/types';
+import { CardType, UUID } from '../../shared/types';
+import { Player, PlayerRole } from '../../shared/models/room/player.model';
 
-
-@Injectable({
-  providedIn: 'root'
-})
-export class RoomsService {
+@Injectable({ providedIn: 'root' })
+export class RoomService {
   private userService = inject(UserService);
   private _rooms = signal<Room[]>(this.initializeMockRooms());
   private latency = 500;
@@ -18,23 +16,18 @@ export class RoomsService {
   loading = signal(false);
 
   private initializeMockRooms(): Room[] {
-    const defaultSettings = {
-      requireAuth: false,
-      allowSpectators: true,
-      maxParticipants: 20,
-      votingTimeLimit: 300
-    };
-
     return [
       this.createRoomEntity({
         id: 'd8a12f04-3c5b-4d7e-8f6a-1c3b9d7e8f6c' as UUID,
         name: 'Sprint Planning',
-        cardType: 'fibonacci'
+        cardType: CardType.FIBONACCI,
+        players: this.generateMockPlayers(3, 'd8a12f04-3c5b-4d7e-8f6a-1c3b9d7e8f6c' as UUID)
       }),
       this.createRoomEntity({
         id: '550e8400-e29b-41d4-a716-446655440000' as UUID,
         name: 'Tech Debt Discussion',
-        cardType: 'sequential'
+        cardType: CardType.SEQUENTIAL,
+        players: this.generateMockPlayers(2, '550e8400-e29b-41d4-a716-446655440000' as UUID)
       })
     ];
   }
@@ -43,30 +36,29 @@ export class RoomsService {
     const userId = this.userService.currentUserId;
     
     return {
-      id: generateUUID(),
+      id: uuidv4() as UUID,
       name: '',
-      cardType: 'fibonacci',
-      customCards: [],
-      adminIds: [userId as UUID],
-      participants: [userId as UUID],
-      votingSessions: [],
-      status: RoomStatus.ACTIVE,
-      settings: {
-        requireAuth: false,
-        allowSpectators: true,
-        maxParticipants: 20,
-        votingTimeLimit: 300,
-        allowRevotes: true,
-        hideResultsUntilEnd: false
-      },
+      ownerId: userId as UUID,
+      cardType: CardType.FIBONACCI,
+      cards: [],
+      players: [],
+      stories: [],
+      inviteLink: '',
       createdAt: new Date(),
-      updatedAt: new Date(),
       ...data
     };
   }
 
-  private generateRoomId(): UUID {
-    return uuidv4() as UUID;
+  private generateMockPlayers(count: number, roomId: UUID): Player[] {
+    return Array.from({ length: count }, (_, i) => ({
+      id: uuidv4() as UUID,
+      roomId: roomId,
+      userId: uuidv4() as UUID,
+      name: `Player ${i + 1}`,
+      role: i === 0 ? PlayerRole.MODERATOR : PlayerRole.PLAYER,
+      hasVoted: Math.random() > 0.5,
+      isConnected: Math.random() > 0.8
+    }));
   }
 
   getRooms(): Observable<Room[]> {
@@ -86,12 +78,11 @@ export class RoomsService {
     );
   }
 
-  createRoom(roomData: Omit<Room, 'id' | 'createdAt' | 'updatedAt'>): Observable<Room> {
+  createRoom(dto: { name: string; cardType: CardType }): Observable<Room> {
     this.loading.set(true);
     const newRoom = this.createRoomEntity({
-      ...roomData,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      ...dto,
+      players: this.generateMockPlayers(1, uuidv4() as UUID)
     });
     
     this._rooms.update(rooms => [...rooms, newRoom]);
@@ -115,8 +106,7 @@ export class RoomsService {
       const updatedRoom = {
         ...rooms[index],
         ...updates,
-        updatedAt: new Date(),
-        id // Prevent ID change
+        updatedAt: new Date()
       };
 
       this._rooms.update(currentRooms => 
@@ -159,8 +149,8 @@ export class RoomsService {
           room.id === roomId 
             ? { 
                 ...room, 
-                customCards: [...cards],
-                cardType: 'custom',
+                cards: [...cards],
+                cardType: CardType.CUSTOM,
                 updatedAt: new Date()
               }
             : room

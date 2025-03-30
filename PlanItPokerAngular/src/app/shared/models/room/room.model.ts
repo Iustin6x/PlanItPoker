@@ -1,20 +1,23 @@
-import { CardType, CardValue } from '../../types/card-type';
-import { UUID } from '../../types/uuid.type';
-import { RoomSettings } from './room-settings.model';
-import { RoomStatus } from './room-status.enum';
-import { VotingSession } from './voting-session.model';
+import { UUID } from "crypto";
+import { CardType, CardValue } from "../../types";
+import { Story } from "../story";
+import { Player } from "./player.model";
 
 export interface Room {
-  id: UUID;
-  name: string;
-  cardType: CardType;
-  customCards?: CardValue[];
-  adminIds: UUID[];
-  participants: UUID[];
-  currentStoryId?: UUID;
-  votingSessions: VotingSession[];
-  status: RoomStatus;
-  settings: RoomSettings;
-  createdAt: Date;
-  updatedAt: Date;
-}
+    id: UUID;
+    name: string;
+    ownerId: UUID;
+    cardType: CardType;
+    cards: CardValue[];
+    players: Player[];
+    stories: Story[];
+    inviteLink: string;
+    createdAt: Date;
+  }
+
+
+  export interface CreateRoomDTO {
+    name: string;
+    cardType: CardType;
+    cards: CardValue[];
+  }
