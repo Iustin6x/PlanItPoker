@@ -8,7 +8,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 
 import { Router } from '@angular/router';
-import { CreateRoomComponent } from '../rooms/create-room/create-room.component';
+import { CreateRoomDialogComponent } from '../rooms/create-room-dialog/create-room-dialog.component';
 import { Room } from '../../shared/models/room/room.model';
 import { RoomsService } from '../../core/services/rooms.service';
 import { lastValueFrom } from 'rxjs';

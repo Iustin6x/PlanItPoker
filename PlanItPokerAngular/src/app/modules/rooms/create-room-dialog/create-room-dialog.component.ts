@@ -17,7 +17,7 @@ import { SaveConfigDialogComponent } from './save-config-dialog.components';
 
 
 @Component({
-  selector: 'app-create-room',
+  selector: 'app-create-room-dialog',
   standalone: true,
   imports: [
     FormsModule,
@@ -30,15 +30,15 @@ import { SaveConfigDialogComponent } from './save-config-dialog.components';
     MatIconModule,
     MatExpansionModule,
   ],
-  templateUrl: './create-room.component.html',
-  styleUrls: ['./create-room.component.scss'],
+  templateUrl: './create-room-dialog.component.html',
+  styleUrls: ['./create-room-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateRoomComponent {
+export class CreateRoomDialogComponent {
   private dialog = inject(MatDialog);
   private cardSetService = inject(CardSetService);
   private userService = inject(UserService);
-  protected dialogRef = inject(MatDialogRef<CreateRoomComponent>);
+  protected dialogRef = inject(MatDialogRef<CreateRoomDialogComponent>);
   protected initialData = input<Partial<Room>>(inject(MAT_DIALOG_DATA));
 
   roomData = model<Room>({

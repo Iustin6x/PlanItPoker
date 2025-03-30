@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { CreateRoomComponent } from '../create-room/create-room.component';
+import { CreateRoomDialogComponent } from '../create-room-dialog/create-room-dialog.component';
 import { RoomsService } from '../../../core/services/rooms.service';
 import { Room } from '../../../shared/models/room/room.model';
 import { RoomsListComponent } from '../rooms-list/rooms-list.component';
@@ -16,7 +16,7 @@ import { filter } from 'rxjs/operators';
 import { UUID } from '../../../shared/types';
 
 @Component({
-  selector: 'app-rooms-page',
+  selector: 'app-landing-page',
   standalone: true,
   imports: [
     MatFormFieldModule,
@@ -27,11 +27,11 @@ import { UUID } from '../../../shared/types';
     MatProgressSpinnerModule,
     MatIconModule
   ],
-  templateUrl: './rooms-page.component.html',
-  styleUrls: ['./rooms-page.component.scss'],
+  templateUrl: './landing-page.component.html',
+  styleUrls: ['./landing-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RoomsPageComponent {
+export class LandingPageComponent {
   private roomsService = inject(RoomsService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
@@ -47,7 +47,7 @@ export class RoomsPageComponent {
 
 
   openCreateDialog(): void {
-    const dialogRef = this.dialog.open(CreateRoomComponent, {
+    const dialogRef = this.dialog.open(CreateRoomDialogComponent, {
       width: '600px',
       disableClose: true
     });
