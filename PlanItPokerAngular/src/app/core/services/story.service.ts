@@ -44,6 +44,7 @@ export class StoryService {
         id: 'b2c3d4e5-2345-6789-0abc-ef1234567890' as UUID,
         name: 'Payment Gateway Integration',
         roomId: '550e8400-e29b-41d4-a716-446655440000' as UUID,
+        order: 0,
         status: StoryStatus.ACTIVE,
         session: {
           startTime: new Date(now.getTime() - 900000), // 15 minutes ago
@@ -108,11 +109,49 @@ export class StoryService {
       );
   }
 
+  getFirstStoryByRoomId(roomId: UUID): Observable<Story> {
+    this.loading.set(true);
+    
+    // Găsim toate story-urile active din camera specificată, sortate după order
+    const activeStories = this._stories().filter(story => 
+      story.roomId === roomId && 
+      story.status === StoryStatus.ACTIVE
+    ).sort((a, b) => (a.order || 0) - (b.order || 0));
+  
+    // Verificăm existența story-urilor active
+    if (activeStories.length === 0) {
+      return throwError(() => new Error(`Nu există story-uri active în camera ${roomId}`)).pipe(
+        delay(this.latency),
+        finalize(() => this.loading.set(false))
+      );
+    }
+  
+    // Returnăm primul story din lista sortată
+    return of({...activeStories[0]}).pipe(
+      delay(this.latency),
+      finalize(() => this.loading.set(false))
+    );
+  }
+
   createStory(dto: { name: string; roomId: UUID }): Observable<Story> {
     this.loading.set(true);
+    
+    // Obținem toate story-urile active din aceeași cameră
+    const activeStoriesInRoom = this._stories().filter(story => 
+      story.roomId === dto.roomId && 
+      story.status === StoryStatus.ACTIVE
+    );
+  
+    // Calculăm ordinea corectă
+    const maxOrder = activeStoriesInRoom.reduce((max, story) => 
+      story.order && story.order > max ? story.order : max, 
+      0
+    );
+  
     const newStory = this.createStoryEntity({
       ...dto,
-      status: StoryStatus.ACTIVE
+      status: StoryStatus.ACTIVE,
+      order: maxOrder + 1 // Adăugăm +1 la maximul existent
     });
     
     this._stories.update(stories => [...stories, newStory]);
@@ -133,10 +172,33 @@ export class StoryService {
         return;
       }
 
+      const originalStory = stories[index];
+      const newStatus = updates.status ?? originalStory.status;
+
+      // Handle order based on status changes
+      let newOrder = originalStory.order;
+      if (newStatus === StoryStatus.ACTIVE) {
+        if (originalStory.status !== StoryStatus.ACTIVE) {
+          // Calculate new order when activating
+          const activeStoriesInRoom = this._stories().filter(s => 
+            s.roomId === originalStory.roomId && 
+            s.status === StoryStatus.ACTIVE
+          );
+          const maxOrder = activeStoriesInRoom.reduce((max, s) => 
+            Math.max(max, s.order || 0), 0);
+          newOrder = maxOrder + 1;
+        }
+      } else {
+        // Clear order when deactivating
+        newOrder = undefined;
+      }
+
       const updatedStory = {
-        ...stories[index],
+        ...originalStory,
         ...updates,
-        session: {...stories[index].session} // Preserve existing session
+        status: newStatus,
+        order: newOrder,
+        session: {...originalStory.session}
       };
 
       this._stories.update(currentStories => 
@@ -228,25 +290,23 @@ export class StoryService {
   updateStoryOrder(orderedIds: UUID[]): Observable<void> {
     this.loading.set(true);
     return new Observable<void>(subscriber => {
-      const currentStories = [...this._stories()];
-      const orderedStories: Story[] = [];
-      
-      // Create a map for quick lookup
-      const storyMap = new Map(currentStories.map(story => [story.id, story]));
-      
-      // Add stories in the specified order
-      orderedIds.forEach(id => {
-        const story = storyMap.get(id);
-        if (story) {
-          orderedStories.push(story);
-          storyMap.delete(id);
+      const updatedStories = this._stories().map(story => {
+        // Găsim poziția în noul array ordonat
+        const newOrder = orderedIds.indexOf(story.id) + 1;
+        
+        // Actualizăm doar dacă:
+        // 1. Este story activ
+        // 2. Ordinea s-a schimbat
+        // 3. Existem în lista de ordonare
+        if (story.status === StoryStatus.ACTIVE && 
+            orderedIds.includes(story.id) && 
+            story.order !== newOrder) {
+          return { ...story, order: newOrder };
         }
+        return story;
       });
-      
-      // Add remaining stories (not in orderedIds) at the end
-      const remainingStories = Array.from(storyMap.values());
-      this._stories.set([...orderedStories, ...remainingStories]);
-      
+  
+      this._stories.set(updatedStories);
       subscriber.next();
       subscriber.complete();
     }).pipe(

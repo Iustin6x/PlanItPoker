@@ -16,7 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { filter, take } from 'rxjs';
 import { RoomService } from '../../../core/services/room.service';
 import { StoryService } from '../../../core/services/story.service';
-import { DragDropModule } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 
@@ -53,8 +53,10 @@ export class StoryListComponent implements OnInit {
   isLoading = this.roomService.loading;
 
   get activeStories() {
-    return this.stories().filter(s => s.status === StoryStatus.ACTIVE);
-  }
+    return this.stories().filter(s => 
+      s.status === StoryStatus.ACTIVE
+    ).sort((a, b) => (a.order || 0) - (b.order || 0))
+  };
   
   get completedStories() {
     return this.stories().filter(s => s.status === StoryStatus.COMPLETED);
@@ -65,9 +67,9 @@ export class StoryListComponent implements OnInit {
   }
 
   constructor(){
-    this.roomService.getRoomsByUserId();
   }
   ngOnInit() {
+    this.storyService.setFirstStoryAsCurrent();
     this.filterStories();
   }
 
@@ -184,5 +186,28 @@ export class StoryListComponent implements OnInit {
               this.refreshStories();
               console.log(this.stories());
               this.filterStories();
+            }
+
+
+            drop(event: CdkDragDrop<Story[]>) {
+              moveItemInArray(this.filteredStories, event.previousIndex, event.currentIndex);
+              this.updateStoryOrder();
+            }
+            
+            private updateStoryOrder() {
+              this.filteredStories.forEach((story, index) => {
+                if (story.order !== index + 1) {
+                  story.order = index + 1;
+                  this.storyService.updateStory(story.id, story).subscribe();
+                }
+              });
+            }
+            
+            calculateDuration(story: Story): string {
+              if (!story.session?.startTime || !story.session?.endTime) return '-';
+              
+              const diff = story.session.endTime.getTime() - story.session.startTime.getTime();
+              const minutes = Math.floor(diff / 60000);
+              return `${minutes} minutes`;
             }
 }

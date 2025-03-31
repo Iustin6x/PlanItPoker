@@ -28,12 +28,91 @@
     </div>
   </div>
   
-  <mat-list>
-    <mat-list-item *ngFor="let story of filteredStories"  (click)="handleSelectStory(story.id)">
+  <!-- Active Stories Tab Content -->
+<div *ngIf="selectedTab === 0" cdkDropList (cdkDropListDropped)="drop($event)" class="story-list">
+    <div class="story-item" *ngFor="let story of filteredStories" cdkDrag (click)="handleSelectStory(story.id)">
+      <div class="order-handle" cdkDragHandle>
+        <mat-icon>drag_indicator</mat-icon>
+        <span class="order-number">{{story.order}}</span>
+      </div>
       {{ story.name }}
-    </mat-list-item>
-    <mat-list-item *ngIf="filteredStories.length === 0">
-      No stories found
-    </mat-list-item>
-  </mat-list>
+    </div>
+  </div>
   
+  <!-- Completed Stories Tab Content -->
+  <div *ngIf="selectedTab === 1">
+    <table mat-table [dataSource]="filteredStories" class="mat-elevation-z8">
+      <!-- Column definitions -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let story"> {{ story.name }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="duration">
+        <th mat-header-cell *matHeaderCellDef> Duration </th>
+        <td mat-cell *matCellDef="let story"> {{ calculateDuration(story) }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="result">
+        <th mat-header-cell *matHeaderCellDef> Result </th>
+        <td mat-cell *matCellDef="let story"> {{ story.finalResult || '-' }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
+        <td mat-cell *matCellDef="let story">
+          <button mat-icon-button color="warn" (click)="handleDeleteStory(story.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="['name', 'duration', 'result', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['name', 'duration', 'result', 'actions'];"></tr>
+    </table>
+  </div>
+  
+  <!-- All Stories Tab Content -->
+  <div *ngIf="selectedTab === 2">
+    <table mat-table [dataSource]="filteredStories" class="mat-elevation-z8">
+      <!-- New status column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef> Status </th>
+        <td mat-cell *matCellDef="let story">
+          <mat-icon class="status-icon" [class.active]="story.status === 'ACTIVE'">
+            {{ story.status === 'ACTIVE' ? 'radio_button_checked' : 'check_circle' }}
+          </mat-icon>
+        </td>
+      </ng-container>
+  
+      <!-- Repeating existing column definitions -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let story"> {{ story.name }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="duration">
+        <th mat-header-cell *matHeaderCellDef> Duration </th>
+        <td mat-cell *matCellDef="let story"> {{ calculateDuration(story) }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="result">
+        <th mat-header-cell *matHeaderCellDef> Result </th>
+        <td mat-cell *matCellDef="let story"> {{ story.finalResult || '-' }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
+        <td mat-cell *matCellDef="let story">
+          <button mat-icon-button color="warn" (click)="handleDeleteStory(story.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+  
+      <!-- Include status in header row -->
+      <tr mat-header-row *matHeaderRowDef="['status', 'name', 'duration', 'result', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['status', 'name', 'duration', 'result', 'actions'];" 
+          [class.completed-row]="row.status === 'COMPLETED'"></tr>
+    </table>
+  </div>

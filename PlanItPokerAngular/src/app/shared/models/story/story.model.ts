@@ -21,6 +21,7 @@ export enum StoryStatus {
 export interface Story {
   id: UUID;
   name: string;
+  order?: number;
   roomId: UUID;
   status: StoryStatus;
   session: VoteSession; 

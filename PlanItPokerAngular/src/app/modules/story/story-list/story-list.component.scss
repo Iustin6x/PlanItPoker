@@ -20,13 +20,7 @@ mat-tab-group {
     border-bottom: 2px solid #ddd;
   }
   
-  .mat-tab-label {
-    font-weight: bold;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
+
   
   /* Badge styling */
   .badge {
@@ -38,35 +32,47 @@ mat-tab-group {
     margin-left: 5px;
   }
   
-  /* List container */
-  mat-list {
-    background: white;
-    border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+
+
+
+  .story-list {
+    padding: 16px;
   }
   
-  mat-list-item {
-    border-bottom: 1px solid #ddd;
-    padding: 10px;
-    cursor: pointer;
-  }
-  
-  mat-list-item:last-child {
-    border-bottom: none;
-  }
-  
-  /* Action buttons */
-  .actions {
+  .story-item {
     display: flex;
-    justify-content: flex-end;
     align-items: center;
-    gap: 10px;
-    margin-top: 10px;
+    padding: 12px;
+    margin-bottom: 8px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    cursor: move;
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  
+    .order-handle {
+      display: flex;
+      align-items: center;
+      margin-right: 16px;
+      color: #666;
+      cursor: grab;
+  
+      .order-number {
+        margin-left: 8px;
+      }
+    }
   }
   
-  .actions button {
-    font-weight: bold;
-    text-transform: none;
+  .completed-row {
+    background-color: #f5f5f5;
   }
   
+  .status-icon {
+    &.active {
+      color: #3f51b5;
+    }
+  }
+  
+  .mat-table {
+    width: 100%;
+    margin-top: 16px;
+}
