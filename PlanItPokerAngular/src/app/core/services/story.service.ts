@@ -10,10 +10,12 @@ import { UserService } from './user.service';
 @Injectable({ providedIn: 'root' })
 export class StoryService {
   private _stories = signal<Story[]>(this.initializeMockStories());
+  private _currentStory = signal<Story | undefined>(undefined);
   private latency = 500;
   private userService = inject(UserService);
   
   stories = this._stories.asReadonly();
+  currentStory = this._currentStory.asReadonly();
   loading = signal(false);
 
   
@@ -210,5 +212,29 @@ export class StoryService {
     return this.updateVotingSession(storyId, {
       votes: { [userId]: vote }
     });
+  }
+
+
+
+  setFirstStoryAsCurrent(): void {
+    const stories = this._stories();
+    this._currentStory.set(stories.length > 0 ? stories[0] : undefined);
+  }
+
+  // Add these methods to manage current story
+  setCurrentStory(storyId: UUID): void {
+    const story = this._stories().find(s => s.id === storyId);
+    if (story) {
+      this._currentStory.set(story);
+    }
+  }
+
+  moveToNextStory(): void {
+    const stories = this._stories();
+    const currentIndex = stories.findIndex(s => s.id === this._currentStory()?.id);
+    
+    if (currentIndex >= 0 && currentIndex < stories.length - 1) {
+      this._currentStory.set(stories[currentIndex + 1]);
+    }
   }
 }

@@ -1,1 +1,12 @@
-<p>voting-card works!</p>
+<div class="cards-container">
+    <div 
+      *ngFor="let card of cardValues"
+      class="card"
+      [class.selected]="selectedValue === card"
+      (click)="selectCard(card)"
+    >
+      <div class="card-corner top-left">{{ card }}</div>
+      <div class="card-center">{{ card }}</div>
+      <div class="card-corner bottom-right">{{ card }}</div>
+    </div>
+  </div>

@@ -1,2 +1,16 @@
-<p>voting-page works!</p>
-<app-story-list></app-story-list>
+<!-- Use separate *ngIf statements -->
+<ng-container *ngIf="currentStory() as story">
+    <ng-container *ngIf="currentRoom() as room">
+      <app-voting-card 
+        [cardType]="room.cardType"
+        [customCards]="customCardSet()"
+        (voted)="handleVote($event)">
+      </app-voting-card>
+    </ng-container>
+  </ng-container>
+  
+  <app-story-list></app-story-list>
+  
+  <div *ngIf="!currentStory()" class="no-story">
+    <p>Select or create a story to start voting</p>
+  </div>

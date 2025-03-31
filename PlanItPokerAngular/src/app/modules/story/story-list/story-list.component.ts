@@ -80,7 +80,9 @@ export class StoryListComponent implements OnInit {
         break;
     }
   }
-
+  handleSelectStory(storyId: UUID): void {
+    this.storyService.setCurrentStory(storyId);
+  }
 
   handleDeleteStory(storyId: UUID): void {
       this.storyService.deleteStory(storyId).subscribe({

@@ -9,14 +9,16 @@ import { Player, PlayerRole } from '../../shared/models/room/player.model';
 @Injectable({ providedIn: 'root' })
 export class RoomService {
   private userService = inject(UserService);
+  private _currentRoom = signal<Room | undefined>(undefined);
   private _rooms = signal<Room[]>(this.initializeMockRooms());
   private latency = 500;
 
   rooms = this._rooms.asReadonly();
+  currentRoom = this._currentRoom.asReadonly();
   loading = signal(false);
 
   private initializeMockRooms(): Room[] {
-    return [
+    const rooms = [
       this.createRoomEntity({
         id: 'd8a12f04-3c5b-4d7e-8f6a-1c3b9d7e8f6c' as UUID,
         name: 'Sprint Planning',
@@ -30,6 +32,21 @@ export class RoomService {
         players: this.generateMockPlayers(2, '550e8400-e29b-41d4-a716-446655440000' as UUID)
       })
     ];
+    
+    // Set first room as current
+    this._currentRoom.set(rooms[0]);
+    return rooms;
+  }
+
+  setCurrentRoom(roomId: UUID): void {
+    const room = this._rooms().find(r => r.id === roomId);
+    if (room) {
+      this._currentRoom.set(room);
+    }
+  }
+
+  clearCurrentRoom(): void {
+    this._currentRoom.set(undefined);
   }
 
   private createRoomEntity(data: Partial<Room>): Room {

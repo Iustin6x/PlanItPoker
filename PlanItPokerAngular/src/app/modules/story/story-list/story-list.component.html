@@ -29,7 +29,7 @@
   </div>
   
   <mat-list>
-    <mat-list-item *ngFor="let story of filteredStories" (click)="handleEditStory(story)">
+    <mat-list-item *ngFor="let story of filteredStories"  (click)="handleSelectStory(story.id)">
       {{ story.name }}
     </mat-list-item>
     <mat-list-item *ngIf="filteredStories.length === 0">
