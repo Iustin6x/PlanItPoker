@@ -16,6 +16,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { filter, take } from 'rxjs';
 import { RoomService } from '../../../core/services/room.service';
 import { StoryService } from '../../../core/services/story.service';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-story-list',
@@ -32,6 +35,7 @@ import { StoryService } from '../../../core/services/story.service';
     MatListModule,
     MatTabsModule,
     MatIconModule,
+    DragDropModule, MatMenuModule, MatTableModule
   ],
   templateUrl: './story-list.component.html',
   styleUrls: ['./story-list.component.scss']

@@ -21,17 +21,23 @@ export class StoryService {
   
 
   private initializeMockStories(): Story[] {
+    const now = new Date();
     return [
       this.createStoryEntity({
         id: 'a1b2c3d4-1234-5678-9abc-def123456789' as UUID,
         name: 'User Authentication',
         roomId: 'd8a12f04-3c5b-4d7e-8f6a-1c3b9d7e8f6c' as UUID,
         status: StoryStatus.COMPLETED,
+        finalResult: '8',
         session: {
-          startTime: new Date(),
-          status: 'active',
-          votes: {} as Record<UUID, CardValue>,
-          revealed: false
+          startTime: new Date(now.getTime() - 3600000), // 1 hour ago
+          endTime: new Date(now.getTime() - 1800000),   // 30 minutes later
+          status: 'completed',
+          votes: {
+            '550e8400-e29b-41d4-a716-446655440000': '5',
+            'd8a12f04-3c5b-4d7e-8f6a-1c3b9d7e8f6c': '8'
+          },
+          revealed: true
         }
       }),
       this.createStoryEntity({
@@ -40,17 +46,22 @@ export class StoryService {
         roomId: '550e8400-e29b-41d4-a716-446655440000' as UUID,
         status: StoryStatus.ACTIVE,
         session: {
-          startTime: new Date(Date.now() - 3600000),
-          endTime: new Date(),
-          status: 'completed',
+          startTime: new Date(now.getTime() - 900000), // 15 minutes ago
+          status: 'active',
           votes: {
-            '550e8400-e29b-41d4-a716-446655440000': '5',
-            'd8a12f04-3c5b-4d7e-8f6a-1c3b9d7e8f6c': '8'
+            '550e8400-e29b-41d4-a716-446655440000': '3',
+            'd8a12f04-3c5b-4d7e-8f6a-1c3b9d7e8f6c': '5'
           },
-          revealed: true
+          revealed: false
         }
       })
     ];
+  }
+
+  // Add this helper for duration calculation
+  getSessionDuration(session: VoteSession): number | null {
+    if (!session.endTime) return null;
+    return new Date(session.endTime).getTime() - new Date(session.startTime).getTime();
   }
 
   private createStoryEntity(data: Partial<Story>): Story {
@@ -212,6 +223,36 @@ export class StoryService {
     return this.updateVotingSession(storyId, {
       votes: { [userId]: vote }
     });
+  }
+
+  updateStoryOrder(orderedIds: UUID[]): Observable<void> {
+    this.loading.set(true);
+    return new Observable<void>(subscriber => {
+      const currentStories = [...this._stories()];
+      const orderedStories: Story[] = [];
+      
+      // Create a map for quick lookup
+      const storyMap = new Map(currentStories.map(story => [story.id, story]));
+      
+      // Add stories in the specified order
+      orderedIds.forEach(id => {
+        const story = storyMap.get(id);
+        if (story) {
+          orderedStories.push(story);
+          storyMap.delete(id);
+        }
+      });
+      
+      // Add remaining stories (not in orderedIds) at the end
+      const remainingStories = Array.from(storyMap.values());
+      this._stories.set([...orderedStories, ...remainingStories]);
+      
+      subscriber.next();
+      subscriber.complete();
+    }).pipe(
+      delay(this.latency),
+      finalize(() => this.loading.set(false))
+    );
   }
 
 

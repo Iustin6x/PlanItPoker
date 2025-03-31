@@ -41,6 +41,7 @@ export class RoomsListComponent {
   @Input() rooms: Room[] = [];
   @Input() isLoading = false;
   @Output() delete = new EventEmitter<UUID>();
+  @Output() select = new EventEmitter<UUID>();
   @Output() edit = new EventEmitter<RoomDialogDTO>();
 
   
@@ -66,6 +67,10 @@ export class RoomsListComponent {
 
   handleDelete(roomId: UUID): void {
     this.delete.emit(roomId);
+  }
+
+  handleSelect(room: Room): void {
+    this.select.emit(room.id);
   }
 
   handleEdit(room: Room): void {

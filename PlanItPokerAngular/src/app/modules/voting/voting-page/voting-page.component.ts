@@ -23,10 +23,7 @@ export class VotingPageComponent {
   // Use signals directly
   currentStory = this.storyService.currentStory;
 
-  currentRoom = computed(() => {
-    const story = this.currentStory();
-    return story ? this.roomService.rooms().find(r => r.id === story.roomId) : undefined;
-  });
+  currentRoom = this.roomService.currentRoom;
 
   customCardSet = computed((): CardValue[] => {
     const room = this.currentRoom();

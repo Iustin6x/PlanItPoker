@@ -47,6 +47,13 @@ export class LandingPageComponent {
     });
   }
 
+  handleSelectRoom(roomId: UUID): void {
+    this.roomService.setCurrentRoom(roomId);
+    console.log(this.roomService.currentRoom());
+    this.router.navigate(['/vot']);
+  }
+
+
   handleEditRoom(room: RoomDialogDTO): void {
     this.openRoomDialog(
       { 
