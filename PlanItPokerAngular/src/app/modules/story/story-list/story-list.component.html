@@ -20,7 +20,7 @@
     </div>
     
     <div class="actions">
-        <button mat-raised-button color="primary" (click)="openAddStoryDialog()">Add Story</button>
+        <button mat-raised-button color="primary" (click)="openCreateDialog()">Add Story</button>
 
       <button mat-icon-button>
         <mat-icon>settings</mat-icon>
@@ -29,8 +29,8 @@
   </div>
   
   <mat-list>
-    <mat-list-item *ngFor="let story of filteredStories" (click)="openStoryDialog(story)">
-      {{ story.title }}
+    <mat-list-item *ngFor="let story of filteredStories" (click)="handleEditStory(story)">
+      {{ story.name }}
     </mat-list-item>
     <mat-list-item *ngIf="filteredStories.length === 0">
       No stories found

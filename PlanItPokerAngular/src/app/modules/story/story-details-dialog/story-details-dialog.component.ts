@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { Story, StoryStatus } from '../../../shared/models/story';
 import { v4 as uuidv4 } from 'uuid';
 import { UUID } from 'crypto';
+import { CardValue } from '../../../shared/types';
 
 @Component({
   selector: 'app-story-details-dialog',
@@ -33,44 +34,41 @@ export class StoryDetailsDialogComponent {
   private dialogRef = inject(MatDialogRef<StoryDetailsDialogComponent>);
   protected initialData = input<Partial<Story>>(inject(MAT_DIALOG_DATA));
 
-  storyData = signal<Story>({
-    id: uuidv4() as UUID,
-    roomId: uuidv4() as UUID,
-    title: this.initialData()?.title || '',
-    status: StoryStatus.ACTIVE,
-    sessions: this.initialData()?.sessions || [],
-    currentSessionId: this.initialData()?.currentSessionId,
-    finalResult: this.initialData()?.finalResult,
+
+  storyData = model<Story>({
+    id: this.initialData()?.id || uuidv4() as UUID,
+    name: '',
+    roomId: this.initialData()?.roomId || '' as UUID,
+    status: this.initialData()?.status || StoryStatus.ACTIVE,
+    session: this.initialData()?.session || {
+      startTime: new Date(),
+      status: 'pending',
+      votes: {} as Record<UUID, CardValue>,
+      revealed: false
+    },
     ...this.initialData()
   });
 
-  protected readonly statusLabels = {
-    [StoryStatus.ACTIVE]: 'Active',
-    [StoryStatus.COMPLETED]: 'Completed',
-    [StoryStatus.SKIPPED]: 'Skipped',
-  };
 
-  protected availableStatuses = signal<StoryStatus[]>(Object.values(StoryStatus));
+
 
   constructor() {}
 
   protected isValidForm(): boolean {
-    const { title } = this.storyData();
-    return title.trim().length >= 3;
+    const { name } = this.storyData();
+    return name.trim().length >= 3;
   }
 
   get isEditMode(): boolean {
     return !!this.initialData()?.id;
   }
 
-  updateTitle(newTitle: string): void {
-    this.storyData.update(data => ({ ...data, title: newTitle }));
-  }
-
   protected submit(): void {
+   
     const story: Story = {
       ...this.storyData(),
     };
+    console.log("submit"+story.name);
 
     this.dialogRef.close(story);
   }

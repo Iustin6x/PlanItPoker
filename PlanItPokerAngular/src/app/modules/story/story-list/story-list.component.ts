@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { StoryDetailsDialogComponent } from '../story-details-dialog/story-details-dialog.component';
 import { Story, StoryStatus } from '../../../shared/models/story';
@@ -13,6 +13,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
+import { filter, take } from 'rxjs';
+import { RoomService } from '../../../core/services/room.service';
+import { StoryService } from '../../../core/services/story.service';
 
 @Component({
   selector: 'app-story-list',
@@ -34,28 +37,32 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./story-list.component.scss']
 })
 export class StoryListComponent implements OnInit {
-  stories: Story[] = [
-    { id: 'd8a12f04-3c5b-4d7e-8f6a-1c3b9d7e8f6c' as UUID, roomId: 'd8a12f04-3c5b-4d7e-8f6a-1c3b9d7e8f6c' as UUID, title: 'Story 1', status: StoryStatus.ACTIVE, sessions: [] },
-    { id: 'd8a12f04-3c5b-4d7e-8f6a-1c3b9d7e9f6c' as UUID, roomId: 'd8a12f04-3c5b-4d7e-8f6a-1c3b9d7e8f6c' as UUID, title: 'Story 2', status: StoryStatus.COMPLETED, sessions: [] },
-    { id: 'd8a12f04-3c5b-4d7e-8f6a-1c3b9d7e6f6c' as UUID, roomId: 'd8a12f04-3c5b-4d7e-8f6a-1c3b9d7e8f6c' as UUID, title: 'Story 3', status: StoryStatus.SKIPPED, sessions: [] }
-  ];
+  private roomService = inject(RoomService);
+  private storyService = inject(StoryService);
+  private dialog = inject(MatDialog);
+
+
   filteredStories: Story[] = [];
   selectedTab = 0;
 
+  stories = this.storyService.stories;
+  isLoading = this.roomService.loading;
+
   get activeStories() {
-    return this.stories.filter(s => s.status === StoryStatus.ACTIVE);
+    return this.stories().filter(s => s.status === StoryStatus.ACTIVE);
   }
   
   get completedStories() {
-    return this.stories.filter(s => s.status === StoryStatus.COMPLETED);
+    return this.stories().filter(s => s.status === StoryStatus.COMPLETED);
   }
   
   get allStories() {
-    return this.stories;
+    return this.stories();
   }
 
-  constructor(private dialog: MatDialog) {}
-
+  constructor(){
+    this.roomService.getRoomsByUserId();
+  }
   ngOnInit() {
     this.filterStories();
   }
@@ -63,38 +70,113 @@ export class StoryListComponent implements OnInit {
   filterStories() {
     switch (this.selectedTab) {
       case 0:
-        this.filteredStories = this.stories.filter(s => s.status === StoryStatus.ACTIVE);
+        this.filteredStories = this.stories().filter(s => s.status === StoryStatus.ACTIVE);
         break;
       case 1:
-        this.filteredStories = this.stories.filter(s => s.status === StoryStatus.COMPLETED);
+        this.filteredStories = this.stories().filter(s => s.status === StoryStatus.COMPLETED);
         break;
       case 2:
-        this.filteredStories = [...this.stories];
+        this.filteredStories = [...this.stories()];
         break;
     }
   }
 
-  openStoryDialog(story?: Story) {
-    this.dialog.open(StoryDetailsDialogComponent, {
-      width: '400px',
-      data: story ? { story, isEdit: true } : { isEdit: false }
-    });
-  }
 
-  openAddStoryDialog() {
-    const dialogRef = this.dialog.open(StoryDetailsDialogComponent, {
-      width: '400px',
-      data: { isEdit: false }
-    });
+  handleDeleteStory(storyId: UUID): void {
+      this.storyService.deleteStory(storyId).subscribe({
+        error: (err) => console.error('Ștergerea a eșuat:', err)
+      });
+    }
   
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // Assuming the result contains the new story data, you can push it to the stories array
-        this.stories.push(result);
-        this.filterStories(); // Update the filtered stories
+    handleEditStory(story: Story): void {
+      console.log("open edit"+story.name);
+      this.openStoryDialog(
+        { 
+          id: story.id,
+          name: story.name,
+          roomId: story.roomId,
+          session: story.session,
+          status: story.status,
+          finalResult: story.finalResult,
+        },
+        (dto) => this.updateStory(dto) 
+      );
+    }
+
+    openCreateDialog(): void {
+      this.openStoryDialog(
+        undefined, // No initial data for creation
+        (dto) => this.createStory(dto)
+      );
+    }
+
+    private updateStory(dto: Story): void {
+      console.log(dto);
+        if (!dto.id) {
+          console.error('Update failed: Missing room ID');
+          return;
+        }
+      
+        this.storyService.updateStory(dto.id, dto).subscribe({
+          next: () => {
+            this.refreshStories();
+            // Consider adding success feedback here
+          },
+          error: (err) => this.handleStoryError('Update', err)
+        });
       }
-    });
-  }
 
-  
+
+    private openStoryDialog(initialData: Partial<Story> | undefined, callback: (dto: Story) => void): void {
+        const dialogRef = this.dialog.open(StoryDetailsDialogComponent, {
+          width: '600px',
+          disableClose: true,
+          data: initialData
+        });
+      
+        dialogRef.afterClosed()
+          .pipe(
+            filter(story => this.isValidStory(story)), // Consolidated validation
+            take(1) // Ensure automatic cleanup
+          )
+          .subscribe({
+            next: (dto: Story) => callback(dto),
+            error: (err) => this.handleDialogError(err)
+          });
+      }
+
+      private isValidStory(dto: unknown): dto is Story {
+          return !!dto && 
+                 typeof dto === 'object' &&
+                 !Array.isArray(dto) &&
+                 'name' in dto &&
+                 typeof (dto as Story).name === 'string';
+        }
+
+        private handleDialogError(err: any): void {
+          console.error('Dialog operation failed:', err);
+        }
+
+        private createStory(story: Story): void {
+            this.storyService.createStory(story).subscribe({
+              next: (createdStory) => this.handleCreatedStory(createdStory),
+              error: (err) => this.handleStoryError('Creation', err)
+            });
+          }
+
+          private handleStoryError(operation: string, err: any): void {
+            console.error(`${operation} failed:`, err);
+            // Consider adding user feedback here (e.g., snackbar/toast)
+            // Consider implementing retry logic for specific error cases
+          }
+
+          refreshStories(): void {
+            this.storyService.getStories().subscribe();
+          }
+
+          private handleCreatedStory(createdStory: Story): void {
+              this.refreshStories();
+              console.log(this.stories());
+              this.filterStories();
+            }
 }

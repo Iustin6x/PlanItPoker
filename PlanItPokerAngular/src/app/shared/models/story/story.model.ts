@@ -1,6 +1,6 @@
 import { UUID } from "crypto";
 import { CardValue } from "../../types";
-import { VotingSession } from "../room";
+import { VoteSession, VotingSession } from "../room";
 
 export enum StoryStatus {
   ACTIVE = 'active',
@@ -8,12 +8,21 @@ export enum StoryStatus {
   SKIPPED = 'skipped'
 }
 
+// export interface Story {
+//   id: UUID;
+//   roomId: UUID;
+//   title: string;
+//   status: StoryStatus;
+//   session: VotingSession; 
+//   finalResult?: string;
+// }
+
+
 export interface Story {
   id: UUID;
+  name: string;
   roomId: UUID;
-  title: string;
   status: StoryStatus;
-  sessions: VotingSession[]; // Istoric sesiuni
-  currentSessionId?: UUID; // Sesiunea activă
+  session: VoteSession; 
   finalResult?: string;
 }

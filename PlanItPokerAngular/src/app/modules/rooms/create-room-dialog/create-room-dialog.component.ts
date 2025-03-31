@@ -34,7 +34,6 @@ import { CardType, CardValue, PREDEFINED_CARD_SETS } from '../../../shared/types
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateRoomDialogComponent {
-  private userService = inject(UserService);
   protected dialogRef = inject(MatDialogRef<CreateRoomDialogComponent>);
   protected initialData = input<Partial<RoomDialogDTO>>(inject(MAT_DIALOG_DATA));
 

@@ -19,3 +19,10 @@ export enum SessionStatus {
     Completed = 'completed'
   }
 
+  export interface VoteSession {
+    startTime: Date;
+    endTime?: Date;
+    status: 'pending' | 'active' | 'completed';
+    votes: Record<UUID, CardValue>; // { [userId]: cardValue }
+    revealed: boolean;
+  }
