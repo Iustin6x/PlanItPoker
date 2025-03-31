@@ -15,7 +15,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 
 import { CardType, isUUID, UUID } from '../../../shared/types';
-import { Room } from '../../../shared/models/room';
+import { Room, RoomDialogDTO } from '../../../shared/models/room';
 
 
 
@@ -41,6 +41,7 @@ export class RoomsListComponent {
   @Input() rooms: Room[] = [];
   @Input() isLoading = false;
   @Output() delete = new EventEmitter<UUID>();
+  @Output() edit = new EventEmitter<RoomDialogDTO>();
 
   
   displayedColumns: string[] = 
@@ -66,6 +67,17 @@ export class RoomsListComponent {
   handleDelete(roomId: UUID): void {
     this.delete.emit(roomId);
   }
+
+  handleEdit(room: Room): void {
+    const dto: RoomDialogDTO = {
+      id: room.id,
+      name: room.name,
+      cardType: room.cardType,
+      cards: room.cards // Verifică dacă această proprietate există în Room
+    };
+    this.edit.emit(dto);
+  }
+
 
   copyInviteLink(link: string): void {
     navigator.clipboard.writeText(link);

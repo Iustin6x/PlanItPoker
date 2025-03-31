@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { UUID } from 'crypto';
 
 import { UserService } from '../../../core/services/user.service';
-import { Room } from '../../../shared/models/room';
+import { Room, RoomDialogDTO } from '../../../shared/models/room';
 import { CardType, CardValue, PREDEFINED_CARD_SETS } from '../../../shared/types';
 
 @Component({
@@ -36,23 +36,15 @@ import { CardType, CardValue, PREDEFINED_CARD_SETS } from '../../../shared/types
 export class CreateRoomDialogComponent {
   private userService = inject(UserService);
   protected dialogRef = inject(MatDialogRef<CreateRoomDialogComponent>);
-  protected initialData = input<Partial<Room>>(inject(MAT_DIALOG_DATA));
+  protected initialData = input<Partial<RoomDialogDTO>>(inject(MAT_DIALOG_DATA));
 
-  roomData = model<Room>({
-    id: uuidv4() as UUID,
+  roomData = model<RoomDialogDTO>({
     name: '',
-    ownerId: this.userService.currentUserId, // Use correct property name
     cardType: CardType.FIBONACCI, // Use enum value
     cards: PREDEFINED_CARD_SETS[CardType.FIBONACCI],
-    players: [],
-    stories: [],
-    inviteLink: '',
-    createdAt: new Date(),
     ...this.initialData()
   });
-
   
-
   protected readonly cardTypeLabels = {
     [CardType.SEQUENTIAL]: 'Scrum',
     [CardType.FIBONACCI]: 'Fibonacci',
@@ -121,7 +113,7 @@ export class CreateRoomDialogComponent {
   }
 
   protected submit(): void {
-    const room: Room = {
+    const room: RoomDialogDTO = {
       ...this.roomData(),
       cards: this.roomData().cardType === 'custom' 
         ? this.editingCards() 

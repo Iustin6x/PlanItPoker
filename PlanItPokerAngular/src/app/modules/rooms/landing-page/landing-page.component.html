@@ -10,6 +10,8 @@
       <app-rooms-list
       [rooms]="rooms()"
       (delete)="handleDeleteRoom($event)"
+      (edit)="handleEditRoom($event)"
+
     ></app-rooms-list>
 
     @if (isLoading()) {

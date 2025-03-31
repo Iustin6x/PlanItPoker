@@ -78,6 +78,20 @@ export class RoomService {
     );
   }
 
+
+  getRoomsByUserId(id?: UUID): Observable<Room[]> {
+    this.loading.set(true);
+    const userId = id ?? this.userService.currentUserId;
+    const rooms = this._rooms().filter(room => room.players.some(player => player.userId === userId));
+    return (rooms.length > 0 ? of([...rooms]) : throwError(() => new Error(`No rooms found for user with ID ${userId}`)))
+      .pipe(
+        delay(this.latency),
+        finalize(() => this.loading.set(false)),
+      );
+  }
+  
+  
+
   createRoom(dto: { name: string; cardType: CardType }): Observable<Room> {
     this.loading.set(true);
     const newRoom = this.createRoomEntity({

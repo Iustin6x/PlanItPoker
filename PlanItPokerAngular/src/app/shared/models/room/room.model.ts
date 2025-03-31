@@ -14,10 +14,3 @@ export interface Room {
     inviteLink: string;
     createdAt: Date;
   }
-
-
-  export interface CreateRoomDTO {
-    name: string;
-    cardType: CardType;
-    cards: CardValue[];
-  }
