@@ -1,0 +1,72 @@
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .tabs {
+    flex: 1;
+    max-width: 50%; /* Limitează tab-urile la jumătate din lățimea header-ului */
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-left: 10px; /* Optional, pentru a adăuga un spațiu între tab-uri și butoane */
+  }
+
+mat-tab-group {
+    border-bottom: 2px solid #ddd;
+  }
+  
+  .mat-tab-label {
+    font-weight: bold;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  /* Badge styling */
+  .badge {
+    background-color: #f44336; /* Roșu */
+    color: white;
+    font-size: 12px;
+    border-radius: 50%;
+    padding: 2px 6px;
+    margin-left: 5px;
+  }
+  
+  /* List container */
+  mat-list {
+    background: white;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  mat-list-item {
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  mat-list-item:last-child {
+    border-bottom: none;
+  }
+  
+  /* Action buttons */
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .actions button {
+    font-weight: bold;
+    text-transform: none;
+  }
+  

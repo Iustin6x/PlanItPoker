@@ -1,1 +1,39 @@
-<p>story-list works!</p>
+<div class="header-container">
+    <div class="tabs">
+      <mat-tab-group [(selectedIndex)]="selectedTab" (selectedIndexChange)="filterStories()">
+        <mat-tab>
+          <ng-template mat-tab-label>
+            Active stories <span class="badge">{{ activeStories.length }}</span>
+          </ng-template>
+        </mat-tab>
+        <mat-tab>
+          <ng-template mat-tab-label>
+            Completed stories <span class="badge">{{ completedStories.length }}</span>
+          </ng-template>
+        </mat-tab>
+        <mat-tab>
+          <ng-template mat-tab-label>
+            All stories <span class="badge">{{ allStories.length }}</span>
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+    
+    <div class="actions">
+        <button mat-raised-button color="primary" (click)="openAddStoryDialog()">Add Story</button>
+
+      <button mat-icon-button>
+        <mat-icon>settings</mat-icon>
+      </button>
+    </div>
+  </div>
+  
+  <mat-list>
+    <mat-list-item *ngFor="let story of filteredStories" (click)="openStoryDialog(story)">
+      {{ story.title }}
+    </mat-list-item>
+    <mat-list-item *ngIf="filteredStories.length === 0">
+      No stories found
+    </mat-list-item>
+  </mat-list>
+  
