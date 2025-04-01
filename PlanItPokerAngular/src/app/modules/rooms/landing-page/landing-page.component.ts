@@ -13,6 +13,7 @@ import { filter, take } from 'rxjs/operators';
 import { isUUID, UUID } from '../../../shared/types';
 import { RoomService } from '../../../core/services/room.service';
 import {  Room, RoomDialogDTO } from '../../../shared/models/room';
+import { HeaderComponent } from '../../../shared/components/header/header.component';
 
 @Component({
   selector: 'app-landing-page',
@@ -24,7 +25,8 @@ import {  Room, RoomDialogDTO } from '../../../shared/models/room';
     CommonModule,
     RoomsListComponent,
     MatProgressSpinnerModule,
-    MatIconModule
+    MatIconModule,
+    HeaderComponent
   ],
   templateUrl: './landing-page.component.html',
   styleUrls: ['./landing-page.component.scss'],

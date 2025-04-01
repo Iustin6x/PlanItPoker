@@ -1,1 +1,55 @@
-<p>profile-page works!</p>
+<div class="profile-container">
+    <div class="profile-card">
+      <h1 class="profile-title">My <span>Profile</span></h1>
+      
+      <div class="avatar-section">
+        <h2>Select Avatar</h2>
+        <div class="avatar-grid">
+          <div *ngFor="let avatar of avatars" 
+               class="avatar-item"
+               [class.selected]="selectedAvatar === avatar"
+               (click)="selectedAvatar = avatar">
+            <img [src]="avatar" alt="Avatar">
+            <div class="role-badge">
+              <!-- Adaugă icon sau text pentru selected state -->
+              <svg viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <form class="profile-form" (ngSubmit)="updateProfile()">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" [(ngModel)]="username" name="username">
+        </div>
+        <button type="submit">Save Changes</button>
+      </form>
+  
+      <div *ngIf="userService.currentUser().isGuest" class="guest-section">
+        <h2>
+          Upgrade to Permanent Account
+          <span>Save your progress </span>
+        </h2>
+        
+        <form (ngSubmit)="convertAccount()">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" [(ngModel)]="email" name="email" required 
+                   placeholder="Enter your email">
+          </div>
+          
+          <div class="form-group">
+            <label>Create Password</label>
+            <input type="password" [(ngModel)]="password" name="password" required
+                   placeholder="At least 8 characters">
+          </div>
+          
+          <button type="submit">
+            Upgrade Account
+          </button>
+        </form>
+      </div>
+  </div>

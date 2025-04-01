@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { StoryDetailsDialogComponent } from '../story-details-dialog/story-details-dialog.component';
 import { Story, StoryStatus } from '../../../shared/models/story';
@@ -23,6 +23,7 @@ import { MatTableModule } from '@angular/material/table';
 @Component({
   selector: 'app-story-list',
   standalone: true,
+  encapsulation: ViewEncapsulation.None,
   imports: [
     CommonModule,
     FormsModule,

@@ -1,1 +1,36 @@
-<p>header works!</p>
+<header class="header">
+    <!-- Partea stângă - Logo și nume aplicație -->
+    <div class="app-brand">
+      <div class="logo">P</div>
+      <span class="app-name">Planning Poker</span>
+    </div>
+  
+    <!-- Partea dreaptă - Utilizator -->
+    <div class="user-menu">
+      <button class="user-button" (click)="toggleMenu()">
+        <span class="user-name">{{ userService.currentUser().name }}</span>
+        <div class="user-avatar">
+          {{ getInitials(userService.currentUser().name) }}
+        </div>
+      </button>
+  
+      <!-- Meniu Dropdown -->
+      <div class="menu-dropdown" [class.show]="isMenuOpen()">
+        <div class="user-info">
+          <div class="user-avatar">{{ getInitials(userService.currentUser().name) }}</div>
+          <div>
+            <p class="user-fullname">{{ userService.currentUser().name }}</p>
+            <p *ngIf="userService.currentUser().email" class="user-email">
+              {{ userService.currentUser().email }}
+            </p>
+          </div>
+        </div>
+        
+        <div class="menu-items">
+          <a routerLink="/profile" class="menu-item">Profilul meu</a>
+          <a routerLink="/rooms" class="menu-item">Camere</a>
+          <button class="menu-item logout" (click)="signOut()">Deconectare</button>
+        </div>
+      </div>
+    </div>
+  </header>

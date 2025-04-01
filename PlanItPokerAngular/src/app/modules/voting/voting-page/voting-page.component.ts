@@ -14,11 +14,12 @@ import { UUID } from 'crypto';
 import { VoteService } from '../../../core/services/vote.service';
 import { ModeratorPanelComponent } from '../moderator-panel/moderator-panel.component';
 import { PlayersPanelComponent } from '../players-panel/players-panel.component';
+import { HeaderComponent } from '../../../shared/components/header/header.component';
 
 @Component({
   selector: 'app-voting-page',
   standalone: true,
-  imports: [CommonModule, StoryListComponent, VotingCardComponent, ModeratorPanelComponent, FormsModule, MatGridListModule,  PlayersPanelComponent],
+  imports: [CommonModule, StoryListComponent, VotingCardComponent, ModeratorPanelComponent, FormsModule, MatGridListModule,  PlayersPanelComponent, HeaderComponent],
   templateUrl: './voting-page.component.html',
   styleUrl: './voting-page.component.scss'
 })
