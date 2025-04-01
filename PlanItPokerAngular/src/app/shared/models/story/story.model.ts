@@ -24,6 +24,6 @@ export interface Story {
   order?: number;
   roomId: UUID;
   status: StoryStatus;
-  session: VoteSession; 
+  session?: VoteSession; 
   finalResult?: string;
 }

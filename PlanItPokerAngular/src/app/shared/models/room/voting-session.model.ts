@@ -20,9 +20,11 @@ export enum SessionStatus {
   }
 
   export interface VoteSession {
+    storyId: UUID;
+    roomId: UUID;
     startTime: Date;
     endTime?: Date;
-    status: 'pending' | 'active' | 'completed';
+    status: 'pending' | 'active' | 'completed' ;
     votes: Record<UUID, CardValue>; // { [userId]: cardValue }
     revealed: boolean;
   }

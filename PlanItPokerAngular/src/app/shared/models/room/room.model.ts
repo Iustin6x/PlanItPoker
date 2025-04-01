@@ -7,6 +7,7 @@ export interface Room {
     id: UUID;
     name: string;
     ownerId: UUID;
+    startTime?: Date;
     cardType: CardType;
     cards: CardValue[];
     players: Player[];

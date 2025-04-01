@@ -1,6 +1,32 @@
-.no-story {
-    padding: 2rem;
-    text-align: center;
-    font-size: 1.2rem;
+.main-container {
+    height: calc(100vh - 64px); // Adjust based on your header height
+    padding: 16px;
+    box-sizing: border-box;
+  }
+  
+  .section-container {
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .voting-section {
+    background: #f8f9fa;
+  }
+  
+  .story-list-section {
+    margin-top: 16px;
+    background: #fff;
+  }
+  
+  .no-story {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     color: #666;
+    text-align: center;
   }

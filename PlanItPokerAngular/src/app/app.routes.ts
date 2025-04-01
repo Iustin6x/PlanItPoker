@@ -4,5 +4,5 @@ import { VotingPageComponent } from './modules/voting/voting-page/voting-page.co
 
 export const routes: Routes = [
     { path: '', component: LandingPageComponent },
-    { path: 'vot', component: VotingPageComponent },
+    { path: 'vot/:roomId', component: VotingPageComponent },
   ];

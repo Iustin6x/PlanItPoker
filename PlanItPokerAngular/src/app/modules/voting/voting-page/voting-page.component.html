@@ -1,16 +1,44 @@
-<!-- Use separate *ngIf statements -->
-<ng-container *ngIf="currentStory() as story">
-    <ng-container *ngIf="currentRoom() as room">
-      <app-voting-card 
-        [cardType]="room.cardType"
-        [customCards]="customCardSet()"
-        (voted)="handleVote($event)">
-      </app-voting-card>
-    </ng-container>
-  </ng-container>
+<!-- Actualizat template -->
+<div class="main-container">
+    <mat-grid-list cols="12" rowHeight="500px"> <!-- Setează rowHeight explicit inițial -->
+      
+      <!-- Sección principal de votare -->
+      <mat-grid-tile [colspan]="9" [rowspan]="1">
+        <div class="section-container">
+          <ng-container *ngIf="currentStory() as story; else noStoryBlock">
+            <app-voting-card 
+              *ngIf="currentRoom() as room"
+              [cardType]="room.cardType"
+              [customCards]="customCardSet()"
+              (voted)="handleVote($event)">
+            </app-voting-card>
+          </ng-container>
+        </div>
+      </mat-grid-tile>
   
-  <app-story-list></app-story-list>
+      <!-- Panou moderator -->
+      <mat-grid-tile [colspan]="3" [rowspan]="1">
+        <div class="section-container">
+          <app-moderator-panel
+            [voteSession]="voteSession()"
+            [availableCards]="customCardSet()"
+            (action)="handleModeratorAction($event)">
+          </app-moderator-panel>
+        </div>
+      </mat-grid-tile>
   
-  <div *ngIf="!currentStory()" class="no-story">
-    <p>Select or create a story to start voting</p>
+      <!-- Listă story-uri -->
+      <mat-grid-tile [colspan]="12" [rowspan]="1">
+        <div class="section-container">
+          <app-story-list></app-story-list>
+        </div>
+      </mat-grid-tile>
+  
+    </mat-grid-list>
+  
+    <ng-template #noStoryBlock>
+      <div class="no-story">
+        <p>Selectează sau creează un story pentru a începe votarea</p>
+      </div>
+    </ng-template>
   </div>
