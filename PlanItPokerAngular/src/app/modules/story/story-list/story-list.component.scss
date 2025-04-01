@@ -1,78 +1,181 @@
 .header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-  }
-  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+
   .tabs {
     flex: 1;
-    max-width: 50%; /* Limitează tab-urile la jumătate din lățimea header-ului */
-  }
-  
-  .actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-left: 10px; /* Optional, pentru a adăuga un spațiu între tab-uri și butoane */
-  }
-
-mat-tab-group {
-    border-bottom: 2px solid #ddd;
-  }
-  
-
-  
-  /* Badge styling */
-  .badge {
-    background-color: #f44336; /* Roșu */
-    color: white;
-    font-size: 12px;
-    border-radius: 50%;
-    padding: 2px 6px;
-    margin-left: 5px;
-  }
-  
-
-
-
-  .story-list {
-    padding: 16px;
-  }
-  
-  .story-item {
-    display: flex;
-    align-items: center;
-    padding: 12px;
-    margin-bottom: 8px;
-    border: 1px solid #eee;
-    border-radius: 4px;
-    cursor: move;
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-  
-    .order-handle {
-      display: flex;
-      align-items: center;
-      margin-right: 16px;
-      color: #666;
-      cursor: grab;
-  
-      .order-number {
-        margin-left: 8px;
+    max-width: 60%;
+    
+    mat-tab-group {
+      border-bottom: 2px solid #e2e8f0;
+      
+      .mat-tab-label {
+        opacity: 1;
+        min-width: 120px;
+        padding: 12px 24px;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: #f8fafc;
+        }
       }
     }
   }
-  
-  .completed-row {
-    background-color: #f5f5f5;
-  }
-  
-  .status-icon {
-    &.active {
-      color: #3f51b5;
+
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+
+    button[mat-raised-button] {
+      background: #3b82f6;
+      color: white;
+      font-weight: 500;
+      transition: background 0.2s ease;
+      
+      &:hover {
+        background: #2563eb;
+      }
+    }
+
+    button[mat-icon-button] {
+      color: #64748b;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        color: #3b82f6;
+        background: #f8fafc;
+      }
     }
   }
-  
-  .mat-table {
-    width: 100%;
-    margin-top: 16px;
+}
+
+.badge {
+  background-color: #3b82f6;
+  color: white;
+  font-size: 0.75rem;
+  border-radius: 10px;
+  padding: 2px 8px;
+  margin-left: 8px;
+  font-weight: 500;
+}
+
+.story-list {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+
+  .story-item {
+    background: #f8fafc;
+    border-radius: 8px;
+    margin: 0.5rem 1rem;
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .order-handle {
+      color: #94a3b8;
+      cursor: grab;
+      transition: color 0.2s ease;
+      
+      &:hover {
+        color: #3b82f6;
+      }
+
+      .order-number {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin-left: 0.5rem;
+      }
+    }
+  }
+}
+
+.mat-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  background: transparent;
+
+  th.mat-header-cell {
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+    padding: 1rem;
+    border-bottom: none;
+  }
+
+  td.mat-cell {
+    background: white;
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    border-top: 1px solid #e2e8f0;
+
+    &:first-child {
+      border-left: 1px solid #e2e8f0;
+      border-radius: 8px 0 0 8px;
+    }
+
+    &:last-child {
+      border-right: 1px solid #e2e8f0;
+      border-radius: 0 8px 8px 0;
+    }
+  }
+
+  tr.mat-row {
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateX(4px);
+    }
+  }
+
+  .status-icon {
+    &.active {
+      color: #3b82f6;
+    }
+    
+    &:not(.active) {
+      color: #22c55e;
+    }
+  }
+
+  button[mat-icon-button] {
+    color: #64748b;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      color: #ef4444;
+      background: #fef2f2;
+    }
+  }
+}
+
+.completed-row {
+  background: #f8fafc;
+  opacity: 0.8;
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.story-item, .mat-row {
+  animation: slideIn 0.3s ease-out;
 }

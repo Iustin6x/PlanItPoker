@@ -13,11 +13,12 @@ import { ActivatedRoute } from '@angular/router';
 import { UUID } from 'crypto';
 import { VoteService } from '../../../core/services/vote.service';
 import { ModeratorPanelComponent } from '../moderator-panel/moderator-panel.component';
+import { PlayersPanelComponent } from '../players-panel/players-panel.component';
 
 @Component({
   selector: 'app-voting-page',
   standalone: true,
-  imports: [CommonModule, StoryListComponent, VotingCardComponent, ModeratorPanelComponent, FormsModule, MatGridListModule],
+  imports: [CommonModule, StoryListComponent, VotingCardComponent, ModeratorPanelComponent, FormsModule, MatGridListModule,  PlayersPanelComponent],
   templateUrl: './voting-page.component.html',
   styleUrl: './voting-page.component.scss'
 })
@@ -104,12 +105,13 @@ export class VotingPageComponent implements OnInit {
       case 'finishVoting':
         this.voteService.closeVotingSession().subscribe(() => {
           this.storyService.updateStory(story.id, { 
-            finalResult: event.data 
+            finalResult: event.data,
+            status: StoryStatus.COMPLETED  
           }).subscribe();
         });
         break;
       case 'nextStory':
-        // Move to next story
+        this.storyService.moveToNextStory();
         break;
     }
   }

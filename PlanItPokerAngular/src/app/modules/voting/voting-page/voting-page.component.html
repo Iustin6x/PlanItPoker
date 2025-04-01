@@ -1,10 +1,11 @@
-<!-- Actualizat template -->
 <div class="main-container">
-    <mat-grid-list cols="12" rowHeight="500px"> <!-- Setează rowHeight explicit inițial -->
-      
-      <!-- Sección principal de votare -->
-      <mat-grid-tile [colspan]="9" [rowspan]="1">
-        <div class="section-container">
+  <mat-grid-list cols="12" rowHeight="fit" gutterSize="16px">
+    <!-- Layout modificat -->
+    <!-- Coloana stângă (vot + story list) -->
+    <mat-grid-tile [colspan]="9" [rowspan]="2">
+      <div class="left-column">
+        <!-- Seccióne de votare -->
+        <div class="section-container voting-section">
           <ng-container *ngIf="currentStory() as story; else noStoryBlock">
             <app-voting-card 
               *ngIf="currentRoom() as room"
@@ -14,31 +15,42 @@
             </app-voting-card>
           </ng-container>
         </div>
-      </mat-grid-tile>
-  
-      <!-- Panou moderator -->
-      <mat-grid-tile [colspan]="3" [rowspan]="1">
-        <div class="section-container">
+
+        <!-- Listă story-uri sub votare -->
+        <div class="section-container story-list-section">
+          <app-story-list></app-story-list>
+        </div>
+      </div>
+    </mat-grid-tile>
+
+    <!-- Coloana dreaptă (moderator + players) -->
+    <mat-grid-tile [colspan]="3" [rowspan]="2">
+      <div class="right-column">
+        <!-- Panou moderator -->
+        <div class="section-container moderator-section">
           <app-moderator-panel
             [voteSession]="voteSession()"
             [availableCards]="customCardSet()"
             (action)="handleModeratorAction($event)">
           </app-moderator-panel>
         </div>
-      </mat-grid-tile>
-  
-      <!-- Listă story-uri -->
-      <mat-grid-tile [colspan]="12" [rowspan]="1">
-        <div class="section-container">
-          <app-story-list></app-story-list>
+
+        <!-- Panou players -->
+        <div class="section-container players-section">
+          <app-players-panel 
+            [players]="currentRoom()?.players ?? []"
+            [isRevealed]="voteSession().revealed"
+            [votes]="voteSession().votes"
+            [inviteLink]="currentRoom()?.inviteLink ?? ''">
+          </app-players-panel>
         </div>
-      </mat-grid-tile>
-  
-    </mat-grid-list>
-  
-    <ng-template #noStoryBlock>
-      <div class="no-story">
-        <p>Selectează sau creează un story pentru a începe votarea</p>
       </div>
-    </ng-template>
-  </div>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <ng-template #noStoryBlock>
+    <div class="no-story">
+      <p>Selectează sau creează un story pentru a începe votarea</p>
+    </div>
+  </ng-template>
+</div>

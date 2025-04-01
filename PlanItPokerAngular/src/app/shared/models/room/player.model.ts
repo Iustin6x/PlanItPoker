@@ -9,10 +9,13 @@ export enum PlayerRole {
   }
   
   export interface Player {
+    id: UUID;
     roomId: string;
     userId: string;
     name: string;
+    avatar?: string;
     role: PlayerRole;
     hasVoted: boolean;
     isConnected: boolean;
+    vote?: CardValue;
   }
