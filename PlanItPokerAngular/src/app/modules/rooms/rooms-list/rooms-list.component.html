@@ -1,40 +1,52 @@
+<!-- rooms-list.component.html -->
 <table mat-table [dataSource]="rooms" class="mat-elevation-z8">
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef>Name</th>
     <td mat-cell *matCellDef="let room">{{ room.name }}</td>
   </ng-container>
 
-  <ng-container matColumnDef="createdAt">
-    <th mat-header-cell *matHeaderCellDef>Created At</th>
-    <td mat-cell *matCellDef="let room">{{ room.createdAt | date }}</td>
+  <ng-container matColumnDef="lastVotedStory">
+    <th mat-header-cell *matHeaderCellDef>Last voted story</th>
+    <td mat-cell *matCellDef="let room">{{ room.lastVotedStory || '-' }}</td>
   </ng-container>
 
-  <ng-container matColumnDef="players">
-    <th mat-header-cell *matHeaderCellDef>Players</th>
-    <td mat-cell *matCellDef="let room">{{ room.players.length }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="cardType">
-    <th mat-header-cell *matHeaderCellDef>Card Type</th>
-    <td mat-cell *matCellDef="let room">{{ getCardLabel(room.cardType) }}</td>
+  <ng-container matColumnDef="totalPoints">
+    <th mat-header-cell *matHeaderCellDef>Total points</th>
+    <td mat-cell *matCellDef="let room">{{ room.totalPoints || '0' }}</td>
   </ng-container>
 
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef>Actions</th>
     <td mat-cell *matCellDef="let room">
-      <button mat-icon-button (click)="handleEdit(room); $event.stopPropagation()">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button mat-icon-button (click)="handleDelete(room.id)">
-        <mat-icon>delete</mat-icon>
-      </button>
+      <!-- Moderator Actions -->
+      <ng-container *ngIf="room.userRole === 'MODERATOR'">
+        <button mat-icon-button 
+                (click)="handleEdit(room); $event.stopPropagation()"
+                matTooltip="Edit room">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button 
+                (click)="handleDelete(room.id); $event.stopPropagation()"
+                matTooltip="Delete room">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </ng-container>
+
+      <!-- Player Actions -->
+      <ng-container *ngIf="room.userRole === 'player'">
+        <button mat-icon-button 
+                (click)="handleLeave(room.id); $event.stopPropagation()"
+                matTooltip="Leave room">
+          <mat-icon>exit_to_app</mat-icon>
+        </button>
+      </ng-container>
     </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row 
-    *matRowDef="let row; columns: displayedColumns;"
-    (click)="handleSelect(row)"
-    class="clickable-row">
-</tr>
+      *matRowDef="let row; columns: displayedColumns;"
+      (click)="handleSelect(row)"
+      class="clickable-row">
+  </tr>
 </table>

@@ -1,0 +1,58 @@
+<!-- signup.component.html -->
+<div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1 class="auth-title">
+          <span class="title-highlight">Planning</span> Poker
+        </h1>
+        <p class="auth-subtitle">Create free account</p>
+      </div>
+  
+      <form (ngSubmit)="handleSubmit()" class="auth-form">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input 
+            type="text" 
+            [(ngModel)]="name" 
+            name="name" 
+            required
+            class="form-input"
+            placeholder="Your name"
+          >
+        </div>
+  
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input 
+            type="email" 
+            [(ngModel)]="email" 
+            name="email" 
+            required
+            class="form-input"
+            placeholder="your@email.com"
+          >
+        </div>
+  
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input 
+            type="password" 
+            [(ngModel)]="password" 
+            name="password" 
+            required
+            class="form-input"
+            placeholder="••••••••"
+          >
+        </div>
+  
+        <button type="submit" class="submit-button">Get Started</button>
+  
+        <p class="toggle-text">
+          Already registered?
+          <a routerLink="/login" class="toggle-button">
+            Login here
+          </a>
+        </p>
+      </form>
+    </div>
+  </div>

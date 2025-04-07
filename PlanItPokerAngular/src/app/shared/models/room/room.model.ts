@@ -6,12 +6,10 @@ import { Player } from "./player.model";
 export interface Room {
     id: UUID;
     name: string;
-    ownerId: UUID;
     startTime?: Date;
     cardType: CardType;
     cards: CardValue[];
     players: Player[];
-    stories: Story[];
+    stories?: Story[];
     inviteLink: string;
-    createdAt: Date;
   }

@@ -15,8 +15,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 
 import { CardType, isUUID, UUID } from '../../../shared/types';
-import { Room, RoomDialogDTO } from '../../../shared/models/room';
-
+import { RoomDialogDTO } from '../../../shared/models/room';
 
 
 @Component({
@@ -38,22 +37,22 @@ import { Room, RoomDialogDTO } from '../../../shared/models/room';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RoomsListComponent {
-  @Input() rooms: Room[] = [];
+  @Input() rooms: RoomDialogDTO[] = [];
   @Input() isLoading = false;
   @Output() delete = new EventEmitter<UUID>();
   @Output() select = new EventEmitter<UUID>();
   @Output() edit = new EventEmitter<RoomDialogDTO>();
+  @Output() leave = new EventEmitter<UUID>(); // New leave event
 
-  
   displayedColumns: string[] = 
-    ['name', 'createdAt', 'players', 'cardType', 'actions'];
+    ['name', 'lastVotedStory', 'totalPoints', 'actions'];
   
   readonly CardType = CardType;
 
   cardTypeLabels: Record<CardType, string> = {
     [CardType.SEQUENTIAL]: 'Secvențial',
     [CardType.FIBONACCI]: 'Fibonacci',
-    [CardType.HOURS]: 'Ore', // Adaugă eticheta pentru HOURS
+    [CardType.HOURS]: 'Ore',
     [CardType.CUSTOM]: 'Personalizat'
   };
 
@@ -61,28 +60,25 @@ export class RoomsListComponent {
     return this.cardTypeLabels[cardType as CardType] || 'Necunoscut';
   }
 
-  trackByRoomId(index: number, room: Room): string {
-    return room.id;
+  trackByRoomId(index: number, room: RoomDialogDTO): string {
+    return room.id!; // Assuming id is present for tracked rooms
   }
 
   handleDelete(roomId: UUID): void {
     this.delete.emit(roomId);
   }
 
-  handleSelect(room: Room): void {
-    this.select.emit(room.id);
+  handleSelect(room: RoomDialogDTO): void {
+    this.select.emit(room.id!);
   }
 
-  handleEdit(room: Room): void {
-    const dto: RoomDialogDTO = {
-      id: room.id,
-      name: room.name,
-      cardType: room.cardType,
-      cards: room.cards // Verifică dacă această proprietate există în Room
-    };
-    this.edit.emit(dto);
+  handleEdit(room: RoomDialogDTO): void {
+    this.edit.emit(room); // Emit the RoomDialogDTO directly
   }
 
+  handleLeave(roomId: UUID): void {
+    this.leave.emit(roomId); // Emit leave event
+  }
 
   copyInviteLink(link: string): void {
     navigator.clipboard.writeText(link);

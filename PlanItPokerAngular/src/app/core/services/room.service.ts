@@ -1,47 +1,26 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { delay, finalize, Observable, of, throwError } from 'rxjs';
-import { v4 as uuidv4 } from 'uuid';
-import { Room, RoomStatus } from '../../shared/models/room';
+import { catchError, finalize, map, Observable, tap, throwError } from 'rxjs';
+import { Room, RoomDialogDTO } from '../../shared/models/room';
 import { UserService } from './user.service';
 import { CardType, UUID } from '../../shared/types';
-import { Player, PlayerRole } from '../../shared/models/room/player.model';
+import { PlayerRole } from '../../shared/models/room/player.model';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class RoomService {
+  private http = inject(HttpClient);
   private userService = inject(UserService);
   private _currentRoom = signal<Room | undefined>(undefined);
-  private _rooms = signal<Room[]>(this.initializeMockRooms());
-  private latency = 500;
+  private _rooms = signal<RoomDialogDTO[]>([]);
 
   rooms = this._rooms.asReadonly();
   currentRoom = this._currentRoom.asReadonly();
   loading = signal(false);
 
-  private initializeMockRooms(): Room[] {
-    const rooms = [
-      this.createRoomEntity({
-        id: 'd8a12f04-3c5b-4d7e-8f6a-1c3b9d7e8f6c' as UUID,
-        name: 'Sprint Planning',
-        cardType: CardType.FIBONACCI,
-        players: this.generateMockPlayers(3, 'd8a12f04-3c5b-4d7e-8f6a-1c3b9d7e8f6c' as UUID)
-      }),
-      this.createRoomEntity({
-        id: '550e8400-e29b-41d4-a716-446655440000' as UUID,
-        name: 'Tech Debt Discussion',
-        cardType: CardType.SEQUENTIAL,
-        players: this.generateMockPlayers(2, '550e8400-e29b-41d4-a716-446655440000' as UUID)
-      })
-    ];
-    
-    // Set first room as current
-    this._currentRoom.set(rooms[0]);
-    return rooms;
-  }
-
   setCurrentRoom(roomId: UUID): void {
     const room = this._rooms().find(r => r.id === roomId);
     if (room) {
-      this._currentRoom.set(room);
+      this._currentRoom.set(this.convertDtoToRoom(room));
     }
   }
 
@@ -49,149 +28,113 @@ export class RoomService {
     this._currentRoom.set(undefined);
   }
 
-  private createRoomEntity(data: Partial<Room>): Room {
-    const userId = this.userService.currentUserId;
-    
+  getRooms(): Observable<RoomDialogDTO[]> {
+    this.loading.set(true);
+    return this.http.get<any[]>('http://localhost:8080/api/rooms', {
+      headers: this.createAuthorizationHeader()
+    }).pipe(
+      map(apiRooms => apiRooms.map(room => this.mapToRoomDTO(room))),
+      tap(mappedRooms => this._rooms.set(mappedRooms)),
+      catchError(error => {
+        console.error("Error fetching rooms:", error);
+        return throwError(() => error);
+      }),
+      finalize(() => this.loading.set(false))
+    );
+  }
+
+  private mapToRoomDTO(apiRoom: any): RoomDialogDTO {
     return {
-      id: uuidv4() as UUID,
-      name: '',
-      ownerId: userId as UUID,
+      id: apiRoom.id as UUID,
+      name: apiRoom.name,
       cardType: CardType.FIBONACCI,
       cards: [],
-      players: [],
-      stories: [],
-      inviteLink: '',
-      createdAt: new Date(),
-      ...data
+      lastVotedStory: apiRoom.lastVotedStory || 'No completed stories',
+      totalPoints: apiRoom.totalPoints || 0,
+      inviteLink: apiRoom.inviteLink,
+      userRole: apiRoom.role as PlayerRole
     };
   }
 
-  private generateMockPlayers(count: number, roomId: UUID): Player[] {
-    return Array.from({ length: count }, (_, i) => ({
-      id: uuidv4() as UUID,
-      roomId: roomId,
-      userId: uuidv4() as UUID,
-      name: `Player ${i + 1}`,
-      role: i === 0 ? PlayerRole.MODERATOR : PlayerRole.PLAYER,
-      hasVoted: Math.random() > 0.5,
-      isConnected: Math.random() > 0.8
-    }));
+  private convertDtoToRoom(dto: RoomDialogDTO): Room {
+    return {
+      id: dto.id!,
+      name: dto.name,
+      cardType: dto.cardType,
+      cards: dto.cards,
+      players: [],
+      stories: [],
+      inviteLink: dto.inviteLink!,
+    };
   }
 
-  getRooms(): Observable<Room[]> {
+  createRoom(dto: { name: string; cardType: CardType }): Observable<RoomDialogDTO> {
     this.loading.set(true);
-    return of(this._rooms()).pipe(
-      delay(this.latency),
-      finalize(() => this.loading.set(false))
-    );
-  }
-
-  getRoomById(id: UUID): Observable<Room> {
-    this.loading.set(true);
-    const room = this._rooms().find(r => r.id === id);
-    return (room ? of({...room}) : throwError(() => new Error(`Room ${id} not found`))).pipe(
-      delay(this.latency),
-      finalize(() => this.loading.set(false))
-    );
-  }
-
-
-  getRoomsByUserId(id?: UUID): Observable<Room[]> {
-    this.loading.set(true);
-    const userId = id ?? this.userService.currentUserId;
-    const rooms = this._rooms().filter(room => room.players.some(player => player.userId === userId));
-    return (rooms.length > 0 ? of([...rooms]) : throwError(() => new Error(`No rooms found for user with ID ${userId}`)))
-      .pipe(
-        delay(this.latency),
-        finalize(() => this.loading.set(false)),
-      );
-  }
-  
-  
-
-  createRoom(dto: { name: string; cardType: CardType }): Observable<Room> {
-    this.loading.set(true);
-    const newRoom = this.createRoomEntity({
-      ...dto,
-      players: this.generateMockPlayers(1, uuidv4() as UUID)
-    });
-    
-    this._rooms.update(rooms => [...rooms, newRoom]);
-    return of(newRoom).pipe(
-      delay(this.latency),
-      finalize(() => this.loading.set(false))
-    );
-  }
-
-  updateRoom(id: UUID, updates: Partial<Room>): Observable<Room> {
-    this.loading.set(true);
-    return new Observable<Room>(subscriber => {
-      const rooms = this._rooms();
-      const index = rooms.findIndex(r => r.id === id);
-      
-      if (index === -1) {
-        subscriber.error(new Error(`Room ${id} not found`));
-        return;
-      }
-
-      const updatedRoom = {
-        ...rooms[index],
-        ...updates,
-        updatedAt: new Date()
-      };
-
-      this._rooms.update(currentRooms => 
-        currentRooms.map(room => 
-          room.id === id ? updatedRoom : room
-        )
-      );
-
-      subscriber.next(updatedRoom);
-      subscriber.complete();
+    return this.http.post<any>('http://localhost:8080/api/room', dto, { 
+      headers: this.createAuthorizationHeader() 
     }).pipe(
-      delay(this.latency),
+      map(apiRoom => this.mapToRoomDTO(apiRoom)),
+      tap(newRoomDto => {
+        this._rooms.update(rooms => [...rooms, newRoomDto]);
+        this._currentRoom.set(this.convertDtoToRoom(newRoomDto));
+      }),
+      catchError(error => {
+        console.error('Error creating room:', error);
+        return throwError(() => error);
+      }),
+      finalize(() => this.loading.set(false))
+    );
+  }
+
+  updateRoom(id: UUID, updates: Partial<Room>): Observable<RoomDialogDTO> {
+    this.loading.set(true);
+    return this.http.put<any>(`http://localhost:8080/api/rooms/${id}`, updates, { 
+      headers: this.createAuthorizationHeader() 
+    }).pipe(
+      map(apiRoom => this.mapToRoomDTO(apiRoom)),
+      tap(updatedDto => {
+        this._rooms.update(rooms => rooms.map(room => 
+          room.id === id ? updatedDto : room
+        ));
+        if (this._currentRoom()?.id === id) {
+          this._currentRoom.set(this.convertDtoToRoom(updatedDto));
+        }
+      }),
+      catchError(error => {
+        console.error('Error updating room:', error);
+        return throwError(() => error);
+      }),
       finalize(() => this.loading.set(false))
     );
   }
 
   deleteRoom(id: UUID): Observable<void> {
     this.loading.set(true);
-    return new Observable<void>(subscriber => {
-      const exists = this._rooms().some(r => r.id === id);
-      if (!exists) {
-        subscriber.error(new Error(`Room ${id} not found`));
-        return;
-      }
-
-      this._rooms.update(rooms => rooms.filter(r => r.id !== id));
-      subscriber.next();
-      subscriber.complete();
-    }).pipe(
-      delay(this.latency),
+    return this.http.delete<void>(
+      `http://localhost:8080/api/rooms/${id}`, 
+      { headers: this.createAuthorizationHeader() }
+    ).pipe(
+      tap(() => {
+        this._rooms.update(rooms => rooms.filter(r => r.id !== id));
+        if (this._currentRoom()?.id === id) {
+          this.clearCurrentRoom();
+        }
+      }),
+      catchError(error => {
+        console.error('Error deleting room:', error);
+        return throwError(() => error);
+      }),
       finalize(() => this.loading.set(false))
     );
   }
 
-  updateCustomCards(roomId: UUID, cards: (number | '?')[]): Observable<void> {
-    this.loading.set(true);
-    return new Observable<void>(subscriber => {
-      this._rooms.update(rooms => 
-        rooms.map(room => 
-          room.id === roomId 
-            ? { 
-                ...room, 
-                cards: [...cards],
-                cardType: CardType.CUSTOM,
-                updatedAt: new Date()
-              }
-            : room
-        )
-      );
-      subscriber.next();
-      subscriber.complete();
-    }).pipe(
-      delay(this.latency),
-      finalize(() => this.loading.set(false))
-    );
+  private createAuthorizationHeader() {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const jwtToken = localStorage.getItem('jwt');
+      if (jwtToken) {
+        return new HttpHeaders().set("Authorization", "Bearer " + jwtToken);
+      }
+    }
+    return undefined;
   }
 }

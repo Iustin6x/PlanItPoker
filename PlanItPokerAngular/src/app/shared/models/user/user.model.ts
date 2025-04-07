@@ -1,7 +1,6 @@
 
 import { UUID } from '../../types';
 import { GuestSession } from '../guest/guest.model';
-import { UserRole } from './user-role.enum';
 
 export interface User {
     id: UUID;

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -32,13 +32,16 @@ import { HeaderComponent } from '../../../shared/components/header/header.compon
   styleUrls: ['./landing-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LandingPageComponent {
+export class LandingPageComponent implements OnInit{
   private roomService = inject(RoomService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
 
-  constructor(){
-    this.roomService.getRoomsByUserId();
+
+  ngOnInit(){
+    this.roomService.getRooms().subscribe();
+    console.log(this.roomService.getRooms());
+    console.log("onInit");
   }
   rooms = this.roomService.rooms;
   isLoading = this.roomService.loading;
@@ -110,12 +113,12 @@ export class LandingPageComponent {
   
   private createRoom(dto: RoomDialogDTO): void {
     this.roomService.createRoom(dto).subscribe({
-      next: (createdRoom) => this.handleCreatedRoom(createdRoom),
+      next: (createdRoom) => this.handleCreatedRoom(),
       error: (err) => this.handleRoomError('Creation', err)
     });
   }
 
-  private handleCreatedRoom(createdRoom: Room): void {
+  private handleCreatedRoom(): void {
     this.refreshRooms();
   }
   
@@ -125,7 +128,9 @@ export class LandingPageComponent {
       return;
     }
   
-    this.roomService.updateRoom(dto.id, dto).subscribe({
+    const { id, ...roomData } = dto; // Scoatem id-ul din obiect
+  
+    this.roomService.updateRoom(id, roomData).subscribe({
       next: () => {
         this.refreshRooms();
         // Consider adding success feedback here

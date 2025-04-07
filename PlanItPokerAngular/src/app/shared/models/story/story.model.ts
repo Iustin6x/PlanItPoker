@@ -8,16 +8,6 @@ export enum StoryStatus {
   SKIPPED = 'skipped'
 }
 
-// export interface Story {
-//   id: UUID;
-//   roomId: UUID;
-//   title: string;
-//   status: StoryStatus;
-//   session: VotingSession; 
-//   finalResult?: string;
-// }
-
-
 export interface Story {
   id: UUID;
   name: string;
@@ -27,3 +17,14 @@ export interface Story {
   session?: VoteSession; 
   finalResult?: string;
 }
+
+
+
+// export interface Story {
+//   id: UUID;
+//   roomId: UUID;
+//   title: string;
+//   status: StoryStatus;
+//   session: VotingSession; 
+//   finalResult?: string;
+// }

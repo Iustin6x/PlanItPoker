@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { UUID } from 'crypto';
 
 import { UserService } from '../../../core/services/user.service';
-import { Room, RoomDialogDTO } from '../../../shared/models/room';
+import { Room, RoomDialogDTO} from '../../../shared/models/room';
 import { CardType, CardValue, PREDEFINED_CARD_SETS } from '../../../shared/types';
 
 @Component({
@@ -61,7 +61,7 @@ export class CreateRoomDialogComponent {
 
   private initializeEditingState(): void {
     const currentType = this.roomData().cardType;
-    if (currentType === 'custom') {
+    if (currentType === 'CUSTOM') {
       this.editingCards.set([...this.roomData().cards]);
     } else {
       this.editingCards.set([...PREDEFINED_CARD_SETS[currentType]]);
@@ -72,11 +72,11 @@ export class CreateRoomDialogComponent {
     this.roomData.update(data => ({
       ...data,
       cardType: newType,
-      cards: newType === 'custom' ? this.editingCards() : PREDEFINED_CARD_SETS[newType as Exclude<CardType, 'custom'>]
+      cards: newType === 'CUSTOM' ? this.editingCards() : PREDEFINED_CARD_SETS[newType as Exclude<CardType, 'CUSTOM'>]
     }));
     
-    if (newType !== 'custom') {
-      this.editingCards.set([...PREDEFINED_CARD_SETS[newType as Exclude<CardType, 'custom'>]]);
+    if (newType !== 'CUSTOM') {
+      this.editingCards.set([...PREDEFINED_CARD_SETS[newType as Exclude<CardType, 'CUSTOM'>]]);
       this.showCustomizationPanel.set(false);
     }
   }
@@ -103,7 +103,7 @@ export class CreateRoomDialogComponent {
   protected get isValidForm(): boolean {
     const { name, cardType } = this.roomData();
     const validName = name.trim().length >= 3;
-    const validCards = cardType !== 'custom' || this.editingCards().length > 0;
+    const validCards = cardType !== 'CUSTOM' || this.editingCards().length > 0;
     return validName && validCards;
   }
 
@@ -114,9 +114,9 @@ export class CreateRoomDialogComponent {
   protected submit(): void {
     const room: RoomDialogDTO = {
       ...this.roomData(),
-      cards: this.roomData().cardType === 'custom' 
+      cards: this.roomData().cardType === 'CUSTOM' 
         ? this.editingCards() 
-        : PREDEFINED_CARD_SETS[this.roomData().cardType as Exclude<CardType, 'custom'>]
+        : PREDEFINED_CARD_SETS[this.roomData().cardType as Exclude<CardType, 'CUSTOM'>]
     };
 
     this.dialogRef.close(room);

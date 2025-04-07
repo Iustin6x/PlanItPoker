@@ -1,0 +1,37 @@
+<div class="quickplay-container">
+    <div class="quickplay-card">
+      <div class="quickplay-header">
+        <h1 class="quickplay-title">
+          <span class="title-highlight">Let's start!</span>
+        </h1>
+        <p class="quickplay-subtitle">Join the room</p>
+      </div>
+  
+      <form (ngSubmit)="handleJoin()" class="quickplay-form">
+        <div class="form-group">
+          <label class="form-label">Enter your name</label>
+          <input 
+            type="text" 
+            [(ngModel)]="playerName" 
+            name="playerName" 
+            required
+            class="form-input"
+            placeholder="Player name"
+          >
+        </div>
+  
+        <button type="submit" class="submit-button">Enter</button>
+  
+        <p class="toggle-text">
+          Already have an account?
+          <button 
+            type="button" 
+            (click)="router.navigateByUrl('/login')" 
+            class="toggle-button"
+          >
+            Login
+          </button>
+        </p>
+      </form>
+    </div>
+  </div>

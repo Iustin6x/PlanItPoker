@@ -1,6 +1,6 @@
 import { UUID } from "crypto";
 import { CardValue } from "../../types";
-import { UserRole } from "../user";
+
 
 export enum PlayerRole {
     PLAYER = 'player',
