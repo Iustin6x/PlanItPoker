@@ -1,214 +1,99 @@
-import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { StoryDetailsDialogComponent } from '../story-details-dialog/story-details-dialog.component';
-import { Story, StoryStatus } from '../../../shared/models/story';
-import { UUID } from '../../../shared/types';
+import { StoryStatus } from '../../../shared/models/story';
+import { StoryDTO } from '../../../shared/models/wbs';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
-import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
-import { filter, take } from 'rxjs';
-import { RoomService } from '../../../core/services/room.service';
-import { StoryService } from '../../../core/services/story.service';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
+import { StoryStateService } from '../../../core/services/story-state.service';
+import { WebSocketMessageService } from '../../../core/services/web-socket-message.service';
 
 @Component({
   selector: 'app-story-list',
   standalone: true,
-  encapsulation: ViewEncapsulation.None,
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
-    MatOptionModule,
     MatButtonModule,
-    MatListModule,
     MatTabsModule,
     MatIconModule,
-    DragDropModule, MatMenuModule, MatTableModule
+    DragDropModule,
+    MatTableModule,
   ],
   templateUrl: './story-list.component.html',
   styleUrls: ['./story-list.component.scss']
 })
-export class StoryListComponent implements OnInit {
-  private roomService = inject(RoomService);
-  private storyService = inject(StoryService);
+export class StoryListComponent {
   private dialog = inject(MatDialog);
+  protected storyState = inject(StoryStateService);
+  private wsMessageService = inject(WebSocketMessageService);
 
-
-  filteredStories: Story[] = [];
-  selectedTab = 0;
-
-  stories = this.storyService.stories;
-  isLoading = this.roomService.loading;
-
-  get activeStories() {
-    return this.stories().filter(s => 
-      s.status === StoryStatus.ACTIVE
-    ).sort((a, b) => (a.order || 0) - (b.order || 0))
-  };
+  protected selectedTab = signal(0);
   
-  get completedStories() {
-    return this.stories().filter(s => s.status === StoryStatus.COMPLETED);
-  }
-  
-  get allStories() {
-    return this.stories();
-  }
-
-  constructor(){
-  }
-  ngOnInit() {
-    this.storyService.setFirstStoryAsCurrent();
-    this.filterStories();
-  }
-
-  filterStories() {
-    switch (this.selectedTab) {
-      case 0:
-        this.filteredStories = this.stories().filter(s => s.status === StoryStatus.ACTIVE);
-        break;
-      case 1:
-        this.filteredStories = this.stories().filter(s => s.status === StoryStatus.COMPLETED);
-        break;
-      case 2:
-        this.filteredStories = [...this.stories()];
-        break;
+  protected filteredStories = computed(() => {
+    switch (this.selectedTab()) {
+      case 0: return this.storyState.activeStories();
+      case 1: return this.storyState.completedStories();
+      case 2: return this.storyState.stories();
+      default: return [];
     }
-  }
-  handleSelectStory(storyId: UUID): void {
-    this.storyService.setCurrentStory(storyId);
-  }
+  });
 
-  handleDeleteStory(storyId: UUID): void {
-      this.storyService.deleteStory(storyId).subscribe({
-        error: (err) => console.error('Ștergerea a eșuat:', err)
-      });
-    }
-  
-    handleEditStory(story: Story): void {
-      console.log("open edit"+story.name);
-      this.openStoryDialog(
-        { 
-          id: story.id,
-          name: story.name,
-          roomId: story.roomId,
-          session: story.session,
-          status: story.status,
-          finalResult: story.finalResult,
-        },
-        (dto) => this.updateStory(dto) 
-      );
-    }
-
-    openCreateDialog(): void {
-      this.openStoryDialog(
-        undefined, // No initial data for creation
-        (dto) => this.createStory(dto)
-      );
-    }
-
-    private updateStory(dto: Story): void {
-      console.log(dto);
-        if (!dto.id) {
-          console.error('Update failed: Missing room ID');
-          return;
-        }
-      
-        this.storyService.updateStory(dto.id, dto).subscribe({
-          next: () => {
-            this.refreshStories();
-            // Consider adding success feedback here
-          },
-          error: (err) => this.handleStoryError('Update', err)
-        });
+  // Handle drag and drop
+  drop(event: CdkDragDrop<StoryDTO[]>) {
+    const stories = [...this.filteredStories()];
+    moveItemInArray(stories, event.previousIndex, event.currentIndex);
+    
+    stories.forEach((story, index) => {
+      const newOrder = index + 1;
+      if (story.order !== newOrder) {
+        this.wsMessageService.updateStoryOrder(story.id, newOrder);
       }
+    });
+  }
 
+  // Story actions
+  handleDeleteStory(storyId: string): void {
+    this.wsMessageService.deleteStory(storyId);
+  }
 
-    private openStoryDialog(initialData: Partial<Story> | undefined, callback: (dto: Story) => void): void {
-        const dialogRef = this.dialog.open(StoryDetailsDialogComponent, {
-          width: '600px',
-          disableClose: true,
-          data: initialData
-        });
-      
-        dialogRef.afterClosed()
-          .pipe(
-            filter(story => this.isValidStory(story)), // Consolidated validation
-            take(1) // Ensure automatic cleanup
-          )
-          .subscribe({
-            next: (dto: Story) => callback(dto),
-            error: (err) => this.handleDialogError(err)
-          });
+  handleCreateStory(name: string): void {
+    this.wsMessageService.createStory(name);
+  }
+
+  handleUpdateStory(storyId: string, name: string): void {
+    this.wsMessageService.updateStory(storyId, name);
+  }
+
+  // Dialog handling
+  handleEditStory(story: StoryDTO): void {
+    this.dialog.open(StoryDetailsDialogComponent, {
+      data: story,
+      width: '600px'
+    }).afterClosed().subscribe(updatedStory => {
+      if (updatedStory) {
+        this.handleUpdateStory(story.id, updatedStory.name);
       }
+    });
+  }
 
-      private isValidStory(dto: unknown): dto is Story {
-          return !!dto && 
-                 typeof dto === 'object' &&
-                 !Array.isArray(dto) &&
-                 'name' in dto &&
-                 typeof (dto as Story).name === 'string';
-        }
-
-        private handleDialogError(err: any): void {
-          console.error('Dialog operation failed:', err);
-        }
-
-        private createStory(story: Story): void {
-            this.storyService.createStory(story).subscribe({
-              next: (createdStory) => this.handleCreatedStory(createdStory),
-              error: (err) => this.handleStoryError('Creation', err)
-            });
-          }
-
-          private handleStoryError(operation: string, err: any): void {
-            console.error(`${operation} failed:`, err);
-            // Consider adding user feedback here (e.g., snackbar/toast)
-            // Consider implementing retry logic for specific error cases
-          }
-
-          refreshStories(): void {
-            this.storyService.getStories().subscribe();
-          }
-
-          private handleCreatedStory(createdStory: Story): void {
-              this.refreshStories();
-              console.log(this.stories());
-              this.filterStories();
-            }
-
-
-            drop(event: CdkDragDrop<Story[]>) {
-              moveItemInArray(this.filteredStories, event.previousIndex, event.currentIndex);
-              this.updateStoryOrder();
-            }
-            
-            private updateStoryOrder() {
-              this.filteredStories.forEach((story, index) => {
-                if (story.order !== index + 1) {
-                  story.order = index + 1;
-                  this.storyService.updateStory(story.id, story).subscribe();
-                }
-              });
-            }
-            
-            calculateDuration(story: Story): string {
-              if (!story.session?.startTime || !story.session?.endTime) return '-';
-              
-              const diff = story.session.endTime.getTime() - story.session.startTime.getTime();
-              const minutes = Math.floor(diff / 60000);
-              return `${minutes} minutes`;
-            }
+  openCreateDialog(): void {
+    this.dialog.open(StoryDetailsDialogComponent, {
+      width: '600px'
+    }).afterClosed().subscribe(newStory => {
+      if (newStory) {
+        this.handleCreateStory(newStory.name);
+      }
+    });
+  }
 }

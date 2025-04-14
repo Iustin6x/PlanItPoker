@@ -175,15 +175,6 @@
       background: #2563eb;
     }
   
-    .copied-feedback {
-      position: absolute;
-      right: 1rem;
-      font-size: 0.85rem;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      animation: fadeOut 1.5s ease 0.5s forwards;
-    }
   }
   
   .invite-link {
@@ -232,3 +223,33 @@
     from { opacity: 1; }
     to { opacity: 0; }
   }
+
+
+  .status {
+    &.online {
+      background: #22c55e;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 50%;
+        animation: pulse 1.5s infinite;
+      }
+    }
+  }
+  
+  .copied-feedback {
+    position: absolute;
+    right: 1rem;
+    font-size: 0.85rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    animation: fadeOut 1.5s ease 0.5s forwards;
+  }
+  
+  

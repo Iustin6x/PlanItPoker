@@ -14,9 +14,9 @@ export interface VotingSession {
   }
 
 export enum SessionStatus {
-    Pending = 'pending',
-    InProgress = 'inProgress',
-    Completed = 'completed'
+    PENDING = 'PENDING',
+    ACTIVE = 'ACTIVE',
+    COMPLETED = 'COMPLETED'
   }
 
   export interface VoteSession {
@@ -24,7 +24,7 @@ export enum SessionStatus {
     roomId: UUID;
     startTime: Date;
     endTime?: Date;
-    status: 'pending' | 'active' | 'completed' ;
+    status: 'PENDING' | 'ACTIVE' | 'COMPLETED' ;
     votes: Record<UUID, CardValue>; // { [userId]: cardValue }
     revealed: boolean;
   }

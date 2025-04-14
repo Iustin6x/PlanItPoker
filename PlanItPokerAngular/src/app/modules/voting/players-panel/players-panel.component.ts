@@ -1,9 +1,11 @@
-import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Player, PlayerRole } from '../../../shared/models/room/player.model';
-import { UUID } from '../../../shared/types';
-import { CardValue } from '../../../shared/types';
+import { PlayerRole } from '../../../shared/models/room/player.model';
+import { PlayerStateService } from '../../../core/services/player-state.service';
+import { VoteStateService } from '../../../core/services/vote-state.service';
+import { ConnectionStateService } from '../../../core/services/connection-state.service';
+import { PlayerDTO } from '../../../shared/models/wbs';
 
 @Component({
   selector: 'app-players-panel',
@@ -12,24 +14,31 @@ import { CardValue } from '../../../shared/types';
   templateUrl: './players-panel.component.html',
   styleUrl: './players-panel.component.scss'
 })
-export class PlayersPanelComponent {
-  @Input() players: Player[] = [];
-  @Input() isRevealed = false;
-  @Input() inviteLink = '';
-  @Input() votes: Record<UUID, CardValue> = {};
-  @Output() inviteCopied = new EventEmitter<void>();
-  
-  protected PlayerRole = PlayerRole;
-  protected showCopiedFeedback = signal(false);
+export class PlayersPanelComponent{
+  protected connectionState = inject(ConnectionStateService);
+  protected playerState = inject(PlayerStateService);
+  protected voteState = inject(VoteStateService);
+  protected showCopiedFeedback = false;
 
-  getPlayerVote(playerId: UUID): CardValue | '?' {
-    return this.votes[playerId] ?? '?';
+  // Computed values
+  protected players = this.playerState.players;
+  protected voteSession = this.voteState.voteSession;
+  protected inviteLink = computed(() => window.location.href);
+  protected PlayerRole = PlayerRole;
+
+  trackById(index: number, player: PlayerDTO): any {
+    return player.id; 
+  }
+
+  getPlayerVote(playerId: string): string {
+    const votes = this.voteState.votes();
+    return votes.find(v => v.userId === playerId)?.cardValue || '?';
   }
 
   copyInviteLink() {
-    navigator.clipboard.writeText(this.inviteLink).then(() => {
-      this.showCopiedFeedback.set(true);
-      setTimeout(() => this.showCopiedFeedback.set(false), 2000);
+    navigator.clipboard.writeText(this.inviteLink()).then(() => {
+      this.showCopiedFeedback = true;
+      setTimeout(() => this.showCopiedFeedback = false, 2000);
     });
   }
 
@@ -40,6 +49,10 @@ export class PlayersPanelComponent {
       .join('')
       .toUpperCase()
       .slice(0, 2);
+  }
+
+  hasVoted(playerId: string): boolean {
+    return this.voteState.votes().some(v => v.userId === playerId);
   }
 
   getRoleBadge(role: PlayerRole): string {

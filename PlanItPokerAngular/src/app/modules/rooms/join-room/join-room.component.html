@@ -1,0 +1,19 @@
+
+  <div class="join-room-container">
+    <div *ngIf="loading()" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Loading room data...</p>
+      </div>
+
+    <div *ngIf="error()" class="error-message">
+      {{ error() }}
+      <button (click)="retryConnection()">Retry</button>
+    </div>
+
+    <div *ngIf="!loading() && !error()">
+      <app-voting-card></app-voting-card>
+      <app-moderator-panel></app-moderator-panel>
+      <app-players-panel></app-players-panel>
+      <app-story-list></app-story-list>
+    </div>
+  </div>

@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CreateRoomDialogComponent } from '../create-room-dialog/create-room-dialog.component';
 import { RoomsListComponent } from '../rooms-list/rooms-list.component';
@@ -36,6 +36,7 @@ export class LandingPageComponent implements OnInit{
   private roomService = inject(RoomService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
+  private route = inject(ActivatedRoute);
 
 
   ngOnInit(){
@@ -55,7 +56,8 @@ export class LandingPageComponent implements OnInit{
   handleSelectRoom(roomId: UUID): void {
     this.roomService.setCurrentRoom(roomId);
     console.log(this.roomService.currentRoom());
-    this.router.navigate(['/vot', roomId]);
+    // this.router.navigate(['/room', roomId]);
+    this.router.navigate(['room', roomId], { relativeTo: this.route });
   }
 
 

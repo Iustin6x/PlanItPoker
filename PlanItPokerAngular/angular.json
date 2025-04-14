@@ -20,6 +20,10 @@
             "outputPath": "dist/plan-it-poker",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "allowedCommonJsDependencies": [
+              "sockjs-client",
+              "crypto-browserify"
+            ],
             "polyfills": [
               "zone.js"
             ],

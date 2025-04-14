@@ -22,7 +22,7 @@ export class VoteService {
       roomId: uuidv4() as UUID,
       startTime: new Date(now.getTime() - 3600000),
       endTime: new Date(now.getTime() - 1800000),
-      status: 'active',
+      status: 'ACTIVE',
       votes: {},
       revealed: false,
     };
@@ -42,7 +42,7 @@ export class VoteService {
       storyId,
       roomId,
       startTime: new Date(),
-      status: 'active',
+      status: 'ACTIVE',
       votes: {},
       revealed: false
     };
@@ -57,7 +57,7 @@ export class VoteService {
   endSession(): Observable<VoteSession> {
     return this.updateSession({
       endTime: new Date(),
-      status: 'completed',
+      status: 'COMPLETED',
       revealed: true
     });
   }

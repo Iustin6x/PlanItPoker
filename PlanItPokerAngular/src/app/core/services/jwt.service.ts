@@ -20,27 +20,16 @@ export class JwtService {
     return this.http.post<{ jwt: string }>(BASE_URL + 'quickplay', { name });
   }
 
+  // login(loginRequest: any): Observable<{ jwt: string }> {
+  //   return this.http.post<{ jwt: string }>(BASE_URL + 'login', loginRequest)
+  // }
+
   login(loginRequest: any): Observable<{ jwt: string }> {
-    return this.http.post<{ jwt: string }>(BASE_URL + 'login', loginRequest)
-  }
-
-  hello(): Observable<any> {
-    return this.http.get(BASE_URL + 'api/hello', {
-      headers: this.createAuhtorizationHeader()
-    })
-  }
-
-  private createAuhtorizationHeader() {
-    const jwtToken = localStorage.getItem('jwt');
-    if (jwtToken) {
-      console.log("JWT token found in local storage", jwtToken);
-      return new HttpHeaders().set(
-        "Authorization", "Bearer " + jwtToken
-      )
-    } else {
-      console.log("JWT token not found in local storage");
-    }
-    return undefined;
+    return this.http.post<{ jwt: string }>(
+      `${BASE_URL}login`, 
+      loginRequest,
+      { headers: new HttpHeaders({'Content-Type': 'application/json'}) }
+    );
   }
 
 }

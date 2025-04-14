@@ -19,7 +19,7 @@ import { HeaderComponent } from '../../../shared/components/header/header.compon
 @Component({
   selector: 'app-voting-page',
   standalone: true,
-  imports: [CommonModule, StoryListComponent, VotingCardComponent, ModeratorPanelComponent, FormsModule, MatGridListModule,  PlayersPanelComponent, HeaderComponent],
+  imports: [CommonModule, FormsModule, MatGridListModule, HeaderComponent],
   templateUrl: './voting-page.component.html',
   styleUrl: './voting-page.component.scss'
 })
@@ -77,7 +77,7 @@ export class VotingPageComponent implements OnInit {
     switch(event.type) {
       case 'start':
         this.voteService.updateVotingSession({ 
-          status: 'active', 
+          status: 'ACTIVE', 
           startTime: new Date() 
         }).subscribe();
         break;

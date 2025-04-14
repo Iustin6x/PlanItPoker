@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { JwtService } from '../../../core/services/jwt.service';
 import { HttpClientModule } from '@angular/common/http';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-signup',
@@ -14,7 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
   styleUrl: './signup.component.scss'
 })
 export class SignUpComponent {
-  service = inject(JwtService);
+  authService = inject(AuthService);
   router = inject(Router);
   name = '';
   email = '';
@@ -27,7 +28,7 @@ export class SignUpComponent {
       password: this.password,
     };
 
-    this.service.register(data).subscribe((response) => {
+    this.authService.register(data).subscribe((response) => {
       if (response.id) {
         alert("Registration successful!");
         this.router.navigateByUrl("/login");

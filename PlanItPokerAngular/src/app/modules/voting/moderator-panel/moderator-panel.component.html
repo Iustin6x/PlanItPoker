@@ -1,41 +1,39 @@
-
+<div *ngIf="isModerator()" class="moderator-panel">
   <div class="controls-container">
     <div *ngIf="safeVoteSession">
       <!-- Pending State -->
-      <div *ngIf="safeVoteSession.status === 'pending'">
+      <div *ngIf="safeVoteSession.status === 'PENDING'">
         <button (click)="handleAction('start')">Start Voting</button>
       </div>
-  
+
       <!-- Active State - Voting Phase -->
-      <div *ngIf="safeVoteSession.status === 'active' && !safeVoteSession.revealed">
-        <button (click)="handleAction('resetTimer')">Reset Timer</button>
-        <button (click)="handleAction('flipCards')">Flip Cards</button>
+      <div *ngIf="safeVoteSession.status === 'ACTIVE' && !safeVoteSession.revealed">
+        <button (click)="handleAction('flipCards')">Reveal Votes</button>
         <button (click)="handleAction('clearVotes')">Clear Votes</button>
         <button (click)="handleAction('skipStory')">Skip Story</button>
       </div>
-  
+
       <!-- Revealed State -->
-      <div *ngIf="safeVoteSession.status === 'active' && safeVoteSession.revealed">
+      <div *ngIf="safeVoteSession.status === 'ACTIVE' && safeVoteSession.revealed">
         <div class="result-section">
-          <h3>Voting Result: {{ calculatedResult }}</h3>
+          <h3>Voting Result: {{ result() }}</h3>
           <select [(ngModel)]="selectedResult">
-            <option *ngFor="let card of availableCards" [value]="card">{{ card }}</option>
+            <option [value]="result()">{{ result() }}</option>
           </select>
         </div>
         
-        <button (click)="handleAction('finishVoting', selectedResult)">Finish Voting</button>
+        <button (click)="handleAction('finishVoting', selectedResult)">Finalize Voting</button>
         <button (click)="handleAction('clearVotes')">Clear Votes</button>
-        <button (click)="handleAction('skipStory')">Skip Story</button>
       </div>
-  
+
       <!-- Completed State -->
-      <div *ngIf="safeVoteSession.status === 'completed'">
+      <div *ngIf="safeVoteSession.status === 'COMPLETED'">
         <button (click)="handleAction('clearVotes')">Clear Votes</button>
-        <button (click)="handleAction('nextStory')">Next Story</button>
       </div>
     </div>
-  
+
     <div *ngIf="!safeVoteSession" class="error-message">
       No active voting session!
     </div>
   </div>
+</div>

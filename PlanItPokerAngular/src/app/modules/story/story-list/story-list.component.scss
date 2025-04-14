@@ -1,173 +1,79 @@
-/* Stiluri specifice componentă */
-.header-container {
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-
-  .tabs {
-    flex: 1;
-    
-    .mat-tab-group {
-      .mat-tab-header {
-        border-bottom: 1px solid #ddd;
-      }
-
-      .mat-tab-label {
-        opacity: 1 !important;
-        min-width: 160px;
-        padding: 12px;
-        color: #666;
-        font-weight: 500;
-        
-        &:hover {
-          background: #f5f5f5;
-        }
-
-        &.mat-tab-label-active {
-          color: #3b82f6;
-          font-weight: 600;
-        }
-      }
-    }
-  }
-
-  .actions {
-    display: flex;
-    gap: 8px;
-    
-    button[mat-raised-button] {
-      background: #3b82f6;
-      color: white;
-      border-radius: 4px;
-      padding: 8px 16px;
-      
-      &:hover {
-        background: #2563eb;
-      }
-    }
-
-    button[mat-icon-button] {
-      color: #666;
-      &:hover {
-        background: #f5f5f5;
-      }
-    }
-  }
-}
-
-/* Listă de stories - Versiune originală */
+/* story-list.component.scss */
 .story-list {
-  background: white;
-  border-radius: 4px;
-  border: 1px solid #eee;
-  padding: 8px;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
   .story-item {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
     display: flex;
     align-items: center;
-    gap: 12px;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    border: 1px solid #e9ecef;
 
     &:hover {
-      background: #f9f9f9;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
 
     .order-handle {
-      color: #999;
-      cursor: move;
-      
-      &:hover {
-        color: #3b82f6;
+      display: flex;
+      align-items: center;
+      padding: 0.5rem;
+      margin-right: 1rem;
+      color: #6c757d;
+      cursor: grab;
+
+      &:active {
+        cursor: grabbing;
       }
     }
+
+    .story-content {
+      flex-grow: 1;
+      cursor: pointer;
+    }
   }
 }
 
-/* Tabele în stil original */
-.stories-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1rem 0;
-  background: white;
-
-  th {
-    background-color: #f5f5f5;
-    padding: 12px;
-    text-align: left;
-    border-bottom: 2px solid #ddd;
-    color: #333;
-    font-weight: 600;
-  }
-
+.completed-row {
   td {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    color: #333;
-  }
-
-  tr:hover {
-    background-color: #f9f9f9;
-  }
-
-  .completed-row {
-    background-color: #f8f8f8;
-    td {
-      color: #666;
-      text-decoration: line-through;
-    }
-  }
-
-  button[mat-icon-button] {
-    color: #666;
-    &:hover {
-      color: #e53935;
-    }
+    opacity: 0.6;
+    background: #f8f9fa;
   }
 }
 
-/* Animations */
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #f1f3f5;
+  }
+}
+
+.status-icon {
+  color: #3b82f6;
+  &.completed {
+    color: #22c55e;
+  }
+}
+
 @keyframes slideIn {
-  from { transform: translateY(-8px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.story-item, .mat-row {
+.story-item {
   animation: slideIn 0.3s ease;
-}
-
-/* Badge-uri */
-.badge {
-  background-color: #3b82f6;
-  color: white;
-  font-size: 0.75rem;
-  border-radius: 10px;
-  padding: 2px 8px;
-  margin-left: 8px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .header-container {
-    flex-direction: column;
-    align-items: flex-start;
-    
-    .tabs {
-      width: 100%;
-    }
-  }
-  
-  .stories-table {
-    overflow-x: auto;
-    display: block;
-    
-    th, td {
-      white-space: nowrap;
-    }
-  }
 }

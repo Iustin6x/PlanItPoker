@@ -3,9 +3,9 @@ import { CardValue } from "../../types";
 import { VoteSession, VotingSession } from "../room";
 
 export enum StoryStatus {
-  ACTIVE = 'active',
-  COMPLETED = 'completed',
-  SKIPPED = 'skipped'
+  ACTIVE = 'ACTIVE',
+  COMPLETED = 'COMPLETED',
+  SKIPPED = 'SKIPPED'
 }
 
 export interface Story {

@@ -3,9 +3,9 @@ import { CardValue } from "../../types";
 
 
 export enum PlayerRole {
-    PLAYER = 'player',
-    OBSERVER = 'observer',
-    MODERATOR = 'moderator'
+    PLAYER = 'PLAYER',
+    OBSERVER = 'OBSERVER',
+    MODERATOR = 'MODERATOR'
   }
   
   export interface Player {

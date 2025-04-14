@@ -8,18 +8,18 @@
         <!-- Seccióne de votare -->
         <div class="section-container voting-section">
           <ng-container *ngIf="currentStory() as story; else noStoryBlock">
-            <app-voting-card 
+            <!-- <app-voting-card 
               *ngIf="currentRoom() as room"
               [cardType]="room.cardType"
               [customCards]="customCardSet()"
               (voted)="handleVote($event)">
-            </app-voting-card>
+            </app-voting-card> -->
           </ng-container>
         </div>
 
         <!-- Listă story-uri sub votare -->
         <div class="section-container story-list-section">
-          <app-story-list></app-story-list>
+          <!-- <app-story-list></app-story-list> -->
         </div>
       </div>
     </mat-grid-tile>
@@ -29,21 +29,21 @@
       <div class="right-column">
         <!-- Panou moderator -->
         <div class="section-container moderator-section">
-          <app-moderator-panel
+          <!-- <app-moderator-panel
             [voteSession]="voteSession()"
             [availableCards]="customCardSet()"
             (action)="handleModeratorAction($event)">
-          </app-moderator-panel>
+          </app-moderator-panel> -->
         </div>
 
         <!-- Panou players -->
         <div class="section-container players-section">
-          <app-players-panel 
+          <!-- <app-players-panel 
             [players]="currentRoom()?.players ?? []"
             [isRevealed]="voteSession().revealed"
             [votes]="voteSession().votes"
             [inviteLink]="currentRoom()?.inviteLink ?? ''">
-          </app-players-panel>
+          </app-players-panel> -->
         </div>
       </div>
     </mat-grid-tile>

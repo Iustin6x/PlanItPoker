@@ -44,7 +44,7 @@ export class StoryDetailsDialogComponent {
       storyId: this.initialData()?.id || uuidv4() as UUID,
       roomId: this.initialData()?.roomId || '' as UUID,
       startTime: new Date(),
-      status: 'pending',
+      status: 'PENDING',
       votes: {} as Record<UUID, CardValue>,
       revealed: false
     },
