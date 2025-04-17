@@ -13,23 +13,31 @@ export class VoteStateService {
 
   private _voteSession = signal<VoteSessionDTO | null>(null);
   readonly voteSession = this._voteSession.asReadonly();
-  
+
+  readonly sessionLoaded = computed(() => this.voteSession() !== null);
+
 
   private _result = signal<string | null>(null);
   readonly result = this._result.asReadonly();
 
   private _votes = signal<VoteDTO[]>([])
   readonly votes = this._votes.asReadonly();
+
+  readonly isRevealed = computed(() => {
+    return this._voteSession()?.revealed ?? false;
+  });
   
+
+  revealVotes() {
+    this._voteSession.update(session =>
+      session ? { ...session, revealed: true } : session
+    );
+  }
 
   updateVotes(votes: VoteDTO[], result: string | null) {
     this._votes.set(votes);
     this._result.set(result);
   }
-  
-  readonly revealedVotes = computed(() =>
-    this._voteSession()?.revealed ? this._voteSession()?.votes ?? [] : null
-  );
 
   readonly currentStory = computed(() => {
     const session = this._voteSession();
@@ -70,14 +78,13 @@ export class VoteStateService {
     });
   }
 
-  setSession(session: VoteSessionDTO) {
-    console.log("set votesession");
-    this._voteSession.set(session || null);
+  setSession(session: VoteSessionDTO | null): void {
+    this._voteSession.set(session); 
   }
 
   clearVotes() {
     this._voteSession.update(session =>
-      session ? { ...session, votes: [] } : session
+      session ? { ...session, votes: [], revealed: false } : session
     );
   }
 
@@ -100,6 +107,7 @@ export class VoteStateService {
   hasVoted(playerId: string): boolean {
     return this._voteSession()?.votes.some(v => v.userId === playerId) ?? false;
   }
+
 
   
 }

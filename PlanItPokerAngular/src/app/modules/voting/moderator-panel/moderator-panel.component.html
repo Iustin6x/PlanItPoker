@@ -1,39 +1,107 @@
-<div *ngIf="isModerator()" class="moderator-panel">
+<ng-container *ngIf="isModerator()">
   <div class="controls-container">
-    <div *ngIf="safeVoteSession">
-      <!-- Pending State -->
-      <div *ngIf="safeVoteSession.status === 'PENDING'">
-        <button (click)="handleAction('start')">Start Voting</button>
+    <ng-container *ngIf="connectionState.loading()">
+      <div class="loading">
+        <div class="spinner"></div>
+        <span>Se încarcă...</span>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!connectionState.loading() && !connectionState.error()">
+      <!-- Butonul Start Voting este vizibil doar când nu există sesiune activă -->
+      <div *ngIf="voteSession() == null" class="controls-section">
+        <ng-container *ngIf="hasActiveStory().length > 0; else noActiveStory">
+          <button class="primary" (click)="handleAction('start')">
+            <i class="icon-play"></i>
+            Start Voting
+          </button>
+        </ng-container>
+        <ng-template #noActiveStory>
+          <div class="info-message">
+            Create a story in order to start voting.
+          </div>
+        </ng-template>
       </div>
 
-      <!-- Active State - Voting Phase -->
-      <div *ngIf="safeVoteSession.status === 'ACTIVE' && !safeVoteSession.revealed">
-        <button (click)="handleAction('flipCards')">Reveal Votes</button>
-        <button (click)="handleAction('clearVotes')">Clear Votes</button>
-        <button (click)="handleAction('skipStory')">Skip Story</button>
-      </div>
+      <ng-container *ngIf="sessionLoaded()">
+        <div *ngIf="voteSession() as session">
+          <!-- Dacă sesiunea este activă și voturile nu au fost încă dezvăluite -->
+          <div *ngIf="session.status === 'ACTIVE' && !session.revealed" class="controls-section">
+            <h3>Session Controls</h3>
+            <div class="button-group">
+              <button class="primary" (click)="handleAction('flipCards')">
+                <i class="icon-flip"></i>
+                Reveal Votes
+              </button>
+              <button class="neutral" (click)="handleAction('clearVotes')">
+                <i class="icon-refresh"></i>
+                Clear Votes
+              </button>
+              <button class="danger" (click)="handleAction('skipStory')">
+                <i class="icon-skip"></i>
+                Skip Story
+              </button>
+            </div>
+          </div>
 
-      <!-- Revealed State -->
-      <div *ngIf="safeVoteSession.status === 'ACTIVE' && safeVoteSession.revealed">
-        <div class="result-section">
-          <h3>Voting Result: {{ result() }}</h3>
-          <select [(ngModel)]="selectedResult">
-            <option [value]="result()">{{ result() }}</option>
-          </select>
+          <!-- Dacă voturile au fost deja dezvăluite -->
+          <div *ngIf="session.status === 'ACTIVE' && session.revealed" class="controls-section">
+            <div class="result-section">
+              <h3>Voting Result</h3>
+              <div class="result-display">
+                <div class="result-value">{{ result() }}</div>
+              </div>
+              <label for="finalResult">Select final value:</label>
+              <select id="finalResult" [(ngModel)]="selectedResult">
+                <option *ngFor="let card of cards()" [value]="card">{{ card }}</option>
+              </select>
+            </div>
+            
+            <div class="button-group">
+              <button class="success" (click)="handleAction('finishVoting', selectedResult)">
+                <i class="icon-check"></i>
+                Finalize Voting
+              </button>
+              <button class="neutral" (click)="handleAction('clearVotes')">
+                <i class="icon-refresh"></i>
+                Clear Votes
+              </button>
+            </div>
+          </div>
+
+          <!-- Dacă sesiunea de vot este completă -->
+          <div *ngIf="session.status === 'COMPLETED'" class="controls-section">
+            <div class="success-message">
+              Voting completed successfully!
+            </div>
+            <div class="button-group">
+              <button class="neutral" (click)="handleAction('clearVotes')">
+                <i class="icon-refresh"></i>
+                Clear Votes
+              </button>
+              <button class="primary" (click)="handleAction('start')">
+                <i class="icon-next"></i>
+                Next Story
+              </button>
+            </div>
+          </div>
         </div>
-        
-        <button (click)="handleAction('finishVoting', selectedResult)">Finalize Voting</button>
-        <button (click)="handleAction('clearVotes')">Clear Votes</button>
-      </div>
 
-      <!-- Completed State -->
-      <div *ngIf="safeVoteSession.status === 'COMPLETED'">
-        <button (click)="handleAction('clearVotes')">Clear Votes</button>
-      </div>
-    </div>
+        <!-- Dacă nu există sesiune activă de vot -->
+        <div *ngIf="!voteSession()" class="error-message">
+          No active voting session!
+        </div>
+      </ng-container>
+    </ng-container>
 
-    <div *ngIf="!safeVoteSession" class="error-message">
-      No active voting session!
-    </div>
+    <!-- Dacă există o eroare -->
+    <ng-container *ngIf="connectionState.error()">
+      <div class="error-message">Eroare de conexiune!</div>
+    </ng-container>
   </div>
-</div>
+</ng-container>
+
+<!-- Dacă utilizatorul nu este moderator, componenta nu va fi afișată -->
+<ng-container *ngIf="!isModerator()">
+  <!-- Poți adăuga un mesaj sau altceva pentru utilizatorii non-moderator -->
+</ng-container>

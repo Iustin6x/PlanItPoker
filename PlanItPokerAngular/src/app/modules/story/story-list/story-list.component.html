@@ -1,4 +1,3 @@
-<!-- story-list.component.html -->
 <div class="header-container">
   <div class="tabs">
     <mat-tab-group [selectedIndex]="selectedTab()" (selectedIndexChange)="selectedTab.set($event)">
@@ -26,24 +25,42 @@
 </div>
 
 <!-- Active Stories Tab -->
-<div *ngIf="selectedTab() === 0" cdkDropList (cdkDropListDropped)="drop($event)" class="story-list">
-  <div class="story-item" *ngFor="let story of filteredStories(); let i = index" cdkDrag>
-    <div class="order-handle" cdkDragHandle>
-      <mat-icon>drag_indicator</mat-icon>
-      <span class="order-number">{{ i + 1 }}</span>
-    </div>
-    <div class="story-content" (click)="handleEditStory(story)">
-      {{ story.name }}
-    </div>
-    <button mat-icon-button color="warn" (click)="handleDeleteStory(story.id)">
-      <mat-icon>delete</mat-icon>
-    </button>
-  </div>
+<div *ngIf="selectedTab() === 0" class="stories-container">
+  <table mat-table [dataSource]="filteredStories()" class="stories-table mat-elevation-z2">
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef>No.</th>
+      <td mat-cell *matCellDef="let story; let i = index">{{ i + 1 }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <td mat-cell *matCellDef="let story">{{ story.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let story">
+        <button mat-icon-button color="primary" (click)="handleEditStory(story); $event.stopPropagation()">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="handleDeleteStory(story.id); $event.stopPropagation()">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="['position', 'name', 'actions']"></tr>
+    <tr mat-row 
+        *matRowDef="let row; columns: ['position', 'name', 'actions'];"
+        class="clickable-row"
+        (click)="handleEditStory(row)">
+    </tr>
+  </table>
 </div>
 
 <!-- Completed Stories Tab -->
 <div *ngIf="selectedTab() === 1" class="stories-container">
-  <table mat-table [dataSource]="filteredStories()" class="stories-table mat-elevation-z8">
+  <table mat-table [dataSource]="filteredStories()" class="stories-table mat-elevation-z2">
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>Name</th>
       <td mat-cell *matCellDef="let story">{{ story.name }}</td>
@@ -51,13 +68,18 @@
 
     <ng-container matColumnDef="result">
       <th mat-header-cell *matHeaderCellDef>Result</th>
-      <td mat-cell *matCellDef="let story">{{ story.finalResult || '-' }}</td>
+      <td mat-cell *matCellDef="let story" [ngClass]="{'success-result': story.finalResult === 'SUCCESS', 'failure-result': story.finalResult === 'FAILURE'}">
+        {{ story.finalResult || '-' }}
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let story">
-        <button mat-icon-button (click)="handleDeleteStory(story.id)">
+        <button mat-icon-button color="primary" (click)="handleEditStory(story); $event.stopPropagation()">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="handleDeleteStory(story.id); $event.stopPropagation()">
           <mat-icon>delete</mat-icon>
         </button>
       </td>
@@ -74,11 +96,11 @@
 
 <!-- All Stories Tab -->
 <div *ngIf="selectedTab() === 2" class="stories-container">
-  <table mat-table [dataSource]="filteredStories()" class="stories-table mat-elevation-z8">
+  <table mat-table [dataSource]="filteredStories()" class="stories-table mat-elevation-z2">
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef>Status</th>
       <td mat-cell *matCellDef="let story">
-        <mat-icon [color]="story.status === 'ACTIVE' ? 'primary' : 'accent'">
+        <mat-icon [ngClass]="{'status-active': story.status === 'ACTIVE', 'status-completed': story.status === 'COMPLETED'}">
           {{ story.status === 'ACTIVE' ? 'radio_button_checked' : 'check_circle' }}
         </mat-icon>
       </td>
@@ -91,13 +113,18 @@
 
     <ng-container matColumnDef="result">
       <th mat-header-cell *matHeaderCellDef>Result</th>
-      <td mat-cell *matCellDef="let story">{{ story.finalResult || '-' }}</td>
+      <td mat-cell *matCellDef="let story" [ngClass]="{'success-result': story.finalResult === 'SUCCESS', 'failure-result': story.finalResult === 'FAILURE'}">
+        {{ story.finalResult || '-' }}
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let story">
-        <button mat-icon-button (click)="handleDeleteStory(story.id)">
+        <button mat-icon-button color="primary" (click)="handleEditStory(story); $event.stopPropagation()">
+          <mat-icon>{{ story.status === 'ACTIVE' ? 'edit' : 'visibility' }}</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="handleDeleteStory(story.id); $event.stopPropagation()">
           <mat-icon>delete</mat-icon>
         </button>
       </td>
@@ -106,6 +133,7 @@
     <tr mat-header-row *matHeaderRowDef="['status', 'name', 'result', 'actions']"></tr>
     <tr mat-row 
         *matRowDef="let row; columns: ['status', 'name', 'result', 'actions'];"
+        [ngClass]="{'active-row': row.status === 'ACTIVE', 'completed-row': row.status === 'COMPLETED'}"
         class="clickable-row"
         (click)="handleEditStory(row)">
     </tr>

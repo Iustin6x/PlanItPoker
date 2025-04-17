@@ -53,7 +53,7 @@ export class WebSocketMessageService {
   }
 
   revealVotes(sessionId: string): void {
-    this.ws.send({ type: 'showVotes', sessionId });
+    this.ws.send({ type: 'revealVotes', sessionId });
   }
 
   clearVotes(sessionId: string): void {

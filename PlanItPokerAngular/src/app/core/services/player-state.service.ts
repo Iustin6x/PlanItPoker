@@ -13,16 +13,10 @@ export class PlayerStateService {
 
   readonly isModerator = computed(() => {
     const userId = this.authService.getUserIdFromJWT();
-    return this._players().some(p => 
-      p.userId === userId && p.role === PlayerRole.MODERATOR
-    );
+    console.log('Checking isModerator for userId:', userId);
+    return this._players().some(p => p.userId === userId && p.role === PlayerRole.MODERATOR);
   });
 
-
-  // get isModerator(): boolean {
-  //   const userId = this.authService.getUserIdFromJWT();
-  //   return this._players().some(p => p.userId === userId && p.role === PlayerRole.MODERATOR);
-  // }
   getPlayer(playerId: string): PlayerDTO | undefined {
     return this._players().find(p => p.id === playerId);
   }
@@ -32,19 +26,27 @@ export class PlayerStateService {
     this._players.set(players || []);
   }
 
+  
+
   updatePlayer(player: PlayerDTO) {
     this._players.update(players => {
       const index = players.findIndex(p => p.id === player.id);
       if (index === -1) {
-        // Player nou, adăugăm la listă
         return [...players, player];
       } else {
-        // Player existent, înlocuim
         const updated = [...players];
         updated[index] = player;
         return updated;
       }
     });
+  }
+
+  markPlayerVoted(playerId: string) {
+    this._players.update(players =>
+      players.map(p =>
+        p.id === playerId ? { ...p, hasVoted: true } : p
+      )
+    );
   }
 
   disconnectPlayer(playerId: string) {
@@ -66,6 +68,7 @@ export class PlayerStateService {
   }
 
   changeRole(playerId: string, newRole: PlayerRole) {
+    console.log("change role "+ playerId + " " + newRole)
     this._players.update(list =>
       list.map(p => (p.id === playerId ? { ...p, role: newRole } : p))
     );

@@ -49,7 +49,6 @@ export class StoryListComponent {
     }
   });
 
-  // Handle drag and drop
   drop(event: CdkDragDrop<StoryDTO[]>) {
     const stories = [...this.filteredStories()];
     moveItemInArray(stories, event.previousIndex, event.currentIndex);
@@ -75,7 +74,6 @@ export class StoryListComponent {
     this.wsMessageService.updateStory(storyId, name);
   }
 
-  // Dialog handling
   handleEditStory(story: StoryDTO): void {
     this.dialog.open(StoryDetailsDialogComponent, {
       data: story,

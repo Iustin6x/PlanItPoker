@@ -16,6 +16,9 @@ export class AuthService {
 
   constructor() {
     const storedToken = localStorage.getItem('jwt');
+  // if (storedToken) {
+  //   this.jwtToken.set(storedToken);
+  // }
   }
 
   register(signRequest: any): Observable<any> {
@@ -74,13 +77,15 @@ export class AuthService {
     return !!token && !this.isTokenExpired(token);
   }
 
-  getUserIdFromJWT() {
-    const token = this.getToken();
+  getUserIdFromJWT(): any{
+    const token = localStorage.getItem('jwt');
+    console.log("get token " + token )
     if (!token) return null;
     try {
       const payloadBase64 = token.split('.')[1];
       const payloadJson = atob(payloadBase64);
       const payload = JSON.parse(payloadJson);
+      console.log("get user from jwt" + payload.userId || payload.sub || null);
       return payload.userId || payload.sub || null;
     } catch (error) {
       console.error('JWT parsing error:', error);

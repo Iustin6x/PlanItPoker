@@ -14,11 +14,17 @@ import { RoomStateService } from '../../../core/services/room-state.service';
 import { PlayerStateService } from '../../../core/services/player-state.service';
 import { StoryStateService } from '../../../core/services/story-state.service';
 import { VoteStateService } from '../../../core/services/vote-state.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { PlayerRole } from '../../../shared/models/room/player.model';
+import { HeaderComponent } from '../../../shared/components/header/header.component';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { VotingResultsComponent } from '../../voting/voting-results/voting-results.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-join-room',
   standalone: true,
-  imports: [CommonModule, FormsModule, VotingCardComponent, StoryListComponent, PlayersPanelComponent, ModeratorPanelComponent],
+  imports: [CommonModule,MatIconModule, FormsModule, VotingResultsComponent ,VotingCardComponent, StoryListComponent,HeaderComponent, PlayersPanelComponent, ModeratorPanelComponent, MatGridListModule],
   templateUrl: './join-room.component.html',
   styleUrls: ['./join-room.component.scss'],
   providers: [RoomMessageHandlerService]
@@ -35,7 +41,7 @@ export class JoinRoomComponent implements OnInit {
 
   private connectionState = inject(ConnectionStateService);
 
-  // protected loading = this.connectionState.loading;
+
   protected error = this.connectionState.error;
   protected roomId = signal<string | null>(null);
 
@@ -45,8 +51,9 @@ export class JoinRoomComponent implements OnInit {
   readonly players = this.playerState.players;
   readonly stories = this.storyState.stories;
   readonly isModerator = this.playerState.isModerator;
-
-  // Inițializare effect în constructor
+  protected result = this.voteState.result;
+  readonly isRevealed = this.voteState.isRevealed;
+      
   private connectionEffect = effect(() => {
     const status = this.connectionState.status();
     

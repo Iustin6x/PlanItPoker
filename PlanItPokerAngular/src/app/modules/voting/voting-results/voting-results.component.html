@@ -1,0 +1,50 @@
+<div class="results-container">
+    <h3>Voting Results</h3>
+    
+    <!-- Final result -->
+    <div *ngIf="session()?.status === 'COMPLETED'" class="final-value">
+      Final Value: {{ voteState.result() || 'N/A' }}
+    </div>
+  
+    <div class="chart-container">
+      <!-- Pie Chart -->
+      <div class="pie-chart" [style.background-image]="pieChartBackground()">
+        <div class="chart-center">
+          <div class="total-votes">{{ totalVotes() }}</div>
+          <div class="votes-label">votes</div>
+          <div class="average-value">
+            Avg: {{ average() ? (average() | number:'1.1-1') : 'N/A' }}
+          </div>
+        </div>
+      </div>
+  
+      <!-- Legend -->
+      <div class="legend">
+        <div *ngFor="let item of distribution()" class="legend-item">
+          <span class="color-box" [style.backgroundColor]="getColor(item.value)"></span>
+          {{ item.value }} ({{ getPercentage(item.count) }}%)
+          <span class="vote-count">({{ item.count }})</span>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Session info -->
+    <div class="stats-container">
+      <div class="stat-item">
+        <span class="stat-label">Status:</span>
+        <span class="stat-value">{{ session()?.status }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Started:</span>
+        <span class="stat-value">{{ session()?.startTime | date:'shortTime' }}</span>
+      </div>
+      <div *ngIf="session()?.endTime" class="stat-item">
+        <span class="stat-label">Ended:</span>
+        <span class="stat-value">{{ session()?.endTime | date:'shortTime' }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Participants:</span>
+        <span class="stat-value">{{ totalVotes() }}</span>
+      </div>
+    </div>
+  </div>

@@ -1,6 +1,39 @@
-mat-list-item {
-    cursor: pointer;
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.05);
-    }
+/* Improved new-story-dialog.component.scss */
+:host {
+  display: block;
+}
+
+h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.mat-dialog-content {
+  min-width: 300px;
+  
+  mat-form-field {
+    width: 100%;
   }
+}
+
+.mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem 0 0;
+  margin-bottom: 0;
+  
+  button {
+    margin-left: 0.75rem;
+  }
+}
+
+/* Add this to your global styles or component styles */
+.mat-mdc-dialog-container {
+  --mdc-dialog-container-color: white;
+  border-radius: 12px !important;
+  padding: 1.5rem !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}

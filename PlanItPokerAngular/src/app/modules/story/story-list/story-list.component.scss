@@ -1,79 +1,120 @@
-/* story-list.component.scss */
-.story-list {
-  padding: 1rem;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  
+  .tabs {
+    flex-grow: 1;
+  }
+  
+  .actions {
+    margin-left: 1rem;
+  }
+}
 
-  .story-item {
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    margin-bottom: 0.5rem;
-    background: #f8f9fa;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    border: 1px solid #e9ecef;
+.badge {
+  background-color: #e2e8f0;
+  color: #475569;
+  border-radius: 12px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+}
 
+.stories-container {
+  margin-top: 1rem;
+  
+  .stories-table {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    
+    th {
+      background-color: #f1f5f9;
+      color: #334155;
+      font-weight: 600;
+      padding: 1rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    td {
+      padding: 0.75rem 1rem;
+      color: #334155;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    
+    .mat-icon {
+      vertical-align: middle;
+    }
+  }
+  
+  .clickable-row {
+    transition: background-color 0.2s ease;
+    
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    }
-
-    .order-handle {
-      display: flex;
-      align-items: center;
-      padding: 0.5rem;
-      margin-right: 1rem;
-      color: #6c757d;
-      cursor: grab;
-
-      &:active {
-        cursor: grabbing;
-      }
-    }
-
-    .story-content {
-      flex-grow: 1;
+      background-color: #f8fafc;
       cursor: pointer;
     }
   }
-}
-
-.completed-row {
-  td {
-    opacity: 0.6;
-    background: #f8f9fa;
+  
+  // Style for status indicators
+  .status-active {
+    color: #3b82f6;
+  }
+  
+  .status-completed {
+    color: #10b981;
+  }
+  
+  // Style for result indicators
+  .success-result {
+    color: #10b981;
+    font-weight: 500;
+  }
+  
+  .failure-result {
+    color: #ef4444;
+    font-weight: 500;
+  }
+  
+  // Style for row based on status
+  .active-row {
+    border-left: 4px solid #3b82f6;
+  }
+  
+  .completed-row {
+    border-left: 4px solid #10b981;
   }
 }
 
-.clickable-row {
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background-color: #f1f3f5;
+// Additional styles for Angular Material components
+::ng-deep {
+  .mat-tab-label {
+    height: 48px;
+    padding: 0 24px;
+    font-weight: 500;
+    
+    &.mat-tab-label-active {
+      opacity: 1;
+    }
   }
-}
-
-.status-icon {
-  color: #3b82f6;
-  &.completed {
-    color: #22c55e;
+  
+  .mat-tab-group {
+    font-family: inherit;
   }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
+  
+  .mat-header-row {
+    background-color: #f8fafc;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  
+  .mat-row:nth-child(even) {
+    background-color: #fafbfc;
   }
-}
-
-.story-item {
-  animation: slideIn 0.3s ease;
+  
+  .mat-cell, .mat-header-cell {
+    padding: 0 16px;
+  }
 }

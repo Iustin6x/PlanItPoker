@@ -13,7 +13,7 @@ export class StoryStateService {
   );
 
   readonly completedStories = computed(() =>
-    this._stories().filter(s => s.status === 'COMPLETED')
+    this._stories().filter(s => ( s.status === 'COMPLETED' || s.status === 'SKIPPED'))
   );
 
   setStories(stories: StoryDTO[]) {

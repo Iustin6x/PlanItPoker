@@ -24,11 +24,11 @@ export class RoomMessageHandlerService {
       this.handleMessage(msg);
     });
 
-    
+
   }
 
   handleMessage(message: WSMessage) {
-    console.log("Handle "+message.type);
+    console.log("Handle " + message.type);
     switch (message.type) {
       case 'roomInfo':
         this.roomState.setRoomInfo(message.room);
@@ -39,12 +39,21 @@ export class RoomMessageHandlerService {
         this.playerState.setPlayers(message.players || []);
         break;
 
+      case 'noPlayers':
+        console.log('No players in the room yet');
+        this.playerState.setPlayers([]);
+        break;
+
       case 'playerJoined':
         this.playerState.updatePlayer(message.player);
         break;
 
+      case 'playerVoted':
+        this.playerState.markPlayerVoted(message.playerId);
+        break;
+
       case 'playerDisconnected':
-        console.log("player disconet"+ message.player.id)
+        console.log("player disconet" + message.player.id)
         this.playerState.disconnectPlayer(message.player.id);
         break;
 
@@ -60,6 +69,12 @@ export class RoomMessageHandlerService {
         console.log('Handle storyList');
         this.storyState.setStories(message.stories);
         break;
+
+      case 'noStories':
+        console.log('No stories in the room yet');
+        this.storyState.setStories([]);
+        break;
+
 
       case 'storyCreated':
         this.storyState.addStory(message.story);
@@ -80,9 +95,11 @@ export class RoomMessageHandlerService {
         this.connectionState.setLoading(false);
         break;
 
-      // case 'updateStoryOrder':
-      //   this.storyState.updateStory(message.story);
-      //   break;
+      case 'noActiveVoteSession':
+        console.log("No active Vote session");
+        this.voteState.setSession(null);
+        this.connectionState.setLoading(false);
+        break;
 
       case 'voteStarted':
         this.voteState.setSession(message.session);
@@ -92,17 +109,14 @@ export class RoomMessageHandlerService {
         this.voteState.clearVotes();
         break;
 
-      // case 'showVotes':
-      //   this.voteState.showVotes(message.votes);
-      //   break;
-
-      // case 'showVotes':
-      //   this.voteState.updateVotes(message.votes, message.result);
-      //   break;
+      case 'votesRevealed':
+        this.voteState.updateVotes(message.votes, message.result);
+        this.voteState.revealVotes();
+        break;
 
       case 'storySkipped':
         this.storyState.updateStory(message.story);
-        if (message.nextStory && message.session) {
+        if (message.session) {
           this.voteState.setSession(message.session);
         }
         break;

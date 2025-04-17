@@ -1,19 +1,62 @@
-
-  <div class="join-room-container">
+<div class="join-room-container">
+    <!-- Loading state -->
     <div *ngIf="loading()" class="loading-overlay">
-        <div class="spinner"></div>
-        <p>Loading room data...</p>
-      </div>
-
-    <div *ngIf="error()" class="error-message">
-      {{ error() }}
-      <button (click)="retryConnection()">Retry</button>
+      <div class="spinner"></div>
+      <p>Loading room data...</p>
     </div>
-
-    <div *ngIf="!loading() && !error()">
-      <app-voting-card></app-voting-card>
-      <app-moderator-panel></app-moderator-panel>
-      <app-players-panel></app-players-panel>
-      <app-story-list></app-story-list>
+    
+    <!-- Error state -->
+    <div *ngIf="error()" class="error-message">
+      <div class="error-content">
+        <mat-icon color="warn">error_outline</mat-icon>
+        <p>{{ error() }}</p>
+        <button mat-raised-button color="primary" (click)="retryConnection()">Retry</button>
+      </div>
+    </div>
+    
+    <app-header></app-header>
+    
+    <div class="main-container">
+      <div class="grid-layout">
+        <!-- Left Column -->
+        <div class="left-column">
+          <!-- Voting Cards/Results Section -->
+          <div class="section-container voting-section">
+            <ng-container *ngIf="!isRevealed(); else showResults">
+              <app-voting-card></app-voting-card>
+            </ng-container>
+            <ng-template #showResults>
+              <app-voting-results></app-voting-results>
+            </ng-template>
+          </div>
+          
+          <!-- Story List Section -->
+          <div class="section-container story-list-section">
+            <app-story-list></app-story-list>
+          </div>
+        </div>
+        
+        <!-- Right Column -->
+        <div class="right-column">
+          <!-- Moderator Panel -->
+          <div class="section-container moderator-section">
+            <app-moderator-panel></app-moderator-panel>
+          </div>
+          
+          <!-- Players Panel -->
+          <div class="section-container players-section">
+            <app-players-panel></app-players-panel>
+          </div>
+        </div>
+      </div>
+      
+      <!-- No Story Template -->
+      <ng-template #noStoryBlock>
+        <div class="no-story">
+          <mat-icon class="empty-icon">view_list</mat-icon>
+          <p>Selectează sau creează un story pentru a începe votarea</p>
+          <button mat-raised-button color="primary">Creează Story</button>
+        </div>
+      </ng-template>
     </div>
   </div>

@@ -17,7 +17,7 @@ import { StoryStatus } from "../story";
     | { type: 'updateStoryOrder', storyId: string, newOrder: string }
     | { type: 'startVote' }
     | { type: 'addVote', sessionId: string, cardValue: CardValue }
-    | { type: 'showVotes', sessionId: string }
+    | { type: 'revealVotes', sessionId: string }
     | { type: 'clearVotes', sessionId: string }
     | { type: 'skipVote', sessionId: string, storyId: string }
     | { type: 'endVoteSession', sessionId: string, finalValue: string };
@@ -25,6 +25,7 @@ import { StoryStatus } from "../story";
   export type ServerMessage =
     | { type: 'error', message: string }
     | { type: 'playerJoined', player: PlayerDTO }
+    | { type: 'playerVoted', playerId: string }
     | { type: 'playerDisconnected', player: PlayerDTO }
     | { type: 'playerNameChanged', playerId: string, newName: string }
     | { type: 'playerRoleChanged', playerId: string, newRole: PlayerRole }
@@ -34,13 +35,15 @@ import { StoryStatus } from "../story";
     | { type: 'storyDeleted', storyId: string }
     | { type: 'storyList', stories: StoryDTO[] }
     | { type: 'voteSession', session: VoteSessionDTO }
-    | { type: 'showVotes', votes: VoteDTO[], result: string | null }
+    | { type: 'voteStarted', session: VoteSessionDTO }
+    | { type: 'votesRevealed', votes: VoteDTO[], result: string | null }
     | { type: 'votesCleared', sessionId: string }
     | { type: 'voteEnded', sessionId: string, finalValue: string }
     | { type: 'roomInfo', room: RoomInfoDTO }
-    | { type: 'voteStarted', session: VoteSessionDTO, story: StoryDTO }
-    | { type: 'storySkipped', story: StoryDTO, nextStory?: StoryDTO, session?: VoteSessionDTO }
-    | { type: 'voteAdded', vote: VoteDTO }
+    | { type: 'storySkipped', story: StoryDTO, session?: VoteSessionDTO }
+    | { type: 'noPlayers'}
+    | { type: 'noStories'}
+    | { type: 'noActiveVoteSession' }
     // | { type: 'updateStoryOrder', story: StoryDTO };
   
 
@@ -49,6 +52,7 @@ import { StoryStatus } from "../story";
     id: string; // UUID
     userId: string;
     name: string;
+    hasVoted: boolean;
     vote: string | null;
     connected: boolean;
     role: PlayerRole;

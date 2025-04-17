@@ -1,4 +1,3 @@
-<!-- players-panel.component.html -->
 <ng-container *ngIf="connectionState.loading()">
   <div class="loading">Se încarcă jucătorii...</div>
 </ng-container>
@@ -8,55 +7,109 @@
 </ng-container>
 
 <ng-container *ngIf="!connectionState.loading() && !connectionState.error()">
-<div class="players-container">
-  <div class="players-list">
-    <div class="player-card" *ngFor="let player of players()">
-      <div class="player-info">
-        <div class="avatar" [style.backgroundColor]="'#' + player.id.slice(0,6)">
-          {{ getAvatarInitials(player.name) }}
-          <div class="role-badge">{{ getRoleBadge(player.role) }}</div>
-        </div>
-        
-        <div class="details">
-          <div class="name-status">
-            <span class="name">
-              {{ player.name }}
-              <span class="role-text" *ngIf="player.role !== PlayerRole.PLAYER">
-                ({{ player.role | lowercase }})
-              </span>
-            </span>
-            <span class="status" [class.online]="player.connected"></span>
-          </div>
-          
-          <div class="voting-info">
-            <ng-container *ngIf="!voteState.voteSession()?.revealed">
-              <span class="vote-status" [class.voted]="hasVoted(player.id)">
-                {{ hasVoted(player.id) ? '✓ Ready' : 'Waiting...' }}
-              </span>
-            </ng-container>
+  <div class="vote-status-bar" *ngIf="!voteState.voteSession()?.revealed && waitingMessage()">
+    {{ waitingMessage() }}
+  </div>
 
-            <ng-container *ngIf="voteState.voteSession()?.revealed">
-              <span class="vote-value">
-                {{ getPlayerVote(player.id) }}
+  <div class="players-container">
+    <div class="players-list">
+      <div class="player-card" *ngFor="let player of sortedPlayers()">
+        <div class="player-info">
+          <!-- Avatar -->
+          <div
+            class="avatar"
+            [style.backgroundColor]="'#' + player.id.slice(0, 6)"
+            (dblclick)="startEditRole(player)"
+          >
+            <!-- Show initials and badge -->
+            <div *ngIf="editingRolePlayerId() !== player.id; else editRole">
+              {{ getAvatarInitials(player.name) }}
+
+              <!-- Show badge only for Observer or Moderator -->
+              <div
+                class="role-badge"
+                *ngIf="player.role === PlayerRole.OBSERVER || player.role === PlayerRole.MODERATOR"
+              >
+                {{ getRoleBadge(player.role) }}
+              </div>
+            </div>
+
+            <!-- Edit role dropdown -->
+            <ng-template #editRole>
+              <select
+                [(ngModel)]="player.role"
+                (change)="saveRole(player)"
+                (blur)="saveRole(player)"
+                class="role-select"
+              >
+                <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+              </select>
+            </ng-template>
+          </div>
+
+          <!-- Name, Status, Voting -->
+          <div class="details">
+            <div class="name-status">
+              <!-- Name editable -->
+              <span class="name" (dblclick)="startEditName(player)">
+                <span *ngIf="editingPlayerId() !== player.id; else editName">
+                  {{ player.name }}
+                  <span
+                    class="role-text"
+                    *ngIf="player.role !== PlayerRole.PLAYER"
+                  >
+                    ({{ player.role | lowercase }})
+                  </span>
+                </span>
+
+                <ng-template #editName>
+                  <input
+                    type="text"
+                    [(ngModel)]="player.name"
+                    (blur)="saveName(player)"
+                    (keyup.enter)="saveName(player)"
+                    autofocus
+                    class="name-input"
+                  />
+                </ng-template>
               </span>
-            </ng-container>
+
+              <!-- Status indicator -->
+              <span class="status" [class.online]="player.connected"></span>
+            </div>
+
+            <!-- Voting info -->
+            <div class="voting-info" *ngIf="player.connected">
+              <ng-container *ngIf="!voteState.voteSession()?.revealed">
+                <span class="vote-status" [class.voted]="player.hasVoted">
+                  {{ player.hasVoted ? '✓ Ready' : 'Waiting...' }}
+                </span>
+              </ng-container>
+
+              <ng-container *ngIf="voteState.voteSession()?.revealed">
+                <span class="vote-value">
+                  {{ getPlayerVote(player.userId) }}
+                </span>
+              </ng-container>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="invite-section">
-    <div class="invite-box">
-      <button class="invite-button" (click)="copyInviteLink()">
-        <span>📨 Invite Teammate</span>
-        <span class="copied-feedback" *ngIf="showCopiedFeedback">Copied!</span>
-      </button>
-      <div class="invite-link">
-        <input type="text" [value]="inviteLink()" readonly>
-        <button (click)="copyInviteLink()">📋</button>
+    <!-- Invite Section -->
+    <div class="invite-section">
+      <div class="invite-box">
+        <button class="invite-button" (click)="copyInviteLink()">
+          <span>📨 Invite Teammate</span>
+          <span class="copied-feedback" *ngIf="showCopiedFeedback">Copied!</span>
+        </button>
+
+        <div class="invite-link">
+          <input type="text" [value]="inviteLink()" readonly />
+          <button (click)="copyInviteLink()">📋</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </ng-container>
