@@ -41,8 +41,6 @@ export class LandingPageComponent implements OnInit{
 
   ngOnInit(){
     this.roomService.getRooms().subscribe();
-    console.log(this.roomService.getRooms());
-    console.log("onInit");
   }
   rooms = this.roomService.rooms;
   isLoading = this.roomService.loading;
@@ -55,7 +53,7 @@ export class LandingPageComponent implements OnInit{
 
   handleSelectRoom(roomId: UUID): void {
     this.roomService.setCurrentRoom(roomId);
-    console.log(this.roomService.currentRoom());
+
     // this.router.navigate(['/room', roomId]);
     this.router.navigate(['room', roomId], { relativeTo: this.route });
   }

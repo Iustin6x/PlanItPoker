@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { AuthService } from './auth.service';
 import { PlayerDTO } from '../../shared/models/wbs';
 import { PlayerRole } from '../../shared/models/room/player.model';
@@ -7,22 +7,24 @@ import { VoteStateService } from './vote-state.service';
 @Injectable({ providedIn: 'root' })
 export class PlayerStateService {
   private authService = inject(AuthService);
+  private voteState = inject(VoteStateService);
 
   private _players = signal<PlayerDTO[]>([]);
   readonly players = this._players.asReadonly();
 
-  readonly isModerator = computed(() => {
+  readonly votes = this.voteState.votes;
+
+  readonly playerRole = computed(()=>{
     const userId = this.authService.getUserIdFromJWT();
-    console.log('Checking isModerator for userId:', userId);
-    return this._players().some(p => p.userId === userId && p.role === PlayerRole.MODERATOR);
+    return this._players().find(p => p.userId == userId)?.role;
   });
+
 
   getPlayer(playerId: string): PlayerDTO | undefined {
     return this._players().find(p => p.id === playerId);
   }
 
   setPlayers(players: PlayerDTO[]) {
-    console.log('Setting players:', players);
     this._players.set(players || []);
   }
 
@@ -41,24 +43,12 @@ export class PlayerStateService {
     });
   }
 
-  markPlayerVoted(playerId: string) {
-    this._players.update(players =>
-      players.map(p =>
-        p.id === playerId ? { ...p, hasVoted: true } : p
-      )
-    );
-  }
 
   disconnectPlayer(playerId: string) {
-    console.log("disconect function");
-    console.log(playerId);
-    console.log(this.players());
 
     this._players.update(list =>
       list.map(p => (p.id === playerId ? { ...p, connected: false } : p))
     );
-
-    console.log(this.players);
   }
 
   changeName(playerId: string, newName: string) {
@@ -68,7 +58,7 @@ export class PlayerStateService {
   }
 
   changeRole(playerId: string, newRole: PlayerRole) {
-    console.log("change role "+ playerId + " " + newRole)
+
     this._players.update(list =>
       list.map(p => (p.id === playerId ? { ...p, role: newRole } : p))
     );

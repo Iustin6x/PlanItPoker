@@ -381,10 +381,8 @@ export class RoomStateService {
 
 
   setRoomInfo(roomInfo: RoomInfoDTO) {
-    console.log("setRoom info");
     this._roomName.set(roomInfo.name);
     this._cardType.set(roomInfo.cardType);
     this._cards.set(roomInfo.customCards);
-    console.log("info " + this.roomName() + " " + this.cardType() + " " + this.cards());
   }
 }

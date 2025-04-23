@@ -29,7 +29,6 @@ export class AuthPageComponent {
       };
       this.service.login(data).subscribe(
         (response) => {
-          console.log(response);
           if (response.jwt != null) {
             alert("Hello, Your token is " + response.jwt);
             const jwtToken = response.jwt;
@@ -43,7 +42,6 @@ export class AuthPageComponent {
         email: this.email,
         password: this.password,
       };
-      // console.log(this.registerForm.value);
     this.service.register(data).subscribe(
       (response) => {
         if (response.id != null) {

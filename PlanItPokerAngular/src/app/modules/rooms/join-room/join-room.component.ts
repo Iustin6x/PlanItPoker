@@ -50,7 +50,6 @@ export class JoinRoomComponent implements OnInit {
   readonly voteSession = this.voteState.voteSession;
   readonly players = this.playerState.players;
   readonly stories = this.storyState.stories;
-  readonly isModerator = this.playerState.isModerator;
   protected result = this.voteState.result;
   readonly isRevealed = this.voteState.isRevealed;
       
@@ -58,15 +57,13 @@ export class JoinRoomComponent implements OnInit {
     const status = this.connectionState.status();
     
     if (status === 'connected') {
-      console.log("doi");
+
       // this.connectionState.setLoading(false);
     }
-    console.log("ce este state"+ this.loading)
 
     
     if (status === 'error') {
       this.connectionState.setError('Connection failed. Please try again.');
-      console.log("trei");
       this.connectionState.setLoading(false);
     }
   });
@@ -92,7 +89,6 @@ export class JoinRoomComponent implements OnInit {
       this.ws.connect(roomId);
     } catch (err) {
       this.connectionState.setError('Connection error');
-      console.log("patru");
       this.connectionState.setLoading(false);
     }
   }

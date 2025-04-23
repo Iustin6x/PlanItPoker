@@ -14,6 +14,7 @@ import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-
 import { MatTableModule } from '@angular/material/table';
 import { StoryStateService } from '../../../core/services/story-state.service';
 import { WebSocketMessageService } from '../../../core/services/web-socket-message.service';
+import { PlayerStateService } from '../../../core/services/player-state.service';
 
 @Component({
   selector: 'app-story-list',
@@ -37,6 +38,11 @@ export class StoryListComponent {
   private dialog = inject(MatDialog);
   protected storyState = inject(StoryStateService);
   private wsMessageService = inject(WebSocketMessageService);
+  private playerState = inject(PlayerStateService);
+  
+    // Expozăm proprietatea isModerator
+  readonly playerRole = this.playerState.playerRole;
+  
 
   protected selectedTab = signal(0);
   
@@ -49,17 +55,10 @@ export class StoryListComponent {
     }
   });
 
-  drop(event: CdkDragDrop<StoryDTO[]>) {
-    const stories = [...this.filteredStories()];
-    moveItemInArray(stories, event.previousIndex, event.currentIndex);
-    
-    stories.forEach((story, index) => {
-      const newOrder = index + 1;
-      if (story.order !== newOrder) {
-        this.wsMessageService.updateStoryOrder(story.id, newOrder);
-      }
-    });
-  }
+  readonly displayedColumns = computed(() => {
+    const baseColumns = ['position', 'name'];
+    return this.playerRole() === 'MODERATOR' ? [...baseColumns, 'actions'] : baseColumns;
+  });
 
   // Story actions
   handleDeleteStory(storyId: string): void {

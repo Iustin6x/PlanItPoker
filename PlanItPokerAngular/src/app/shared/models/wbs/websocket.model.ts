@@ -25,7 +25,6 @@ import { StoryStatus } from "../story";
   export type ServerMessage =
     | { type: 'error', message: string }
     | { type: 'playerJoined', player: PlayerDTO }
-    | { type: 'playerVoted', playerId: string }
     | { type: 'playerDisconnected', player: PlayerDTO }
     | { type: 'playerNameChanged', playerId: string, newName: string }
     | { type: 'playerRoleChanged', playerId: string, newRole: PlayerRole }
@@ -36,6 +35,7 @@ import { StoryStatus } from "../story";
     | { type: 'storyList', stories: StoryDTO[] }
     | { type: 'voteSession', session: VoteSessionDTO }
     | { type: 'voteStarted', session: VoteSessionDTO }
+    | { type: 'voteAdded', vote: VoteDTO }
     | { type: 'votesRevealed', votes: VoteDTO[], result: string | null }
     | { type: 'votesCleared', sessionId: string }
     | { type: 'voteEnded', sessionId: string, finalValue: string }
@@ -84,6 +84,9 @@ export interface VoteSessionDTO {
   storyId: string;
   roomId: string;
   votes: VoteDTO[];
+  result: string | null;
+  averageVotingTime?: string; // <- dacă ai deja calculat backend
+  votingDuration?: string;    // <- idem
 }
 
 export interface RoomInfoDTO{

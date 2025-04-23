@@ -42,11 +42,8 @@ export class VotingPageComponent implements OnInit {
     } else {
       console.error('Invalid UUID:', this.roomId);
     }
-    console.log('Room ID:', this.roomId);
-    this.storyService.setFirstStoryAsCurrent();
 
-    console.log(this.currentRoom());
-    console.log(this.currentStory());
+    this.storyService.setFirstStoryAsCurrent();
   }
 
   customCardSet = computed((): CardValue[] => {
@@ -64,7 +61,6 @@ export class VotingPageComponent implements OnInit {
     }
     
     this.voteService.submitVote(vote).subscribe();
-    console.log(this.storyService.stories());
   }
 
   handleModeratorAction(event: { type: string, data?: any }) {

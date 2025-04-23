@@ -39,7 +39,6 @@ export class RoomService {
       tap(response => console.log("Raw response:", response)),
       map(apiRooms => apiRooms.map(room => this.mapToRoomDTO(room))),
       tap(mappedRooms => {
-        console.log("Mapped rooms:", mappedRooms);
         this._rooms.set(mappedRooms); 
       }),
       catchError(error => {

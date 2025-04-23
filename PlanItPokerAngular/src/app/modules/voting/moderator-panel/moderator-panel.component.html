@@ -1,5 +1,7 @@
-<ng-container *ngIf="isModerator()">
+<ng-container *ngIf="playerRole() === PlayerRole.MODERATOR">
   <div class="controls-container">
+
+    <!-- Loading State -->
     <ng-container *ngIf="connectionState.loading()">
       <div class="loading">
         <div class="spinner"></div>
@@ -7,8 +9,10 @@
       </div>
     </ng-container>
 
+    <!-- Main Controls -->
     <ng-container *ngIf="!connectionState.loading() && !connectionState.error()">
-      <!-- Butonul Start Voting este vizibil doar când nu există sesiune activă -->
+
+      <!-- No session active -->
       <div *ngIf="voteSession() == null" class="controls-section">
         <ng-container *ngIf="hasActiveStory().length > 0; else noActiveStory">
           <button class="primary" (click)="handleAction('start')">
@@ -23,9 +27,11 @@
         </ng-template>
       </div>
 
+      <!-- Session Loaded -->
       <ng-container *ngIf="sessionLoaded()">
         <div *ngIf="voteSession() as session">
-          <!-- Dacă sesiunea este activă și voturile nu au fost încă dezvăluite -->
+
+          <!-- Active session, not revealed -->
           <div *ngIf="session.status === 'ACTIVE' && !session.revealed" class="controls-section">
             <h3>Session Controls</h3>
             <div class="button-group">
@@ -44,7 +50,7 @@
             </div>
           </div>
 
-          <!-- Dacă voturile au fost deja dezvăluite -->
+          <!-- Revealed votes -->
           <div *ngIf="session.status === 'ACTIVE' && session.revealed" class="controls-section">
             <div class="result-section">
               <h3>Voting Result</h3>
@@ -52,11 +58,24 @@
                 <div class="result-value">{{ result() }}</div>
               </div>
               <label for="finalResult">Select final value:</label>
-              <select id="finalResult" [(ngModel)]="selectedResult">
-                <option *ngFor="let card of cards()" [value]="card">{{ card }}</option>
-              </select>
+
+              <ng-container *ngIf="result() as res">
+                <ng-container *ngIf="cards() as cardList">
+                  <select id="finalResult" [(ngModel)]="selectedResult">
+                    <option *ngIf="!cardList.includes(res.toString())"
+                            [value]="res"
+                            disabled
+                            hidden>
+                      {{ res }} (not in cards)
+                    </option>
+                    <option *ngFor="let card of cardList" [value]="card">
+                      {{ card }}
+                    </option>
+                  </select>
+                </ng-container>
+              </ng-container>
             </div>
-            
+
             <div class="button-group">
               <button class="success" (click)="handleAction('finishVoting', selectedResult)">
                 <i class="icon-check"></i>
@@ -69,7 +88,7 @@
             </div>
           </div>
 
-          <!-- Dacă sesiunea de vot este completă -->
+          <!-- Voting completed -->
           <div *ngIf="session.status === 'COMPLETED'" class="controls-section">
             <div class="success-message">
               Voting completed successfully!
@@ -87,21 +106,22 @@
           </div>
         </div>
 
-        <!-- Dacă nu există sesiune activă de vot -->
+        <!-- No session available fallback -->
         <div *ngIf="!voteSession()" class="error-message">
           No active voting session!
         </div>
       </ng-container>
     </ng-container>
 
-    <!-- Dacă există o eroare -->
+    <!-- Error State -->
     <ng-container *ngIf="connectionState.error()">
       <div class="error-message">Eroare de conexiune!</div>
     </ng-container>
+
   </div>
 </ng-container>
 
-<!-- Dacă utilizatorul nu este moderator, componenta nu va fi afișată -->
-<ng-container *ngIf="!isModerator()">
-  <!-- Poți adăuga un mesaj sau altceva pentru utilizatorii non-moderator -->
+<!-- Non-moderator message (optional) -->
+<ng-container *ngIf="playerRole() !== PlayerRole.MODERATOR">
+  <!-- Add content here for non-moderators if needed -->
 </ng-container>

@@ -1,3 +1,4 @@
+/* voting-card.component.scss */
 .cards-container {
   display: flex;
   flex-wrap: wrap;
@@ -14,15 +15,16 @@
   height: 140px;
   border-radius: 12px;
   background: white;
+  border: 2px solid #e2e8f0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #e2e8f0;
   overflow: hidden;
-  
+  transform-style: preserve-3d;
+
   &:after {
     content: '';
     position: absolute;
@@ -36,26 +38,46 @@
     top: 50%;
     left: 50%;
   }
-  
-  &:hover:not(.selected) {
+
+  &:hover:not(.selected):not(.disabled):not(.voted) {
     transform: translateY(-8px) rotate(1deg);
     box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
-    
+
     &:after {
       opacity: 0.4;
     }
   }
-  
+
   &.selected {
-    background-color: #3b82f6;
-    color: white;
-    border-color: #2563eb;
-    transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 15px 25px rgba(59, 130, 246, 0.3);
-    
-    .card-corner, .card-center {
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    }
+    background-color: #3b82f6 !important;
+    color: white !important;
+    border-color: #2563eb !important;
+    transform: translateY(-5px) scale(1.05) !important;
+    box-shadow: 
+      0 15px 25px rgba(59, 130, 246, 0.3),
+      0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    z-index: 2;
+  }
+
+  &.voted {
+    border: 3px solid #10b981 !important;
+    box-shadow: 
+      0 0 0 3px rgba(16, 185, 129, 0.4),
+      0 8px 16px rgba(16, 185, 129, 0.2) !important;
+  }
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  // Stil pentru voturi revelate
+  .cards-container:not(.revealed) &.voted {
+    border-color: transparent;
+    box-shadow: none;
+    transform: none;
   }
 }
 
@@ -64,12 +86,13 @@
   font-size: 1rem;
   font-weight: bold;
   padding: 8px;
-  
+  transition: color 0.2s ease;
+
   &.top-left {
     top: 0;
     left: 0;
   }
-  
+
   &.bottom-right {
     bottom: 0;
     right: 0;
@@ -80,19 +103,31 @@
 .card-center {
   font-size: 2.25rem;
   font-weight: bold;
+  transition: transform 0.2s ease;
 }
 
 @media (max-width: 768px) {
   .cards-container {
     gap: 0.75rem;
   }
-  
+
   .card {
     width: 80px;
     height: 112px;
+
+    &.selected {
+      transform: translateY(-3px) scale(1.03);
+    }
   }
-  
+
   .card-center {
     font-size: 1.75rem;
   }
+}
+
+// Animație pentru schimbare vot
+@keyframes card-switch {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-10px) scale(1.1); }
+  100% { transform: translateY(0) scale(1); }
 }

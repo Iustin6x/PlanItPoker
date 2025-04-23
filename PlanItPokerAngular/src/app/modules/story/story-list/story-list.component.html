@@ -20,43 +20,51 @@
   </div>
   
   <div class="actions">
-    <button mat-raised-button color="primary" (click)="openCreateDialog()">Add Story</button>
+    <button *ngIf="playerRole() === 'MODERATOR'" 
+            mat-raised-button 
+            color="primary" 
+            (click)="openCreateDialog()">
+      Add Story
+    </button>
   </div>
 </div>
 
 <!-- Active Stories Tab -->
 <div *ngIf="selectedTab() === 0" class="stories-container">
   <table mat-table [dataSource]="filteredStories()" class="stories-table mat-elevation-z2">
-    <ng-container matColumnDef="position">
-      <th mat-header-cell *matHeaderCellDef>No.</th>
-      <td mat-cell *matCellDef="let story; let i = index">{{ i + 1 }}</td>
-    </ng-container>
-
+    <!-- Ștergem containerul pentru coloana "position" -->
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>Name</th>
       <td mat-cell *matCellDef="let story">{{ story.name }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="actions">
+    <ng-container *ngIf="playerRole() === 'MODERATOR'" matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let story">
-        <button mat-icon-button color="primary" (click)="handleEditStory(story); $event.stopPropagation()">
+        <button mat-icon-button 
+                color="primary" 
+                (click)="handleEditStory(story); $event.stopPropagation()">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button color="warn" (click)="handleDeleteStory(story.id); $event.stopPropagation()">
+        <button mat-icon-button 
+                color="warn" 
+                (click)="handleDeleteStory(story.id); $event.stopPropagation()">
           <mat-icon>delete</mat-icon>
         </button>
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="['position', 'name', 'actions']"></tr>
+    <tr mat-header-row 
+        *matHeaderRowDef="playerRole() === 'MODERATOR' ? ['name', 'actions'] : ['name']">
+    </tr>
     <tr mat-row 
-        *matRowDef="let row; columns: ['position', 'name', 'actions'];"
+        *matRowDef="let row; columns: playerRole() === 'MODERATOR' ? ['name', 'actions'] : ['name']"
         class="clickable-row"
-        (click)="handleEditStory(row)">
+        (click)="playerRole() === 'MODERATOR' && handleEditStory(row)">
     </tr>
   </table>
 </div>
+
 
 <!-- Completed Stories Tab -->
 <div *ngIf="selectedTab() === 1" class="stories-container">
@@ -68,28 +76,35 @@
 
     <ng-container matColumnDef="result">
       <th mat-header-cell *matHeaderCellDef>Result</th>
-      <td mat-cell *matCellDef="let story" [ngClass]="{'success-result': story.finalResult === 'SUCCESS', 'failure-result': story.finalResult === 'FAILURE'}">
+      <td mat-cell *matCellDef="let story" 
+          [ngClass]="{'success-result': story.finalResult === 'SUCCESS', 'failure-result': story.finalResult === 'FAILURE'}">
         {{ story.finalResult || '-' }}
       </td>
     </ng-container>
 
-    <ng-container matColumnDef="actions">
+    <ng-container *ngIf="playerRole() === 'MODERATOR'" matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let story">
-        <button mat-icon-button color="primary" (click)="handleEditStory(story); $event.stopPropagation()">
+        <button mat-icon-button 
+                color="primary" 
+                (click)="handleEditStory(story); $event.stopPropagation()">
           <mat-icon>visibility</mat-icon>
         </button>
-        <button mat-icon-button color="warn" (click)="handleDeleteStory(story.id); $event.stopPropagation()">
+        <button mat-icon-button 
+                color="warn" 
+                (click)="handleDeleteStory(story.id); $event.stopPropagation()">
           <mat-icon>delete</mat-icon>
         </button>
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="['name', 'result', 'actions']"></tr>
+    <tr mat-header-row 
+        *matHeaderRowDef="playerRole() === 'MODERATOR' ? ['name', 'result', 'actions'] : ['name', 'result']">
+    </tr>
     <tr mat-row 
-        *matRowDef="let row; columns: ['name', 'result', 'actions'];"
+        *matRowDef="let row; columns: playerRole() === 'MODERATOR' ? ['name', 'result', 'actions'] : ['name', 'result']"
         class="clickable-row"
-        (click)="handleEditStory(row)">
+        (click)="playerRole() === 'MODERATOR' && handleEditStory(row)">
     </tr>
   </table>
 </div>
@@ -113,29 +128,36 @@
 
     <ng-container matColumnDef="result">
       <th mat-header-cell *matHeaderCellDef>Result</th>
-      <td mat-cell *matCellDef="let story" [ngClass]="{'success-result': story.finalResult === 'SUCCESS', 'failure-result': story.finalResult === 'FAILURE'}">
+      <td mat-cell *matCellDef="let story" 
+          [ngClass]="{'success-result': story.finalResult === 'SUCCESS', 'failure-result': story.finalResult === 'FAILURE'}">
         {{ story.finalResult || '-' }}
       </td>
     </ng-container>
 
-    <ng-container matColumnDef="actions">
+    <ng-container *ngIf="playerRole() === 'MODERATOR'" matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let story">
-        <button mat-icon-button color="primary" (click)="handleEditStory(story); $event.stopPropagation()">
+        <button mat-icon-button 
+                color="primary" 
+                (click)="handleEditStory(story); $event.stopPropagation()">
           <mat-icon>{{ story.status === 'ACTIVE' ? 'edit' : 'visibility' }}</mat-icon>
         </button>
-        <button mat-icon-button color="warn" (click)="handleDeleteStory(story.id); $event.stopPropagation()">
+        <button mat-icon-button 
+                color="warn" 
+                (click)="handleDeleteStory(story.id); $event.stopPropagation()">
           <mat-icon>delete</mat-icon>
         </button>
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="['status', 'name', 'result', 'actions']"></tr>
+    <tr mat-header-row 
+        *matHeaderRowDef="playerRole() === 'MODERATOR' ? ['status', 'name', 'result', 'actions'] : ['status', 'name', 'result']">
+    </tr>
     <tr mat-row 
-        *matRowDef="let row; columns: ['status', 'name', 'result', 'actions'];"
+        *matRowDef="let row; columns: playerRole() === 'MODERATOR' ? ['status', 'name', 'result', 'actions'] : ['status', 'name', 'result']"
         [ngClass]="{'active-row': row.status === 'ACTIVE', 'completed-row': row.status === 'COMPLETED'}"
         class="clickable-row"
-        (click)="handleEditStory(row)">
+        (click)="playerRole() === 'MODERATOR' && handleEditStory(row)">
     </tr>
   </table>
 </div>

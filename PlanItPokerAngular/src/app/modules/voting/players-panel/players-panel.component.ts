@@ -21,14 +21,22 @@ export class PlayersPanelComponent{
   protected playerState = inject(PlayerStateService);
   protected voteState = inject(VoteStateService);
   protected authService = inject(AuthService);
+  protected PlayerRole = PlayerRole;
   private wsMessages = inject(WebSocketMessageService);
   protected showCopiedFeedback = false;
+
+  protected votedMap = computed(() => {
+    return new Set(this.votes().map(v => v.userId));
+  });
 
   
   protected players = this.playerState.players;
   protected voteSession = this.voteState.voteSession;
   protected inviteLink = computed(() => window.location.href);
-  protected PlayerRole = PlayerRole;
+  readonly playerRole = computed(()=> {
+    const userId = this.authService.getUserIdFromJWT();
+    return this.players().find(p => p.userId === userId)?.role;
+  });
   readonly isModerator = computed(() => {
     const userId = this.authService.getUserIdFromJWT();
     return this.players().some(p => 
@@ -48,7 +56,7 @@ export class PlayersPanelComponent{
   protected notVotedOnlinePlayers = computed(() => {
     if (!this.voteSession()) return [];
     return this.players().filter(p =>
-      p.connected && !p.hasVoted
+      p.connected && !this.voteState.hasVoted(p.userId) && p.role !== PlayerRole.OBSERVER
     );
   });
 
@@ -94,10 +102,9 @@ export class PlayersPanelComponent{
       .slice(0, 2);
   }
 
-  // hasVoted(playerId: string): boolean {
-  //   return this.voteState.votes().some(v => v.userId === playerId);
-  // }
-  
+  hasVoted(playerId: string): boolean {
+    return this.votedMap().has(playerId);
+  }
 
   getRoleBadge(role: PlayerRole): string {
     switch(role) {
@@ -131,7 +138,6 @@ export class PlayersPanelComponent{
 
   saveRole(player: PlayerDTO): void {
     this.wsMessages.changePlayerRole(player.id, player.role);
-    console.log("saveRole " + this.playerState.getPlayer(player.id)?.role);
     this.editingRolePlayerId.set(null);
   }
 }

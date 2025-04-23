@@ -15,26 +15,18 @@
     <div class="players-list">
       <div class="player-card" *ngFor="let player of sortedPlayers()">
         <div class="player-info">
-          <!-- Avatar -->
           <div
             class="avatar"
             [style.backgroundColor]="'#' + player.id.slice(0, 6)"
             (dblclick)="startEditRole(player)"
           >
-            <!-- Show initials and badge -->
             <div *ngIf="editingRolePlayerId() !== player.id; else editRole">
               {{ getAvatarInitials(player.name) }}
-
-              <!-- Show badge only for Observer or Moderator -->
-              <div
-                class="role-badge"
-                *ngIf="player.role === PlayerRole.OBSERVER || player.role === PlayerRole.MODERATOR"
-              >
+              <div class="role-badge" *ngIf="player.role === PlayerRole.OBSERVER || player.role === PlayerRole.MODERATOR">
                 {{ getRoleBadge(player.role) }}
               </div>
             </div>
 
-            <!-- Edit role dropdown -->
             <ng-template #editRole>
               <select
                 [(ngModel)]="player.role"
@@ -47,17 +39,12 @@
             </ng-template>
           </div>
 
-          <!-- Name, Status, Voting -->
           <div class="details">
             <div class="name-status">
-              <!-- Name editable -->
               <span class="name" (dblclick)="startEditName(player)">
                 <span *ngIf="editingPlayerId() !== player.id; else editName">
                   {{ player.name }}
-                  <span
-                    class="role-text"
-                    *ngIf="player.role !== PlayerRole.PLAYER"
-                  >
+                  <span class="role-text" *ngIf="player.role !== PlayerRole.PLAYER">
                     ({{ player.role | lowercase }})
                   </span>
                 </span>
@@ -74,15 +61,13 @@
                 </ng-template>
               </span>
 
-              <!-- Status indicator -->
               <span class="status" [class.online]="player.connected"></span>
             </div>
 
-            <!-- Voting info -->
-            <div class="voting-info" *ngIf="player.connected">
+            <div class="voting-info" *ngIf="player.connected && player.role !== PlayerRole.OBSERVER">
               <ng-container *ngIf="!voteState.voteSession()?.revealed">
-                <span class="vote-status" [class.voted]="player.hasVoted">
-                  {{ player.hasVoted ? '✓ Ready' : 'Waiting...' }}
+                <span class="vote-status" [class.voted]="votedMap().has(player.userId)">
+                  {{ votedMap().has(player.userId) ? '✓ Ready' : 'Waiting...' }}
                 </span>
               </ng-container>
 
@@ -97,7 +82,6 @@
       </div>
     </div>
 
-    <!-- Invite Section -->
     <div class="invite-section">
       <div class="invite-box">
         <button class="invite-button" (click)="copyInviteLink()">
