@@ -12,6 +12,7 @@ import { Story, StoryStatus } from '../../../shared/models/story';
 import { v4 as uuidv4 } from 'uuid';
 import { UUID } from 'crypto';
 import { CardValue } from '../../../shared/types';
+import { StoryDTO } from '../../../shared/models/wbs';
 
 @Component({
   selector: 'app-story-details-dialog',
@@ -32,22 +33,14 @@ import { CardValue } from '../../../shared/types';
 })
 export class StoryDetailsDialogComponent {
   private dialogRef = inject(MatDialogRef<StoryDetailsDialogComponent>);
-  protected initialData = input<Partial<Story>>(inject(MAT_DIALOG_DATA));
+  protected initialData = input<Partial<StoryDTO>>(inject(MAT_DIALOG_DATA));
 
 
-  storyData = model<Story>({
+  storyData = model<StoryDTO>({
     id: this.initialData()?.id || uuidv4() as UUID,
     name: '',
-    roomId: this.initialData()?.roomId || '' as UUID,
+    finalResult: null,
     status: this.initialData()?.status || StoryStatus.ACTIVE,
-    session: this.initialData()?.session || {
-      storyId: this.initialData()?.id || uuidv4() as UUID,
-      roomId: this.initialData()?.roomId || '' as UUID,
-      startTime: new Date(),
-      status: 'PENDING',
-      votes: {} as Record<UUID, CardValue>,
-      revealed: false
-    },
     ...this.initialData()
   });
 
@@ -62,17 +55,17 @@ export class StoryDetailsDialogComponent {
   }
 
   get isEditMode(): boolean {
-    return !!this.initialData()?.id;
+    return !!this.initialData()?.id; 
   }
 
+
   protected submit(): void {
-   
-    const story: Story = {
+    const story: StoryDTO = {
       ...this.storyData(),
     };
-    console.log("submit"+story.name);
+    console.log("submit " + story.name); 
 
-    this.dialogRef.close(story);
+    this.dialogRef.close(story);  
   }
 
   protected closeDialog(): void {

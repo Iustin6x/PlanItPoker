@@ -43,6 +43,7 @@ export class JoinRoomComponent implements OnInit {
 
 
   protected error = this.connectionState.error;
+  showError: boolean = true;
   protected roomId = signal<string | null>(null);
 
   protected loading = this.connectionState.loading;
@@ -91,6 +92,10 @@ export class JoinRoomComponent implements OnInit {
       this.connectionState.setError('Connection error');
       this.connectionState.setLoading(false);
     }
+  }
+
+  closeErrorMessage() {
+    this.showError = false;
   }
 
   retryConnection() {

@@ -116,6 +116,11 @@ export class RoomMessageHandlerService {
         }
         break;
 
+      case 'storyWithSession':
+        this.storyState.setViewedStory(message.story);
+        this.storyState.setViewedSession(message.session);
+        break;
+
       case 'voteEnded':
         this.voteState.endSession(message.finalValue);
         break;

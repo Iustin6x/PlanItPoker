@@ -6,10 +6,11 @@
     </div>
     
     <!-- Error state -->
-    <div *ngIf="error()" class="error-message">
+    <div *ngIf="showError && error()" class="error-message">
       <div class="error-content">
         <mat-icon color="warn">error_outline</mat-icon>
         <p>{{ error() }}</p>
+        <!-- to do  -->
         <button mat-raised-button color="primary" (click)="retryConnection()">Retry</button>
       </div>
     </div>

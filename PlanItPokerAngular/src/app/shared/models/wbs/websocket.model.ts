@@ -13,6 +13,7 @@ import { StoryStatus } from "../story";
     | { type: 'changeRole', playerId: string, newRole: PlayerRole }
     | { type: 'deleteStory', storyId: string }
     | { type: 'createStory', name: string }
+    | { type: 'getStoryWithSession', storyId: string }
     | { type: 'updateStory', storyId: string, name: string }
     | { type: 'updateStoryOrder', storyId: string, newOrder: string }
     | { type: 'startVote' }
@@ -31,6 +32,7 @@ import { StoryStatus } from "../story";
     | { type: 'playerList', players: PlayerDTO[] }
     | { type: 'storyCreated', story: StoryDTO }
     | { type: 'storyUpdated', story: StoryDTO }
+    | { type: 'storyWithSession', story: StoryDTO, session: VoteSessionDTO}
     | { type: 'storyDeleted', storyId: string }
     | { type: 'storyList', stories: StoryDTO[] }
     | { type: 'voteSession', session: VoteSessionDTO }
@@ -63,7 +65,6 @@ import { StoryStatus } from "../story";
     name: string;
     finalResult: string | null;
     status: StoryStatus;
-    order: number;
   }
 
   export interface VoteDTO {
@@ -85,8 +86,6 @@ export interface VoteSessionDTO {
   roomId: string;
   votes: VoteDTO[];
   result: string | null;
-  averageVotingTime?: string; // <- dacă ai deja calculat backend
-  votingDuration?: string;    // <- idem
 }
 
 export interface RoomInfoDTO{

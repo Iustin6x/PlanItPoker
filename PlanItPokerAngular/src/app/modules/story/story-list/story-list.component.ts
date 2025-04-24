@@ -75,11 +75,11 @@ export class StoryListComponent {
 
   handleEditStory(story: StoryDTO): void {
     this.dialog.open(StoryDetailsDialogComponent, {
-      data: story,
+      data: story,  
       width: '600px'
     }).afterClosed().subscribe(updatedStory => {
       if (updatedStory) {
-        this.handleUpdateStory(story.id, updatedStory.name);
+        this.handleUpdateStory(story.id, updatedStory.name);  
       }
     });
   }

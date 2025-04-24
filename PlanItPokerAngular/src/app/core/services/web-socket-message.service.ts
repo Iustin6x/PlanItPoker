@@ -31,13 +31,15 @@ export class WebSocketMessageService {
     this.ws.send({ type: 'createStory', name });
   }
 
+  getStoryWithSession(storyId: string): void {
+    console.log("getStorywithSession");
+    this.ws.send({ type: 'getStoryWithSession', storyId });
+  }
+
   updateStory(storyId: string, name: string): void {
     this.ws.send({ type: 'updateStory', storyId, name });
   }
 
-  updateStoryOrder(storyId: string, newOrder: number): void {
-    this.ws.send({ type: 'updateStoryOrder', storyId, newOrder: newOrder.toString() });
-  }
 
   deleteStory(storyId: string): void {
     this.ws.send({ type: 'deleteStory', storyId });
