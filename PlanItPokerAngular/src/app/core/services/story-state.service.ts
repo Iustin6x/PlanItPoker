@@ -14,24 +14,22 @@ export class StoryStateService {
   );
 
   readonly completedStories = computed(() =>
-    this._stories().filter(s => ( s.status === 'COMPLETED' || s.status === 'SKIPPED'))
+    this._stories().filter(s => (s.status === 'COMPLETED' || s.status === 'SKIPPED'))
   );
 
-  
+
   private _viewedStory = signal<StoryDTO | null>(null);
   readonly viewedStory = this._viewedStory.asReadonly();
 
-
   private _viewedSession = signal<VoteSessionDTO | null>(null);
   readonly viewedSession = this._viewedSession.asReadonly();
-  
-
-  setViewedStory(story: StoryDTO) {
-    this._viewedStory.set(story);
-  }
 
   setViewedSession(session: VoteSessionDTO | null): void {
     this._viewedSession.set(session);
+  }
+
+  setViewedStory(story: StoryDTO): void {
+    this._viewedStory.set(story);
   }
 
   clearViewedData() {
@@ -71,5 +69,5 @@ export class StoryStateService {
   }
 
 
-  
+
 }

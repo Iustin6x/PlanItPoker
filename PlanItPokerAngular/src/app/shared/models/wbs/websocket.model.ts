@@ -40,13 +40,12 @@ import { StoryStatus } from "../story";
     | { type: 'voteAdded', vote: VoteDTO }
     | { type: 'votesRevealed', votes: VoteDTO[], result: string | null }
     | { type: 'votesCleared', sessionId: string }
-    | { type: 'voteEnded', sessionId: string, finalValue: string }
+    | { type: 'voteEnded', sessionId: string, finalValue: string, story: StoryDTO}
     | { type: 'roomInfo', room: RoomInfoDTO }
     | { type: 'storySkipped', story: StoryDTO, session?: VoteSessionDTO }
     | { type: 'noPlayers'}
     | { type: 'noStories'}
     | { type: 'noActiveVoteSession' }
-    // | { type: 'updateStoryOrder', story: StoryDTO };
   
 
 

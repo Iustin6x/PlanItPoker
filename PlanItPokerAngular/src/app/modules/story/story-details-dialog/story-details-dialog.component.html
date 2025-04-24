@@ -1,22 +1,76 @@
-<h1 mat-dialog-title>{{ isEditMode ? 'Edit Story' : 'New Story' }}</h1>
+<h1 mat-dialog-title>
+  {{
+    mode === 'create' ? 'New Story' :
+    mode === 'edit' ? 'Edit Story' :
+    'Story Details'
+  }}
+</h1>
 
 <div mat-dialog-content>
-  <mat-form-field>
-    <mat-label>Name</mat-label>
-    <input matInput 
-           [(ngModel)]="storyData().name" 
-           required />
-  </mat-form-field>
+  <!-- Display loading spinner if data is loading -->
+  <ng-container *ngIf="isLoading; else content">
+    <div class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  </ng-container>
+
+  <!-- Content when not loading -->
+  <ng-template #content>
+    <!-- Create & Edit Mode: Show input fields -->
+    <ng-container *ngIf="mode !== 'view'; else viewModeContent">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Name</mat-label>
+        <input matInput
+               [(ngModel)]="storyData().name"
+               required />
+      </mat-form-field>
+    </ng-container>
+
+    <!-- View Mode: Show plain text -->
+    <ng-template #viewModeContent>
+      <div class="readonly-field">
+        <label class="readonly-label">Name</label>
+        <div class="readonly-value">{{ storyData().name }}</div>
+      </div>
+
+      <div class="readonly-field">
+        <label class="readonly-label">Final Result</label>
+        <div class="readonly-value">{{ storyData().finalResult || '-' }}</div>
+      </div>
+
+      <ng-container *ngIf="_viewedSession()">
+
+        <div class="readonly-field">
+          <label class="readonly-label">Votes</label>
+          <table class="votes-table">
+            <thead>
+              <tr>
+                <th>Player Name</th>
+                <th>Vote</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let vote of _viewedSession()?.votes">
+                <td>{{ getPlayerName(vote.userId) }}</td>
+                <td>{{ vote.cardValue }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+    </ng-template>
+  </ng-template>
 </div>
 
 <div mat-dialog-actions>
   <button mat-button (click)="closeDialog()">Close</button>
-  <button
-      mat-raised-button
-      color="primary"
-      [disabled]="!isValidForm"
-      (click)="submit()"
-    >
-          {{ isEditMode ? 'Update' : 'Create' }}
-    </button>
+
+  <!-- Show submit only if not in view mode and loading is false -->
+  <button mat-raised-button
+          color="primary"
+          *ngIf="mode !== 'view' && !isLoading"
+          [disabled]="!isValidForm()"
+          (click)="submit()">
+    {{ mode === 'edit' ? 'Update' : 'Create' }}
+  </button>
 </div>

@@ -2,12 +2,14 @@ import { inject, Injectable } from '@angular/core';
 import { WebSocketService } from './websocket.service';
 import { ClientMessage } from '../../shared/models/wbs/websocket.model';
 import { PlayerRole } from '../../shared/models/room/player.model';
+import { ConnectionStateService } from './connection-state.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WebSocketMessageService {
-  private ws = inject(WebSocketService); 
+  private ws = inject(WebSocketService);
+  private connectionState = inject(ConnectionStateService);
   
   send(message: ClientMessage): void {
     this.ws.send(message);
@@ -33,6 +35,7 @@ export class WebSocketMessageService {
 
   getStoryWithSession(storyId: string): void {
     console.log("getStorywithSession");
+    this.connectionState.setLoading(true);
     this.ws.send({ type: 'getStoryWithSession', storyId });
   }
 

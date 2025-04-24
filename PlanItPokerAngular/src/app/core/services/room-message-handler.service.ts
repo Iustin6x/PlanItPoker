@@ -119,10 +119,12 @@ export class RoomMessageHandlerService {
       case 'storyWithSession':
         this.storyState.setViewedStory(message.story);
         this.storyState.setViewedSession(message.session);
+        this.connectionState.setLoading(false);
         break;
 
       case 'voteEnded':
         this.voteState.endSession(message.finalValue);
+        this.storyState.updateStory(message.story);
         break;
 
       case 'error':

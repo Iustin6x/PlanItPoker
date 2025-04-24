@@ -16,9 +16,9 @@ export class AuthService {
 
   constructor() {
     const storedToken = localStorage.getItem('jwt');
-  // if (storedToken) {
-  //   this.jwtToken.set(storedToken);
-  // }
+  if (storedToken) {
+    this.jwtToken.set(storedToken);
+  }
   }
 
   register(signRequest: any): Observable<any> {

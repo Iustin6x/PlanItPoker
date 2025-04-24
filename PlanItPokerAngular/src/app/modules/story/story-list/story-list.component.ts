@@ -15,6 +15,7 @@ import { MatTableModule } from '@angular/material/table';
 import { StoryStateService } from '../../../core/services/story-state.service';
 import { WebSocketMessageService } from '../../../core/services/web-socket-message.service';
 import { PlayerStateService } from '../../../core/services/player-state.service';
+import { ConnectionStateService } from '../../../core/services/connection-state.service';
 
 @Component({
   selector: 'app-story-list',
@@ -39,6 +40,8 @@ export class StoryListComponent {
   protected storyState = inject(StoryStateService);
   private wsMessageService = inject(WebSocketMessageService);
   private playerState = inject(PlayerStateService);
+  private connectionState = inject(ConnectionStateService);
+
   
     // Expozăm proprietatea isModerator
   readonly playerRole = this.playerState.playerRole;
@@ -63,6 +66,7 @@ export class StoryListComponent {
   // Story actions
   handleDeleteStory(storyId: string): void {
     this.wsMessageService.deleteStory(storyId);
+    
   }
 
   handleCreateStory(name: string): void {

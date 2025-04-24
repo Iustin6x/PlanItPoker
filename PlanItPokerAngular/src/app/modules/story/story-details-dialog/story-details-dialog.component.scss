@@ -37,3 +37,26 @@ h1 {
   padding: 1.5rem !important;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
 }
+
+.full-width {
+  width: 100%;
+}
+
+.readonly-field {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+  padding-bottom: 4px;
+}
+
+.readonly-label {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 4px;
+}
+
+.readonly-value {
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.87);
+}
