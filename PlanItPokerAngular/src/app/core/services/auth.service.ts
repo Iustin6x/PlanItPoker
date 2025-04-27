@@ -12,12 +12,25 @@ export class AuthService {
   private http = inject(HttpClient);
   private jwtToken = signal<string | null>(null);
   private router = inject(Router);
-  public isAuthenticated = () => this.isTokenValid();
+
+  private _returnUrl = signal<String> ('/');
+
+  setReturnUrl(url: string) {
+    this._returnUrl.set(url);
+  }
+
+  readonly returnUrl = this._returnUrl.asReadonly();
+
+  isAuthenticated(): boolean {
+    const token = localStorage.getItem('jwt');
+    return (!!token && !this.isTokenExpired(token)); 
+  }
 
   constructor() {
     const storedToken = localStorage.getItem('jwt');
   if (storedToken) {
     this.jwtToken.set(storedToken);
+    this.autoLogout();
   }
   }
 
@@ -44,6 +57,7 @@ export class AuthService {
   private setToken(token: string): void {
     localStorage.setItem('jwt', token);
     this.jwtToken.set(token);
+    this.autoLogout();
   }
 
   getToken(): string | null {
@@ -104,7 +118,7 @@ export class AuthService {
     try {
       return JSON.parse(atob(token.split('.')[1]));
     } catch (e) {
-      console.error('Eroare la decodarea tokenului:', e);
+      console.error('Error dedcode token', e);
       return null;
     }
   }
@@ -115,6 +129,11 @@ export class AuthService {
 
     const decoded = this.decodeToken(token);
     const expiresIn = decoded.exp * 1000 - Date.now();
+
+    if (!decoded) {
+      console.warn('Token decoding failed or token missing.');
+      return;
+    }
     
     setTimeout(() => {
       this.logout();

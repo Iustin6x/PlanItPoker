@@ -2,8 +2,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { JwtService } from '../../../core/services/jwt.service';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -17,9 +16,17 @@ import { AuthService } from '../../../core/services/auth.service';
 export class SignUpComponent {
   authService = inject(AuthService);
   router = inject(Router);
+
+  returnUrl = '';
+
   name = '';
   email = '';
   password = '';
+
+  constructor(private route: ActivatedRoute) {
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    this.authService.setReturnUrl(this.returnUrl);
+  }
 
   handleSubmit() {
     const data = {
@@ -31,7 +38,7 @@ export class SignUpComponent {
     this.authService.register(data).subscribe((response) => {
       if (response.id) {
         alert("Registration successful!");
-        this.router.navigateByUrl("/login");
+        this.router.navigate(['/login']);
       }
     });
   }

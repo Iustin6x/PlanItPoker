@@ -1,17 +1,18 @@
 // header.component.ts
 import { Component, signal } from '@angular/core';
 
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { fadeIn } from '../../animations/animations';
 import { UserService } from '../../../core/services/user.service';
+import { User } from '../../models/user';
 
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, RouterModule],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
   animations: [fadeIn]
@@ -24,6 +25,14 @@ export class HeaderComponent {
     private router: Router
   ) {}
 
+  get user(): User | null {
+    return this.userService.currentUser();
+  }
+
+  ngOnInit() {
+    this.userService.getCurrentUser().subscribe();
+  }
+
   toggleMenu() {
     this.isMenuOpen.update(v => !v);
   }
@@ -34,7 +43,8 @@ export class HeaderComponent {
     this.isMenuOpen.set(false);
   }
 
-  getInitials(name: string): string {
+  getInitials(name?: string): string {
+    if (!name) return '??';
     return name.split(' ')
       .map(part => part[0])
       .join('')

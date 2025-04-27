@@ -3,8 +3,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { UserService } from '../../../core/services/user.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { JwtService } from '../../../core/services/jwt.service';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -16,8 +15,11 @@ import { AuthService } from '../../../core/services/auth.service';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent{
-  authService = inject(AuthService);
-  router = inject(Router);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
+  protected returnUrl = this.authService.returnUrl;
   
   email = '';
   password = '';
@@ -25,6 +27,7 @@ export class LoginComponent{
   errorMessage = signal<string | null>(null);
 
 
+  
   handleSubmit() {
     this.errorMessage.set(null); // Resetare mesaj de eroare
     
@@ -34,7 +37,7 @@ export class LoginComponent{
     };
     
     this.authService.login(data).subscribe({
-      next: () => this.router.navigateByUrl("/"),
+      next: () => this.router.navigateByUrl(this.returnUrl().toString()),
       error: (err) => {
         if (err.status === 401) {
           this.errorMessage.set('Email sau parolă incorectă');

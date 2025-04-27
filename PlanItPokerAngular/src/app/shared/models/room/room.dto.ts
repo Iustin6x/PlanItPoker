@@ -1,9 +1,9 @@
-import { UUID } from "crypto";
+
 import { CardType, CardValue } from "../../types";
 import { PlayerRole } from "./player.model";
 
 export interface RoomDialogDTO {
-    id?: UUID;
+    id?: string;
     name: string;
     cardType: CardType;
     cards: CardValue[];

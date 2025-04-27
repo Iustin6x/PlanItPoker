@@ -10,8 +10,6 @@ import { CommonModule } from '@angular/common';
 
 import { Story, StoryStatus } from '../../../shared/models/story';
 import { v4 as uuidv4 } from 'uuid';
-import { UUID } from 'crypto';
-import { CardValue } from '../../../shared/types';
 import { StoryDTO } from '../../../shared/models/wbs';
 import { ConnectionStateService } from '../../../core/services/connection-state.service';
 import { StoryStateService } from '../../../core/services/story-state.service';
@@ -60,7 +58,7 @@ export class StoryDetailsDialogComponent implements OnInit {
 
   // Story data model with defaults if not provided
   storyData = model<StoryDTO>({
-    id: this.initialData()?.id || uuidv4() as UUID,
+    id: this.initialData()?.id || ' ',
     name: '',
     finalResult: null,
     status: this.initialData()?.status || StoryStatus.ACTIVE,

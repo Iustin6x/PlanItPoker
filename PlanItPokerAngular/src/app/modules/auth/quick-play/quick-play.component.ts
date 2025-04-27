@@ -1,8 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { JwtService } from '../../../core/services/jwt.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -17,6 +16,9 @@ export class QuickPlayComponent {
   router = inject(Router);
   playerName = '';
   errorMessage = signal<string | null>(null);
+  private activatedRoute = inject(ActivatedRoute);
+  protected returnUrl = this.authService.returnUrl;
+
 
   handleJoin() {
     this.errorMessage.set(null);
@@ -27,7 +29,7 @@ export class QuickPlayComponent {
     }
 
     this.authService.quickplay(this.playerName).subscribe({
-      next: () => this.router.navigateByUrl('/'),
+      next: () => this.router.navigateByUrl(this.returnUrl().toString()),
       error: (err) => {
         this.errorMessage.set('Error joining the game');
         console.error('Quickplay error:', err);

@@ -8,10 +8,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { CommonModule } from '@angular/common';
-import { v4 as uuidv4 } from 'uuid';
-import { UUID } from 'crypto';
-
-import { UserService } from '../../../core/services/user.service';
 import { Room, RoomDialogDTO} from '../../../shared/models/room';
 import { CardType, CardValue, PREDEFINED_CARD_SETS } from '../../../shared/types';
 

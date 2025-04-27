@@ -370,7 +370,6 @@ PlanItPoker
 │  │  │  │  │  ├─ user.service.ts
 │  │  │  │  │  ├─ vote-state.service.spec.ts
 │  │  │  │  │  ├─ vote-state.service.ts
-│  │  │  │  │  ├─ vote.service.spec.ts
 │  │  │  │  │  ├─ vote.service.ts
 │  │  │  │  │  ├─ web-socket-message.service.spec.ts
 │  │  │  │  │  ├─ web-socket-message.service.ts

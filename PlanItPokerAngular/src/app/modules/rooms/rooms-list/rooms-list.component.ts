@@ -1,6 +1,7 @@
 // rooms-list.component.ts
 import { 
-  Component, Input, Output, EventEmitter, ChangeDetectionStrategy 
+  Component, Input, Output, EventEmitter, ChangeDetectionStrategy, 
+  OnInit
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -16,6 +17,7 @@ import { MatTableModule } from '@angular/material/table';
 
 import { CardType, isUUID, UUID } from '../../../shared/types';
 import { RoomDialogDTO } from '../../../shared/models/room';
+import { interval, Subscription } from 'rxjs';
 
 
 @Component({
@@ -36,7 +38,7 @@ import { RoomDialogDTO } from '../../../shared/models/room';
   styleUrls: ['./rooms-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RoomsListComponent {
+export class RoomsListComponent{
   @Input() rooms: RoomDialogDTO[] = [];
   @Input() isLoading = false;
   @Output() delete = new EventEmitter<UUID>();
@@ -69,7 +71,11 @@ export class RoomsListComponent {
   }
 
   handleSelect(room: RoomDialogDTO): void {
-    this.select.emit(room.id!);
+    if (room.id && isUUID(room.id)) {
+      this.select.emit(room.id);
+    } else {
+      console.error('Invalid room ID:', room.id);
+    }
   }
 
   handleEdit(room: RoomDialogDTO): void {

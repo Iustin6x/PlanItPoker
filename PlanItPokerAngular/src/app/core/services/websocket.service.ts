@@ -34,7 +34,7 @@ export class WebSocketService {
         next: () => {
           this.connectionState.setLoading(true);
           this.connectionState.setStatus('connected');
-          this.send({ type: 'join', roomId }); // Trimitem mesajul 'join' imediat după conectare
+          this.send({ type: 'join', roomId });
         }
       },
       closeObserver: {

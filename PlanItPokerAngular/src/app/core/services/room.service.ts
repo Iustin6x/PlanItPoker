@@ -1,11 +1,11 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { catchError, delay, finalize, map, Observable, of, tap, throwError } from 'rxjs';
-import { v4 as uuidv4 } from 'uuid';
 import { Room, RoomDialogDTO} from '../../shared/models/room';
 import { UserService } from './user.service';
 import { CardType, UUID } from '../../shared/types';
 import { Player, PlayerRole } from '../../shared/models/room/player.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class RoomService {
@@ -15,6 +15,8 @@ export class RoomService {
   private _rooms = signal<RoomDialogDTO[]>([]);
   private latency = 500;
 
+  private baseUrl = `${environment.apiUrl}`;
+
   rooms = this._rooms.asReadonly();
   currentRoom = this._currentRoom.asReadonly();
   loading = signal(false);
@@ -22,7 +24,6 @@ export class RoomService {
   setCurrentRoom(roomId: UUID): void {
     const room = this._rooms().find(r => r.id === roomId);
     if (room) {
-      // If you need to convert DTO to Room entity
       this._currentRoom.set(this.convertDtoToRoom(room));
     }
   }
@@ -30,12 +31,12 @@ export class RoomService {
   clearCurrentRoom(): void {
     this._currentRoom.set(undefined);
   }
-
+ 
 
   getRooms(): Observable<RoomDialogDTO[]> {
     this.loading.set(true);
   
-    return this.http.get<any[]>('http://localhost:8080/api/rooms').pipe(
+    return this.http.get<any[]>(`${this.baseUrl}/rooms`).pipe(
       tap(response => console.log("Raw response:", response)),
       map(apiRooms => apiRooms.map(room => this.mapToRoomDTO(room))),
       tap(mappedRooms => {
@@ -55,8 +56,8 @@ export class RoomService {
     return {
       id: apiRoom.id as UUID,
       name: apiRoom.name,
-      cardType: CardType.FIBONACCI, // Default value
-      cards: [], // Default empty array
+      cardType: CardType.FIBONACCI, 
+      cards: [],
       lastVotedStory: apiRoom.lastVotedStory || 'No completed stories',
       totalPoints: apiRoom.totalPoints || 0,
       inviteLink: apiRoom.inviteLink,
@@ -70,7 +71,7 @@ export class RoomService {
       name: dto.name,
       cardType: dto.cardType,
       cards: dto.cards,
-      players: [], // You might need to fetch players separately
+      players: [],
       stories: [],
       inviteLink: dto.inviteLink!,
     };
@@ -79,13 +80,10 @@ export class RoomService {
   createRoom(dto: { name: string; cardType: CardType }): Observable<RoomDialogDTO> {
     this.loading.set(true);
 
-    return this.http.post<any>('http://localhost:8080/api/room', dto).pipe(
+    return this.http.post<any>(`${this.baseUrl}/room`, dto).pipe(
       map(apiRoom => this.mapToRoomDTO(apiRoom)),
       tap(newRoomDto => {
-        // Adaugă camera nouă la lista de camere
         this._rooms.update(rooms => [...rooms, newRoomDto]);
-  
-        // Poți seta camera creată ca fiind `currentRoom`, dacă vrei
         this._currentRoom.set(this.convertDtoToRoom(newRoomDto));
       }),
       catchError(error => {
@@ -97,9 +95,9 @@ export class RoomService {
   }
 
 
-  updateRoom(id: UUID, updates: Partial<Room>): Observable<RoomDialogDTO> {
+  updateRoom(id: string, updates: Partial<Room>): Observable<RoomDialogDTO> {
     this.loading.set(true);
-    return this.http.put<any>(`http://localhost:8080/api/rooms/${id}`, updates).pipe(
+    return this.http.put<any>(`${this.baseUrl}/rooms/${id}`, updates).pipe(
       map(apiRoom => this.mapToRoomDTO(apiRoom)),
       tap(updatedDto => {
         this._rooms.update(rooms =>
@@ -123,13 +121,11 @@ export class RoomService {
   deleteRoom(id: UUID): Observable<void> {
     this.loading.set(true);
     return this.http.delete<void>(
-      `http://localhost:8080/api/rooms/${id}`
+      `${this.baseUrl}/rooms/${id}`
     ).pipe(
       tap(() => {
-        // Șterge camera din lista locală
         this._rooms.update(rooms => rooms.filter(r => r.id !== id));
-        
-        // Resetează camera curentă dacă a fost ștearsă
+      
         if (this._currentRoom()?.id === id) {
           this.clearCurrentRoom();
         }
@@ -142,28 +138,4 @@ export class RoomService {
     );
   }
   
-
-  updateCustomCards(roomId: UUID, cards: (number | '?')[]): Observable<void> {
-    this.loading.set(true);
-    return new Observable<void>(subscriber => {
-      this._rooms.update(rooms => 
-        rooms.map(room => 
-          room.id === roomId 
-            ? { 
-                ...room, 
-                cards: [...cards],
-                cardType: CardType.CUSTOM,
-                updatedAt: new Date()
-              }
-            : room
-        )
-      );
-      subscriber.next();
-      subscriber.complete();
-    }).pipe(
-      delay(this.latency),
-      finalize(() => this.loading.set(false))
-    );
-  }
-
 }

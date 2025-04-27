@@ -1,34 +1,28 @@
+<!-- profile-page.component.html -->
+ <app-header></app-header>
 <div class="profile-container">
-    <div class="profile-card">
-      <h1 class="profile-title">My <span>Profile</span></h1>
-      
-      <div class="avatar-section">
-        <h2>Select Avatar</h2>
-        <div class="avatar-grid">
-          <div *ngFor="let avatar of avatars" 
-               class="avatar-item"
-               [class.selected]="selectedAvatar === avatar"
-               (click)="selectedAvatar = avatar">
-            <img [src]="avatar" alt="Avatar">
-            <div class="role-badge">
-              <!-- Adaugă icon sau text pentru selected state -->
-              <svg viewBox="0 0 24 24">
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-              </svg>
-            </div>
-          </div>
-        </div>
+  <div class="profile-card">
+    <h1 class="profile-title">My <span>Profile</span></h1>
+
+    @if (successMessage()) {
+      <div class="alert success">{{ successMessage() }}</div>
+    }
+    @if (errorMessage()) {
+      <div class="alert error">{{ errorMessage() }}</div>
+    }
+
+    <form class="profile-form" (ngSubmit)="updateProfile()">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" [(ngModel)]="username" name="username" required>
       </div>
-  
-      <form class="profile-form" (ngSubmit)="updateProfile()">
-        <div class="form-group">
-          <label>Username</label>
-          <input type="text" [(ngModel)]="username" name="username">
-        </div>
-        <button type="submit">Save Changes</button>
-      </form>
-  
-      <div *ngIf="userService.currentUser().isGuest" class="guest-section">
+      <button type="submit" [disabled]="loading()">
+        {{ loading() ? 'Saving...' : 'Save Changes' }}
+      </button>
+    </form>
+
+    @if (userService.isGuest()) {
+      <div class="guest-section">
         <h2>
           Upgrade to Permanent Account
           <span>Save your progress </span>
@@ -47,9 +41,11 @@
                    placeholder="At least 8 characters">
           </div>
           
-          <button type="submit">
-            Upgrade Account
+          <button type="submit" [disabled]="loading()">
+            {{ loading() ? 'Processing...' : 'Upgrade Account' }}
           </button>
         </form>
       </div>
+    }
   </div>
+</div>

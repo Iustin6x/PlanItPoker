@@ -1,4 +1,4 @@
-import { UUID } from "crypto";
+
 import { CardValue } from "../../types";
 
 
@@ -9,7 +9,7 @@ export enum PlayerRole {
   }
   
   export interface Player {
-    id: UUID;
+    id: string;
     roomId: string;
     userId: string;
     name: string;

@@ -14,6 +14,7 @@ import { isUUID, UUID } from '../../../shared/types';
 import { RoomService } from '../../../core/services/room.service';
 import {  Room, RoomDialogDTO } from '../../../shared/models/room';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-landing-page',
@@ -30,14 +31,12 @@ import { HeaderComponent } from '../../../shared/components/header/header.compon
   ],
   templateUrl: './landing-page.component.html',
   styleUrls: ['./landing-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LandingPageComponent implements OnInit{
   private roomService = inject(RoomService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
   private route = inject(ActivatedRoute);
-
 
   ngOnInit(){
     this.roomService.getRooms().subscribe();
@@ -53,10 +52,11 @@ export class LandingPageComponent implements OnInit{
 
   handleSelectRoom(roomId: UUID): void {
     this.roomService.setCurrentRoom(roomId);
-
-    // this.router.navigate(['/room', roomId]);
-    this.router.navigate(['room', roomId], { relativeTo: this.route });
+    // Schimbare rută absolută
+    this.router.navigate(['/room', roomId]); 
   }
+
+  
 
 
   handleEditRoom(room: RoomDialogDTO): void {
@@ -133,7 +133,6 @@ export class LandingPageComponent implements OnInit{
     this.roomService.updateRoom(id, roomData).subscribe({
       next: () => {
         this.refreshRooms();
-        // Consider adding success feedback here
       },
       error: (err) => this.handleRoomError('Update', err)
     });
