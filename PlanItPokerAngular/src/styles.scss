@@ -410,3 +410,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   tbody tr:hover {
     background-color: var(--bg-light);
   }
+
+  .error-snackbar {
+    background-color: #f44336;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .success-snackbar {
+    background-color: #4caf50;
+    color: #fff;
+  }

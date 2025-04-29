@@ -1,13 +1,20 @@
 <ng-container *ngIf="playerRole() === PlayerRole.MODERATOR">
   <div class="controls-container">
 
-    <!-- Loading State -->
     <ng-container *ngIf="connectionState.loading()">
       <div class="loading">
         <div class="spinner"></div>
         <span>Se încarcă...</span>
       </div>
     </ng-container>
+
+    <div class="moderator-header">
+      <h3>Moderator Controls</h3>
+      <button class="settings-button" mat-icon-button (click)="openRoomSettingsDialog()">
+        <mat-icon>settings</mat-icon>
+      </button>
+    </div>
+    
 
     <!-- Main Controls -->
     <ng-container *ngIf="!connectionState.loading() && !connectionState.error()">
@@ -119,9 +126,7 @@
     </ng-container>
 
   </div>
+
+
 </ng-container>
 
-<!-- Non-moderator message (optional) -->
-<ng-container *ngIf="playerRole() !== PlayerRole.MODERATOR">
-  <!-- Add content here for non-moderators if needed -->
-</ng-container>

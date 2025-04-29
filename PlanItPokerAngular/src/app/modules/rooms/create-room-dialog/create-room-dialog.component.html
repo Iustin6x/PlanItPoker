@@ -1,67 +1,41 @@
 <div class="create-room-container">
-  <h2 mat-dialog-title>{{ isEditMode ? 'Edit Room' : 'Create New Room' }}</h2>
+  <h2 mat-dialog-title>{{ isEditMode() ? 'Edit Room' : 'Create New Room' }}</h2>
 
   <mat-dialog-content>
     <form #roomForm="ngForm">
       <mat-form-field appearance="outline">
         <mat-label>Room Name</mat-label>
-        <input
-          matInput
-          name="name"
-          [(ngModel)]="roomData().name"
-          required
-          minlength="3"
-        >
+        <input matInput name="name" [(ngModel)]="roomData().name" required minlength="3">
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Estimation Type</mat-label>
-        <mat-select
-          [(ngModel)]="roomData().cardType"
-          name="cardType"
-          (selectionChange)="onCardTypeChange($event.value)"
-        >
-          <mat-option
-            *ngFor="let configType of availableConfigs()"
-            [value]="configType"
-          >
+        <mat-select [(ngModel)]="roomData().cardType" name="cardType"
+          (selectionChange)="onCardTypeChange($event.value)">
+          <mat-option *ngFor="let configType of availableConfigs()" [value]="configType">
             {{ cardTypeLabels[configType] }}
           </mat-option>
           <mat-option value="custom">Custom Cards</mat-option>
         </mat-select>
       </mat-form-field>
 
-      <mat-expansion-panel
-        [expanded]="showCustomizationPanel()"
-        (opened)="showCustomizationPanel.set(true)"
-        (closed)="showCustomizationPanel.set(false)"
-      >
+      <mat-expansion-panel [expanded]="showCustomizationPanel()" (opened)="showCustomizationPanel.set(true)"
+        (closed)="showCustomizationPanel.set(false)">
         <mat-expansion-panel-header>
           <mat-panel-title>Custom Cards Configuration</mat-panel-title>
         </mat-expansion-panel-header>
 
         <div class="custom-cards-grid">
-          @for (card of editingCards(); track card; let i = $index) {
-            <div class="card-item">
-              <input
-                type="text"
-                [value]="card"
-                (input)="updateCardValue(i, $event)"
-                class="card-input"
-              >
-              <button mat-icon-button color="warn" (click)="removeCard(i)">
-                <mat-icon>close</mat-icon>
-              </button>
-            </div>
-          }
+          <div *ngFor="let card of editingCards(); trackBy: trackByCard; let i = index" class="card-item">
+            <input type="text" [value]="card" (input)="updateCardValue(i, $event)" class="card-input">
+            <button mat-icon-button color="warn" (click)="removeCard(i)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
         </div>
 
         <div class="actions">
-          <button
-            mat-button
-            color="primary"
-            (click)="addCard()"
-          >
+          <button mat-button color="primary" (click)="addCard()">
             <mat-icon>add</mat-icon> Add Card
           </button>
         </div>
@@ -69,20 +43,20 @@
     </form>
   </mat-dialog-content>
 
+  <mat-checkbox name="allowQuestionMark" [(ngModel)]="roomData().roomSettings.allowQuestionMark">
+    Allow "?" Card
+  </mat-checkbox>
+
+  <mat-checkbox name="allowVoteModification" [(ngModel)]="roomData().roomSettings.allowVoteModification">
+    Allow Vote Modification
+  </mat-checkbox>
+
   <mat-dialog-actions align="end">
-    <button
-      mat-button
-      (click)="closeDialog()"
-    >
+    <button mat-button (click)="closeDialog()">
       Cancel
     </button>
-    <button
-      mat-raised-button
-      color="primary"
-      [disabled]="!isValidForm"
-      (click)="submit()"
-    >
-          {{ isEditMode ? 'Update' : 'Create' }}
+    <button mat-raised-button color="primary" [disabled]="!isValidForm" (click)="submit()">
+      {{ isEditMode() ? 'Update' : 'Create' }}
     </button>
   </mat-dialog-actions>
 </div>

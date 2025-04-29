@@ -24,9 +24,12 @@ export class WebSocketService {
   constructor(private connectionState: ConnectionStateService) { }
 
   connect(roomId: string): void {
-    if (this.socket$) return;
+    if (this.socket$) {
+      this.disconnect(); 
+    }
     const token = localStorage.getItem('jwt') || '';
     const url = `${environment.wsUrl}/ws?token=${encodeURIComponent(token)}`;
+    this.connectionState.setLoading(true);
 
     this.socket$ = webSocket<WSMessage>({
       url,

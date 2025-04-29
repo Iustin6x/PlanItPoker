@@ -20,11 +20,12 @@ import { HeaderComponent } from '../../../shared/components/header/header.compon
 import { MatGridListModule } from '@angular/material/grid-list';
 import { VotingResultsComponent } from '../../voting/voting-results/voting-results.component';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-join-room',
   standalone: true,
-  imports: [CommonModule,MatIconModule, FormsModule, VotingResultsComponent ,VotingCardComponent, StoryListComponent,HeaderComponent, PlayersPanelComponent, ModeratorPanelComponent, MatGridListModule],
+  imports: [CommonModule,MatIconModule, FormsModule, MatSnackBarModule, VotingResultsComponent ,VotingCardComponent, StoryListComponent,HeaderComponent, PlayersPanelComponent, ModeratorPanelComponent, MatGridListModule],
   templateUrl: './join-room.component.html',
   styleUrls: ['./join-room.component.scss'],
   providers: [RoomMessageHandlerService]

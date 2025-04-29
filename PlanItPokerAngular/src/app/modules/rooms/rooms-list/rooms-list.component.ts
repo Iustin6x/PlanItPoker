@@ -1,7 +1,8 @@
 // rooms-list.component.ts
 import { 
   Component, Input, Output, EventEmitter, ChangeDetectionStrategy, 
-  OnInit
+  OnInit,
+  inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -16,8 +17,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 
 import { CardType, isUUID, UUID } from '../../../shared/types';
-import { RoomDialogDTO } from '../../../shared/models/room';
+
 import { interval, Subscription } from 'rxjs';
+import { DatePipe } from '@angular/common';
+import { RoomListDTO } from '../../../shared/models/room';
 
 
 @Component({
@@ -34,20 +37,23 @@ import { interval, Subscription } from 'rxjs';
     MatProgressSpinnerModule,
     MatTableModule,
   ],
+  providers:[DatePipe],
   templateUrl: './rooms-list.component.html',
   styleUrls: ['./rooms-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RoomsListComponent{
-  @Input() rooms: RoomDialogDTO[] = [];
+  @Input() rooms: RoomListDTO[] = [];
   @Input() isLoading = false;
   @Output() delete = new EventEmitter<UUID>();
   @Output() select = new EventEmitter<UUID>();
-  @Output() edit = new EventEmitter<RoomDialogDTO>();
+  @Output() edit = new EventEmitter<RoomListDTO>();
   @Output() leave = new EventEmitter<UUID>(); // New leave event
 
+  private datePipe = inject(DatePipe);
+
   displayedColumns: string[] = 
-    ['name', 'lastVotedStory', 'totalPoints', 'actions'];
+    ['name', 'lastVotedStory', 'totalPoints', 'lastAction', 'actions'];
   
   readonly CardType = CardType;
 
@@ -62,7 +68,7 @@ export class RoomsListComponent{
     return this.cardTypeLabels[cardType as CardType] || 'Necunoscut';
   }
 
-  trackByRoomId(index: number, room: RoomDialogDTO): string {
+  trackByRoomId(index: number, room: RoomListDTO): string {
     return room.id!; // Assuming id is present for tracked rooms
   }
 
@@ -70,7 +76,7 @@ export class RoomsListComponent{
     this.delete.emit(roomId);
   }
 
-  handleSelect(room: RoomDialogDTO): void {
+  handleSelect(room: RoomListDTO): void {
     if (room.id && isUUID(room.id)) {
       this.select.emit(room.id);
     } else {
@@ -78,8 +84,8 @@ export class RoomsListComponent{
     }
   }
 
-  handleEdit(room: RoomDialogDTO): void {
-    this.edit.emit(room); // Emit the RoomDialogDTO directly
+  handleEdit(room: RoomListDTO): void {
+    this.edit.emit(room); // Emit the RoomListDTO directly
   }
 
   handleLeave(roomId: UUID): void {

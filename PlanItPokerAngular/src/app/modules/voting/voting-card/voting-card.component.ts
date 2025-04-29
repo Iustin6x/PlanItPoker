@@ -28,28 +28,36 @@ export class VotingCardComponent {
   readonly cardValues = this.roomState.cards;
   readonly playerRole = this.playerState.playerRole;
   readonly name = this.roomState.roomName;
+  readonly allowQuestionMark = this.roomState.allowQuestionMark;
+  readonly allowVoteModification = this.roomState.allowVoteModification;
+  private voteChanged = signal(0);
+
+
 
   readonly isRevealed = computed(() => {
     return this.voteSession()?.revealed ?? false;
   });
   
-  private voteChanged = signal(0);
-
   protected cards = computed(() => {
-    const type = this.cardType();
-    return type === CardType.CUSTOM ? 
+    const type = this.cardType();  
+    let allCards = type === CardType.CUSTOM ? 
       this.cardValues() : 
-      PREDEFINED_CARD_SETS[type];
+      PREDEFINED_CARD_SETS[type];  
+    
+    if (this.allowQuestionMark()) {
+      allCards = [...allCards, '?']; 
+    }
+  
+    return allCards;  
   });
+
 
   protected selectedCard = computed<CardValue | null>(() => {
     if (this.playerRole() === PlayerRole.OBSERVER) return null;
     
-    // Obține valoarea ca tip original
-    const rawValue = this.voteState.getLocalVote();
+    const rawValue = this.voteState.currentVote();
     if (!rawValue) return null;
   
-    // Convertim la tipul corespunzător din cards
     const cards = this.cards();
     const sampleCard = cards[0];
     
@@ -64,6 +72,15 @@ export class VotingCardComponent {
     return this.voteSession()?.votes.find(v => v.userId === userId)?.cardValue || null;
   });
 
+  readonly votingLocked = computed(() => {
+    return (
+      this.playerRole() !== PlayerRole.OBSERVER &&
+      this.selectedValue() !== null &&
+      !this.allowVoteModification() &&
+      !this.isRevealed()
+    );
+  });
+
   constructor() {
     effect(() => {
       const session = this.voteSession();
@@ -72,12 +89,12 @@ export class VotingCardComponent {
     });
   }
 
+
+
   selectCard(card: CardValue): void {
     const session = this.voteSession();
     if (!session || this.playerRole() === PlayerRole.OBSERVER) return;
-  
-    // Trimite valoarea originală, nu string
-    this.voteState.saveLocalVote(card.toString());
+    if (!this.allowVoteModification() && this.selectedCard() === card) return;
     this.wsMessages.addVote(session.id, card.toString());
   }
 }

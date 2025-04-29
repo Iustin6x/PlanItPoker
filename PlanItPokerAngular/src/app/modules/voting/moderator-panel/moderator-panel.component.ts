@@ -10,11 +10,16 @@ import { AuthService } from '../../../core/services/auth.service';
 import { PlayerRole } from '../../../shared/models/room/player.model';
 import { RoomStateService } from '../../../core/services/room-state.service';
 import { StoryStateService } from '../../../core/services/story-state.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { RoomSettingsDialogComponent } from '../room-settings-dialog/room-settings-dialog.component';
+import { RoomSettingsDTO } from '../../../shared/models/room';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-moderator-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatDialogModule, MatCheckboxModule, MatDialogModule, MatIconModule],
   templateUrl: './moderator-panel.component.html',
   styleUrl: './moderator-panel.component.scss'
 })
@@ -26,6 +31,7 @@ export class ModeratorPanelComponent{
   private storyState = inject(StoryStateService);
   private wsMessages = inject(WebSocketMessageService);
   protected authService = inject(AuthService)
+  private dialog = inject(MatDialog);
 
   selectedResult: string | null = null;
   protected hasActiveStory = this.storyState.activeStories;
@@ -39,24 +45,13 @@ export class ModeratorPanelComponent{
   readonly PlayerRole = PlayerRole;
   readonly playerRole = this.playerState.playerRole;
 
-  // readonly isModerator = computed(() => {
-  //   const userId = this.authService.getUserIdFromJWT();
-  //   return true;
-  // });
-
   constructor() {
     effect(() => {
       const currentResult = this.result();
-      const availableCards = this.cards();
-
-
-      console.log(availableCards);
-      console.log("CURRENT RESULT "+ currentResult);
-    
+      const availableCards = this.cards();    
       if (!availableCards || availableCards.length === 0) return;
       if (currentResult == null) return;
 
-      console.log("da");
     
       const exactMatch = availableCards.find(c => c === currentResult);
       if (exactMatch) {
@@ -67,27 +62,6 @@ export class ModeratorPanelComponent{
       }
     });
   }
-
-  // ngOnInit() {
-  //   effect(() => {
-  //     const currentResult = this.result();
-  //     const availableCards = this.cards();
-  //     console.log("result " + this.selectedResult);
-
-  //     if (currentResult && availableCards.length > 0) {
-  //       const exactMatch = availableCards.find(c => c === currentResult);
-  //       if (exactMatch) {
-  //         this.selectedResult = exactMatch.toString();
-  //       } else {
-  //         const specialCaseMatch = availableCards.find(c => c === '?');
-  //         this.selectedResult = specialCaseMatch || availableCards[0].toString();
-  //       }
-  //     } else if (availableCards.length > 0) {
-  //       // Default to first card if no result
-  //       this.selectedResult = availableCards[0].toString();
-  //     }
-  //   });
-  // }
 
   handleAction(type: string, data?: any) {
     const session = this.voteSession();
@@ -120,5 +94,19 @@ export class ModeratorPanelComponent{
         break;
     }
   }
-
+  openRoomSettingsDialog(): void {
+    const dialogRef = this.dialog.open(RoomSettingsDialogComponent, {
+      width: '300px',
+      data: {
+        allowQuestionMark: this.roomState.allowQuestionMark(),
+        allowVoteModification: this.roomState.allowVoteModification()
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe((result: RoomSettingsDTO) => {
+      if (result) {
+          this.wsMessages.updateRoomSettings(result.allowQuestionMark,result.allowVoteModification);
+        }
+    });
+  }
 }

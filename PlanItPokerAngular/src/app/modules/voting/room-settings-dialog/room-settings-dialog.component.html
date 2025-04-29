@@ -1,0 +1,9 @@
+<mat-dialog-content>
+    <mat-checkbox [(ngModel)]="allowQuestionMark">Allow "?" Card</mat-checkbox>
+    <mat-checkbox [(ngModel)]="allowVoteModification">Allow Vote Modification</mat-checkbox>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onSave()">Save</button>
+  </mat-dialog-actions>

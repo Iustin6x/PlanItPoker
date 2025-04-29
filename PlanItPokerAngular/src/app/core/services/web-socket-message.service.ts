@@ -23,18 +23,17 @@ export class WebSocketMessageService {
   changePlayerName(playerId: string, newName: string): void {
     this.ws.send({ type: 'changeName', playerId, newName });
   }
+  
 
   changePlayerRole(playerId: string, newRole: PlayerRole): void {
     this.ws.send({ type: 'changeRole', playerId, newRole });
   }
 
-  // Metode pentru gestionarea story-urilor
   createStory(name: string): void {
     this.ws.send({ type: 'createStory', name });
   }
 
   getStoryWithSession(storyId: string): void {
-    console.log("getStorywithSession");
     this.connectionState.setLoading(true);
     this.ws.send({ type: 'getStoryWithSession', storyId });
   }
@@ -71,5 +70,9 @@ export class WebSocketMessageService {
 
   endVoteSession(sessionId: string, finalValue: string): void {
     this.ws.send({ type: 'endVoteSession', sessionId, finalValue });
+  }
+
+  updateRoomSettings(allowQuestionMark: boolean, allowVoteModification: boolean): void {
+    this.ws.send({ type: 'updateRoomSettings', allowQuestionMark, allowVoteModification });
   }
 }

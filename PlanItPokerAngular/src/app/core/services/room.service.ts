@@ -1,18 +1,18 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { catchError, delay, finalize, map, Observable, of, tap, throwError } from 'rxjs';
-import { Room, RoomDialogDTO} from '../../shared/models/room';
 import { UserService } from './user.service';
 import { CardType, UUID } from '../../shared/types';
 import { Player, PlayerRole } from '../../shared/models/room/player.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { Room, RoomListDTO, RoomRequestDTO } from '../../shared/models/room';
 
 @Injectable({ providedIn: 'root' })
 export class RoomService {
   private http = inject(HttpClient);
   private userService = inject(UserService);
   private _currentRoom = signal<Room | undefined>(undefined);
-  private _rooms = signal<RoomDialogDTO[]>([]);
+  private _rooms = signal<RoomListDTO[]>([]);
   private latency = 500;
 
   private baseUrl = `${environment.apiUrl}`;
@@ -33,11 +33,10 @@ export class RoomService {
   }
  
 
-  getRooms(): Observable<RoomDialogDTO[]> {
+  getRooms(): Observable<RoomListDTO[]> {
     this.loading.set(true);
   
     return this.http.get<any[]>(`${this.baseUrl}/rooms`).pipe(
-      tap(response => console.log("Raw response:", response)),
       map(apiRooms => apiRooms.map(room => this.mapToRoomDTO(room))),
       tap(mappedRooms => {
         this._rooms.set(mappedRooms); 
@@ -52,7 +51,25 @@ export class RoomService {
     );
   }
 
-  private mapToRoomDTO(apiRoom: any): RoomDialogDTO {
+  getRoomById(roomId: string): Observable<RoomRequestDTO> {
+    return this.http.get<RoomRequestDTO>(`${this.baseUrl}/rooms/${roomId}`).pipe(
+      catchError(error => {
+        console.error('Error fetching room by id:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  updateRoom(roomId: string, roomData: RoomRequestDTO): Observable<RoomListDTO> {
+    return this.http.put<RoomListDTO>(`${this.baseUrl}/rooms/${roomId}`, roomData).pipe(
+      catchError(error => {
+        console.error('Error updating room:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  private mapToRoomDTO(apiRoom: any): RoomListDTO {
     return {
       id: apiRoom.id as UUID,
       name: apiRoom.name,
@@ -61,11 +78,12 @@ export class RoomService {
       lastVotedStory: apiRoom.lastVotedStory || 'No completed stories',
       totalPoints: apiRoom.totalPoints || 0,
       inviteLink: apiRoom.inviteLink,
-      userRole: apiRoom.role as PlayerRole
+      userRole: apiRoom.role as PlayerRole,
+      lastActionTime: apiRoom.lastActionTime
     };
   }
 
-  private convertDtoToRoom(dto: RoomDialogDTO): Room {
+  private convertDtoToRoom(dto: RoomListDTO): Room {
     return {
       id: dto.id!,
       name: dto.name,
@@ -77,7 +95,7 @@ export class RoomService {
     };
   }
 
-  createRoom(dto: { name: string; cardType: CardType }): Observable<RoomDialogDTO> {
+  createRoom(dto: { name: string; cardType: CardType }): Observable<RoomListDTO> {
     this.loading.set(true);
 
     return this.http.post<any>(`${this.baseUrl}/room`, dto).pipe(
@@ -88,30 +106,6 @@ export class RoomService {
       }),
       catchError(error => {
         console.error('Error creating room:', error);
-        return throwError(() => error);
-      }),
-      finalize(() => this.loading.set(false))
-    );
-  }
-
-
-  updateRoom(id: string, updates: Partial<Room>): Observable<RoomDialogDTO> {
-    this.loading.set(true);
-    return this.http.put<any>(`${this.baseUrl}/rooms/${id}`, updates).pipe(
-      map(apiRoom => this.mapToRoomDTO(apiRoom)),
-      tap(updatedDto => {
-        this._rooms.update(rooms =>
-          rooms.map(room =>
-            room.id === id ? updatedDto : room
-          )
-        );
-  
-        if (this._currentRoom()?.id === id) {
-          this._currentRoom.set(this.convertDtoToRoom(updatedDto));
-        }
-      }),
-      catchError(error => {
-        console.error('Error updating room:', error);
         return throwError(() => error);
       }),
       finalize(() => this.loading.set(false))

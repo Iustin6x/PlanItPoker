@@ -8,11 +8,13 @@ import { ConnectionStateService } from '../../../core/services/connection-state.
 import { PlayerDTO } from '../../../shared/models/wbs';
 import { AuthService } from '../../../core/services/auth.service';
 import { WebSocketMessageService } from '../../../core/services/web-socket-message.service';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-players-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatDialogModule, MatCheckboxModule, ],
   templateUrl: './players-panel.component.html',
   styleUrl: './players-panel.component.scss'
 })

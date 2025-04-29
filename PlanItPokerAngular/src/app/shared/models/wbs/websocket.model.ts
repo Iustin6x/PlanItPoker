@@ -1,5 +1,5 @@
 import { CardType, CardValue } from "../../types";
-import { SessionStatus } from "../room";
+import { RoomSettingsDTO, SessionStatus } from "../room";
 import { Player, PlayerRole } from "../room/player.model";
 import { StoryStatus } from "../story";
 
@@ -21,10 +21,11 @@ import { StoryStatus } from "../story";
     | { type: 'revealVotes', sessionId: string }
     | { type: 'clearVotes', sessionId: string }
     | { type: 'skipVote', sessionId: string, storyId: string }
-    | { type: 'endVoteSession', sessionId: string, finalValue: string };
+    | { type: 'endVoteSession', sessionId: string, finalValue: string }
+    | { type: 'updateRoomSettings', allowQuestionMark: boolean, allowVoteModification: boolean};
   
   export type ServerMessage =
-    | { type: 'error', message: string }
+  | { type: 'error', message: string, details?: string }
     | { type: 'playerJoined', player: PlayerDTO }
     | { type: 'playerDisconnected', player: PlayerDTO }
     | { type: 'playerNameChanged', playerId: string, newName: string }
@@ -35,14 +36,15 @@ import { StoryStatus } from "../story";
     | { type: 'storyWithSession', story: StoryDTO, session: VoteSessionDTO}
     | { type: 'storyDeleted', storyId: string }
     | { type: 'storyList', stories: StoryDTO[] }
-    | { type: 'voteSession', session: VoteSessionDTO }
+    | { type: 'voteSession', session: VoteSessionDTO,  hasVoted?: string }
     | { type: 'voteStarted', session: VoteSessionDTO }
-    | { type: 'voteAdded', vote: VoteDTO }
+    | { type: 'voteAdded', vote: VoteDTO, cardValue?: string}
     | { type: 'votesRevealed', votes: VoteDTO[], result: string | null }
     | { type: 'votesCleared', sessionId: string }
     | { type: 'voteEnded', sessionId: string, finalValue: string, story: StoryDTO}
     | { type: 'roomInfo', room: RoomInfoDTO }
     | { type: 'storySkipped', story: StoryDTO, session?: VoteSessionDTO }
+    | { type: 'roomSettingsUpdated', settings: RoomSettingsDTO }
     | { type: 'noPlayers'}
     | { type: 'noStories'}
     | { type: 'noActiveVoteSession' }
@@ -91,5 +93,6 @@ export interface RoomInfoDTO{
   name: string;
   cardType: CardType;
   customCards: CardValue[];
+  roomSettings: RoomSettingsDTO;
 }
   

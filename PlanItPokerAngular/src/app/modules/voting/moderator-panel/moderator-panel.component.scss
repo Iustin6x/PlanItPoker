@@ -257,3 +257,45 @@ button {
     font-size: 1.5rem;
   }
 }
+
+
+.moderator-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #334155;
+  }
+}
+
+.settings-button {
+  all: unset;
+  color: #64748b;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover mat-icon {
+    transform: rotate(45deg);
+  }
+
+  &:active mat-icon {
+    transform: scale(0.95) rotate(45deg);
+  }
+}

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, model, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
@@ -8,8 +8,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { CommonModule } from '@angular/common';
-import { Room, RoomDialogDTO} from '../../../shared/models/room';
 import { CardType, CardValue, PREDEFINED_CARD_SETS } from '../../../shared/types';
+import { RoomListDTO, RoomRequestDTO } from '../../../shared/models/room';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-create-room-dialog',
@@ -24,6 +25,7 @@ import { CardType, CardValue, PREDEFINED_CARD_SETS } from '../../../shared/types
     CommonModule,
     MatIconModule,
     MatExpansionModule,
+    MatCheckboxModule
   ],
   templateUrl: './create-room-dialog.component.html',
   styleUrls: ['./create-room-dialog.component.scss'],
@@ -31,12 +33,13 @@ import { CardType, CardValue, PREDEFINED_CARD_SETS } from '../../../shared/types
 })
 export class CreateRoomDialogComponent {
   protected dialogRef = inject(MatDialogRef<CreateRoomDialogComponent>);
-  protected initialData = input<Partial<RoomDialogDTO>>(inject(MAT_DIALOG_DATA));
+  protected initialData = input<Partial<RoomRequestDTO>>(inject(MAT_DIALOG_DATA));
 
-  roomData = model<RoomDialogDTO>({
+  roomData = model<RoomRequestDTO>({
     name: '',
-    cardType: CardType.FIBONACCI, // Use enum value
+    cardType: CardType.FIBONACCI,
     cards: PREDEFINED_CARD_SETS[CardType.FIBONACCI],
+    roomSettings: { allowQuestionMark: true, allowVoteModification: true },
     ...this.initialData()
   });
   
@@ -47,8 +50,13 @@ export class CreateRoomDialogComponent {
     [CardType.CUSTOM]: 'Custom Cards'
   };
 
+  isEditMode = computed(()=>!!this.roomData().id);
+
   protected editingCards = signal<CardValue[]>([]);
-  protected availableConfigs = signal<CardType[]>(Object.keys(PREDEFINED_CARD_SETS) as CardType[]);
+  protected availableConfigs = signal<CardType[]>([
+    ...Object.keys(PREDEFINED_CARD_SETS) as CardType[],
+    CardType.CUSTOM 
+  ]);
   protected showCustomizationPanel = signal(false);
 
   constructor() {
@@ -57,10 +65,14 @@ export class CreateRoomDialogComponent {
 
   private initializeEditingState(): void {
     const currentType = this.roomData().cardType;
-    if (currentType === 'CUSTOM') {
-      this.editingCards.set([...this.roomData().cards]);
+    if (this.isEditMode()) {
+      this.editingCards.set([...this.roomData().cards]); 
     } else {
-      this.editingCards.set([...PREDEFINED_CARD_SETS[currentType]]);
+      if (currentType === 'CUSTOM') {
+        this.editingCards.set([...this.roomData().cards]);
+      } else {
+        this.editingCards.set([...PREDEFINED_CARD_SETS[currentType]]);
+      }
     }
   }
 
@@ -68,17 +80,28 @@ export class CreateRoomDialogComponent {
     this.roomData.update(data => ({
       ...data,
       cardType: newType,
-      cards: newType === 'CUSTOM' ? this.editingCards() : PREDEFINED_CARD_SETS[newType as Exclude<CardType, 'CUSTOM'>]
+      cards: newType === CardType.CUSTOM 
+        ? this.editingCards()  
+        : PREDEFINED_CARD_SETS[newType as Exclude<CardType, 'CUSTOM'>] 
     }));
-    
-    if (newType !== 'CUSTOM') {
+  
+    if (newType !== CardType.CUSTOM) {
       this.editingCards.set([...PREDEFINED_CARD_SETS[newType as Exclude<CardType, 'CUSTOM'>]]);
       this.showCustomizationPanel.set(false);
     }
   }
 
   protected addCard(): void {
-    this.editingCards.update(cards => [...cards, '?']);
+    const newCards = [...this.editingCards(), '?']; 
+    this.editingCards.set(newCards); 
+    this.roomData.update(data => ({
+      ...data,
+      cards: newCards 
+    }));
+  }
+
+  protected trackByCard(index: number, card: CardValue): number {
+    return index;
   }
 
   protected removeCard(index: number): void {
@@ -88,11 +111,17 @@ export class CreateRoomDialogComponent {
   protected updateCardValue(index: number, event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     let cardValue: CardValue = value === '?' ? '?' : Number(value);
-    
+  
     if (value === '?' || !isNaN(Number(value))) {
-      this.editingCards.update(cards => 
-        cards.map((c, i) => i === index ? cardValue : c)
-      );
+      const newCards = [...this.editingCards()];  
+      newCards[index] = cardValue;  
+  
+      this.editingCards.set(newCards);  
+      this.roomData.update(data => ({
+        ...data,
+        cardType: CardType.CUSTOM,
+        cards: newCards
+      }));
     }
   }
 
@@ -103,19 +132,16 @@ export class CreateRoomDialogComponent {
     return validName && validCards;
   }
 
-  get isEditMode(): boolean {
-    return !!this.initialData()?.id;
-  }
 
   protected submit(): void {
-    const room: RoomDialogDTO = {
+    const room: RoomRequestDTO = {
       ...this.roomData(),
-      cards: this.roomData().cardType === 'CUSTOM' 
-        ? this.editingCards() 
+      cards: this.roomData().cardType === CardType.CUSTOM
+        ? this.editingCards()  
         : PREDEFINED_CARD_SETS[this.roomData().cardType as Exclude<CardType, 'CUSTOM'>]
     };
-
-    this.dialogRef.close(room);
+  
+    this.dialogRef.close(room); // Închide dialogul și trimite datele
   }
 
   protected closeDialog(): void {

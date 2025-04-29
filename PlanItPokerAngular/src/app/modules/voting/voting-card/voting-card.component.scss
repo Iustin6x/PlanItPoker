@@ -25,6 +25,12 @@
   overflow: hidden;
   transform-style: preserve-3d;
 
+  &.question-card {
+    background-color: #f9a826;
+    color: white;
+    border-color: #f68c14;
+  }
+
   &:after {
     content: '';
     position: absolute;

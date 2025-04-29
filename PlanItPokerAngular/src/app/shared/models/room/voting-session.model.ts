@@ -9,7 +9,7 @@ export interface VotingSession {
     startTime: Date;
     endTime?: Date;
     status: 'pending' | 'active' | 'completed';
-    votes: Record<UUID, CardValue>; // { [userId]: cardValue }
+    votes: Record<UUID, CardValue>;
     revealed: boolean;
   }
 
@@ -25,6 +25,6 @@ export enum SessionStatus {
     startTime: Date;
     endTime?: Date;
     status: 'PENDING' | 'ACTIVE' | 'COMPLETED' ;
-    votes: Record<UUID, CardValue>; // { [userId]: cardValue }
+    votes: Record<UUID, CardValue>;
     revealed: boolean;
   }

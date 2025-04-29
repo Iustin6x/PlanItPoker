@@ -6,6 +6,7 @@ import { RoomStateService } from './room-state.service';
 import { StoryStateService } from './story-state.service';
 import { VoteStateService } from './vote-state.service';
 import { WebSocketService } from './websocket.service';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,13 +18,12 @@ export class RoomMessageHandlerService {
   private roomState = inject(RoomStateService);
   private connectionState = inject(ConnectionStateService);
   private ws = inject(WebSocketService);
+  private notify = inject(NotificationService);
 
   constructor() {
     this.ws.messages$.subscribe((msg) => {
       this.handleMessage(msg);
     });
-
-
   }
 
   handleMessage(message: WSMessage) {
@@ -48,7 +48,7 @@ export class RoomMessageHandlerService {
         break;
 
       case 'voteAdded':
-        this.voteState.voteAdded(message.vote);
+        this.voteState.voteAdded(message.vote, message.cardValue);
         break;
 
       case 'playerDisconnected':
@@ -86,8 +86,11 @@ export class RoomMessageHandlerService {
         break;
 
       case 'voteSession':
-
         this.voteState.setSession(message.session || null);
+
+        if (message.hasVoted) {
+          this.voteState.setCurrentVote(message.hasVoted);
+        }
         this.connectionState.setLoading(false);
         break;
 
@@ -127,8 +130,21 @@ export class RoomMessageHandlerService {
         this.storyState.updateStory(message.story);
         break;
 
+      case 'roomSettingsUpdated':
+        this.roomState.setRoomSettings(message.settings);
+        break;
+
       case 'error':
-        this.connectionState.setError(message.message);
+        const baseMsg = message.message || 'An unexpected error occurred.';
+        const details = message.details || '';
+        const fullMessage = details ? `${baseMsg} Details: ${details}` : baseMsg;
+
+        if (details.includes('Vote modification is not allowed')) {
+            this.notify.showError(message.message + details);
+        }
+
+        // this.connectionState.setError(fullMessage);
+        // console.error('[WebSocket Error]', { message: baseMsg, details });
         break;
 
       default:

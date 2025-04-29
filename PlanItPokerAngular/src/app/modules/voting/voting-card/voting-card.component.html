@@ -1,14 +1,18 @@
 <div class="cards-container" *ngIf="cards()?.length">
   <div 
-    *ngFor="let card of cards()"
-    class="card"
-    [class.selected]="selectedCard() === card"
-    [class.voted]="selectedValue() === card"
-    (click)="playerRole() !== 'OBSERVER' && !isRevealed() && selectCard(card)"
-    [class.disabled]="playerRole() === 'OBSERVER' || isRevealed()"
-  >
+      *ngFor="let card of cards()"
+      class="card"
+      [class.selected]="selectedCard() === card"
+      [class.voted]="selectedValue() === card"
+      [class.disabled]="votingLocked()"
+      (click)="!votingLocked() && selectCard(card)"
+    >
     <div class="card-corner top-left">{{ card }}</div>
-    <div class="card-center">{{ isRevealed() ? (selectedValue() === card ? card : '') : card }}</div>
+    <div class="card-center">{{ 
+      isRevealed() ? 
+      (selectedValue() === card ? card : '') : 
+      (card === '?' && allowQuestionMark() ? '?' : card) 
+    }}</div>
     <div class="card-corner bottom-right">{{ card }}</div>
   </div>
 </div>

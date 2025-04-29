@@ -15,22 +15,21 @@ export class VoteStateService {
   private storyState = inject(StoryStateService);
   private authService = inject(AuthService);
 
+  private _currentVote = signal<string | null>(null);
+  readonly currentVote = this._currentVote.asReadonly();
+
   private _voteSession = signal<VoteSessionDTO | null>(null);
   readonly voteSession = this._voteSession.asReadonly();
 
-
   readonly sessionLoaded = computed(() => this.voteSession() !== null);
-
-  
-  private _localVote = signal<string | null>(null);
-  readonly localVote = this._localVote.asReadonly();
-
 
   private _result = signal<string | null>(null);
   readonly result = this._result.asReadonly();
 
   private _votes = signal<VoteDTO[]>([])
   readonly votes = this._votes.asReadonly();
+
+  
 
   readonly isRevealed = computed(() => {
     return this._voteSession()?.revealed ?? false;
@@ -52,10 +51,11 @@ export class VoteStateService {
 
   revealVotes(votes: VoteDTO[], result: string | null) {
     this._votes.set([...votes]);
-  this._result.set(result);
-  this._voteSession.update(session => 
-    session ? {...session, votes: [...votes], result, revealed: true} : session
-  );
+    this._result.set(result);
+    this._voteSession.update(session =>
+      session ? { ...session, votes: [...votes], result, revealed: true } : session
+    );
+    this.resetCurrentVote();
   }
 
   readonly currentStory = computed(() => {
@@ -95,18 +95,19 @@ export class VoteStateService {
       sessionId: session.id,
       storyId: storyId
     });
+
+    this.resetCurrentVote();
   }
 
-  voteAdded(vote: VoteDTO): void {
-    console.log("vote added");
+  voteAdded(vote: VoteDTO, cardValue: string | undefined): void {
     const existingVotes = this._votes();
-  
+
     const alreadyExists = existingVotes.some(v => v.userId === vote.userId);
     if (alreadyExists) return;
-  
+
     const updatedVotes = [...existingVotes, vote];
     this._votes.set(updatedVotes);
-  
+
     this._voteSession.update(session => {
       if (!session) return null;
       return {
@@ -114,25 +115,31 @@ export class VoteStateService {
         votes: [...session.votes, vote]
       };
     });
+    console.log("vot adaugat ",cardValue)
+    if (cardValue !== undefined) {
+      this.setCurrentVote(cardValue);
+    }
   }
 
-  
+
 
   setSession(session: VoteSessionDTO | null): void {
     this._voteSession.set(session);
   }
 
   clearVotes() {
-    this.clearAllLocalVotesForSession();
+
     this._voteSession.update(session =>
       session ? { ...session, votes: [], revealed: false } : session
     );
+    this.resetCurrentVote();
   }
 
   showVotes(votes: VoteDTO[]) {
     this._voteSession.update(session =>
       session ? { ...session, votes, revealed: true } : null
     );
+    this.resetCurrentVote();
   }
 
   endSession(finalValue: string) {
@@ -143,12 +150,7 @@ export class VoteStateService {
         finalValue: finalValue
       } : null
     );
-
-    const userId = this.authService.getUserIdFromJWT();
-    const sessionId = this._voteSession()?.id;
-    if (sessionId && userId) {
-      localStorage.removeItem(`vote-${sessionId}-${userId}`);
-    }
+    this.resetCurrentVote();  
   }
 
 
@@ -156,66 +158,11 @@ export class VoteStateService {
     return this._votes().some(vote => vote.userId === playerId);
   }
 
-
-
-  saveLocalVote(cardValue: CardValue): void {
-    const session = this._voteSession();
-    const userId = this.authService.getUserIdFromJWT();
-    if (!session || !userId) return;
-
-    const key = this.getLocalStorageKey(session.id, userId);
-    localStorage.setItem(key, JSON.stringify({ sessionId: session.id, cardValue }));
-    this._localVote.set(cardValue.toString());
+  setCurrentVote(cardValue: string | null): void {
+    this._currentVote.set(cardValue);
   }
 
-  getLocalVote(): string | null {
-    const session = this._voteSession();
-    const userId = this.authService.getUserIdFromJWT();
-    if (!session || !userId) return null;
-
-    const key = this.getLocalStorageKey(session.id, userId);
-    const savedVote = localStorage.getItem(key);
-    return this.parseLocalVote(savedVote, session.id);
+  private resetCurrentVote() {
+    this._currentVote.set(null);
   }
-
-  private parseLocalVote(savedVote: string | null, currentSessionId: string): string | null {
-    if (!savedVote) return null;
-    
-    try {
-      const { sessionId, cardValue } = JSON.parse(savedVote);
-      return sessionId === currentSessionId ? cardValue : null;
-    } catch (e) {
-      console.error('Error parsing local vote:', e);
-      return null;
-    }
-  }
-
-
-  clearLocalVote(): void {
-    const session = this._voteSession();
-    const userId = this.authService.getUserIdFromJWT();
-    if (!session || !userId) return;
-
-    const key = this.getLocalStorageKey(session.id, userId);
-    localStorage.removeItem(key);
-  }
-
-  clearAllLocalVotesForSession(): void {
-    const session = this._voteSession();
-    if (!session) return;
-
-    const prefix = `vote-${session.id}-`;
-    Object.keys(localStorage).forEach(key => {
-      if (key.startsWith(prefix)) {
-        localStorage.removeItem(key);
-      }
-    });
-  }
-
-  private getLocalStorageKey(sessionId: string, userId: string): string {
-    return `vote-${sessionId}-${userId}`;
-  }
-
-
-
 }
