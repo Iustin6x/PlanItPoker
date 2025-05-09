@@ -42,6 +42,9 @@ export class JoinRoomComponent implements OnInit {
 
   private connectionState = inject(ConnectionStateService);
 
+  readonly PlayerRole = PlayerRole;
+  readonly playerRole = this.playerState.playerRole;
+
 
   protected error = this.connectionState.error;
   showError: boolean = true;

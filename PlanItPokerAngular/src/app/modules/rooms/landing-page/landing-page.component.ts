@@ -46,13 +46,13 @@ export class LandingPageComponent implements OnInit{
   rooms = this.roomService.rooms;
   isLoading = this.roomService.loading;
 
-  handleDeleteRoom(roomId: UUID): void {
+  handleDeleteRoom(roomId: string): void {
     this.roomService.deleteRoom(roomId).subscribe({
       error: (err) => console.error('Delete error', err)
     });
   }
 
-  handleSelectRoom(roomId: UUID): void {
+  handleSelectRoom(roomId: string): void {
     this.router.navigate(['/room', roomId]); 
   }
 

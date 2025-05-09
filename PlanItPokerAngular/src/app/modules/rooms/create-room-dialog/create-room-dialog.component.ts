@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, model, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, model, signal, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
@@ -29,7 +29,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
   ],
   templateUrl: './create-room-dialog.component.html',
   styleUrls: ['./create-room-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None, 
 })
 export class CreateRoomDialogComponent {
   protected dialogRef = inject(MatDialogRef<CreateRoomDialogComponent>);
@@ -77,6 +78,7 @@ export class CreateRoomDialogComponent {
   }
 
   protected onCardTypeChange(newType: CardType): void {
+    
     this.roomData.update(data => ({
       ...data,
       cardType: newType,

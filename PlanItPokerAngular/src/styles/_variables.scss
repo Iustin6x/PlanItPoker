@@ -1,0 +1,27 @@
+$baseline: 0.5rem; 
+$breakpoint-small-desktop: 1194px;
+$primary-blue: #006bb6;
+$primary-red: #ea0016;
+$text-dark: #2d3e50;
+$background-primary: #ffffff;
+$background-secondary: #f5f5f5;
+$signal-danger: #d50000;
+$primary-blue-10: #e6f3ff !default;
+$border-radius-medium: 8px !default;
+$icon-size-xlarge: 48px !default;
+
+$spacing-within-component-vertical: 3rem;
+$spacing-within-component-horizontal: 2rem; 
+$spacing-between-components: 2rem; 
+
+$grid-columns-desktop: 12;
+$grid-gutter: 1rem;
+
+$z-index-header: 1000;
+$z-index-overlay: 1100;
+
+$transition-duration: 0.3s;
+$easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+$shadow-low: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.1);

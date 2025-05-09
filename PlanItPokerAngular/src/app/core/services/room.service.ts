@@ -40,6 +40,7 @@ export class RoomService {
       map(apiRooms => apiRooms.map(room => this.mapToRoomDTO(room))),
       tap(mappedRooms => {
         this._rooms.set(mappedRooms); 
+        console.log("da");
       }),
       catchError(error => {
         console.error("Error fetching rooms:", error);
@@ -112,7 +113,7 @@ export class RoomService {
     );
   }
 
-  deleteRoom(id: UUID): Observable<void> {
+  deleteRoom(id: string): Observable<void> {
     this.loading.set(true);
     return this.http.delete<void>(
       `${this.baseUrl}/rooms/${id}`

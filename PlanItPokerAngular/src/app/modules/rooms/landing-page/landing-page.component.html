@@ -1,21 +1,22 @@
-<div class="landing-container">
+<div class="landing-page">
   <app-header></app-header>
-  
   <div class="content-container">
-    <div class="header-section">
-      <h1 class="page-title">Planning Rooms</h1>
-      <button class="new-room-button" mat-raised-button (click)="openCreateDialog()">
-        <mat-icon>add</mat-icon>
-        New Room
-      </button>
-    </div>
+    <div class="content-card"> <!-- Added main content card -->
+      <div class="header-section">
+        <h1 class="page-title">Planning Rooms</h1>
+        <button type="button" class="a-button a-button--primary" (click)="openCreateDialog()">
+          <i class="a-icon a-button__icon boschicon-bosch-ic-add"></i>
+          <span class="a-button__label">New Room</span>
+        </button>
+      </div>
 
-    <app-rooms-list
-      [rooms]="rooms()"
-      (delete)="handleDeleteRoom($event)"
-      (edit)="handleEditRoom($event)"
-      (select)="handleSelectRoom($event)"
-    ></app-rooms-list>
+      <app-rooms-list
+        [rooms]="rooms()"
+        (delete)="handleDeleteRoom($event)"
+        (edit)="handleEditRoom($event)"
+        (select)="handleSelectRoom($event)">
+      </app-rooms-list>
+    </div>
 
     @if (isLoading()) {
       <div class="loading-overlay">

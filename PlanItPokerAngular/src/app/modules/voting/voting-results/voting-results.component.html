@@ -1,6 +1,4 @@
-<div class="results-container">
-    <h3>Voting Results</h3>
-    
+<div class="results-container">    
     <!-- Final result -->
     <div *ngIf="session()?.status === 'COMPLETED'" class="final-value">
       Final Value: {{ voteState.result() || 'N/A' }}
@@ -31,19 +29,19 @@
     <!-- Session info -->
     <div class="stats-container">
       <div class="stat-item">
-        <span class="stat-label">Status:</span>
+        <span class="stat-label">Status</span>
         <span class="stat-value">{{ session()?.status }}</span>
       </div>
       <div class="stat-item">
-        <span class="stat-label">Started:</span>
+        <span class="stat-label">Started</span>
         <span class="stat-value">{{ session()?.startTime | date:'shortTime' }}</span>
       </div>
       <div *ngIf="session()?.endTime" class="stat-item">
-        <span class="stat-label">Ended:</span>
+        <span class="stat-label">Ended</span>
         <span class="stat-value">{{ session()?.endTime | date:'shortTime' }}</span>
       </div>
       <div class="stat-item">
-        <span class="stat-label">Participants:</span>
+        <span class="stat-label">Participants</span>
         <span class="stat-value">{{ totalVotes() }}</span>
       </div>
     </div>

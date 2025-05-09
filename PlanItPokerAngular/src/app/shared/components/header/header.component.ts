@@ -18,7 +18,7 @@ import { User } from '../../models/user';
   animations: [fadeIn]
 })
 export class HeaderComponent {
-  isMenuOpen = signal(false);
+  isMenuVisible = signal(false);
   
   constructor(
     public userService: UserService,
@@ -32,23 +32,13 @@ export class HeaderComponent {
   ngOnInit() {
     this.userService.getCurrentUser().subscribe();
   }
-
-  toggleMenu() {
-    this.isMenuOpen.update(v => !v);
+  toggleContextMenu() {
+    this.isMenuVisible.update(v => !v); 
   }
 
   signOut() {
     this.userService.signOut();
     this.router.navigate(['/login']);
-    this.isMenuOpen.set(false);
-  }
-
-  getInitials(name?: string): string {
-    if (!name) return '??';
-    return name.split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
+    this.isMenuVisible.set(false);
   }
 }

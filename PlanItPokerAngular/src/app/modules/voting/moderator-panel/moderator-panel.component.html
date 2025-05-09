@@ -1,20 +1,21 @@
 <ng-container *ngIf="playerRole() === PlayerRole.MODERATOR">
   <div class="controls-container">
 
+    <!-- Loading state -->
     <ng-container *ngIf="connectionState.loading()">
       <div class="loading">
         <div class="spinner"></div>
-        <span>Se încarcă...</span>
+        <span>Loading...</span>
       </div>
     </ng-container>
 
+    <!-- Header with settings -->
     <div class="moderator-header">
-      <h3>Moderator Controls</h3>
-      <button class="settings-button" mat-icon-button (click)="openRoomSettingsDialog()">
-        <mat-icon>settings</mat-icon>
+      <h5>Session Controls</h5>
+      <button type="button" class="a-button a-button--tertiary -without-label" aria-label="accessibility label" (click)="openRoomSettingsDialog()">
+        <i class="a-icon a-button__icon boschicon-bosch-ic-settings"></i>
       </button>
     </div>
-    
 
     <!-- Main Controls -->
     <ng-container *ngIf="!connectionState.loading() && !connectionState.error()">
@@ -22,9 +23,8 @@
       <!-- No session active -->
       <div *ngIf="voteSession() == null" class="controls-section">
         <ng-container *ngIf="hasActiveStory().length > 0; else noActiveStory">
-          <button class="primary" (click)="handleAction('start')">
-            <i class="icon-play"></i>
-            Start Voting
+          <button type="button" class="a-button a-button--primary -without-icon" (click)="handleAction('start')">
+            <span class="a-button__label">Start Voting</span>
           </button>
         </ng-container>
         <ng-template #noActiveStory>
@@ -40,93 +40,86 @@
 
           <!-- Active session, not revealed -->
           <div *ngIf="session.status === 'ACTIVE' && !session.revealed" class="controls-section">
-            <h3>Session Controls</h3>
             <div class="button-group">
-              <button class="primary" (click)="handleAction('flipCards')">
-                <i class="icon-flip"></i>
-                Reveal Votes
+              <button type="button" class="a-button a-button--primary -without-icon"
+                (click)="handleAction('flipCards')">
+                <span class="a-button__label">Reveal Votes</span>
               </button>
-              <button class="neutral" (click)="handleAction('clearVotes')">
-                <i class="icon-refresh"></i>
-                Clear Votes
+
+              <button type="button" class="a-button a-button--secondary -without-icon"
+                (click)="handleAction('clearVotes')">
+                <span class="a-button__label">Clear Votes</span>
               </button>
-              <button class="danger" (click)="handleAction('skipStory')">
-                <i class="icon-skip"></i>
-                Skip Story
+
+              <button type="button" class="a-button a-button--danger -without-icon" (click)="handleAction('skipStory')">
+                <span class="a-button__label">Skip Story</span>
               </button>
             </div>
           </div>
 
           <!-- Revealed votes -->
           <div *ngIf="session.status === 'ACTIVE' && session.revealed" class="controls-section">
-            <div class="result-section">
-              <h3>Voting Result</h3>
-              <div class="result-display">
+
+            <div class="result-section">      
+              <div class="result-display-box">
                 <div class="result-value">{{ result() }}</div>
               </div>
-              <label for="finalResult">Select final value:</label>
+              </div>
 
-              <ng-container *ngIf="result() as res">
-                <ng-container *ngIf="cards() as cardList">
-                  <select id="finalResult" [(ngModel)]="selectedResult">
-                    <option *ngIf="!cardList.includes(res.toString())"
-                            [value]="res"
-                            disabled
-                            hidden>
-                      {{ res }} (not in cards)
-                    </option>
-                    <option *ngFor="let card of cardList" [value]="card">
-                      {{ card }}
-                    </option>
-                  </select>
+              <div class="button-group">
+              <div class="a-dropdown a-dropdown">
+                <label for="finalResult">Select final value:</label>
+                <ng-container *ngIf="result() as res">
+                  <ng-container *ngIf="cards() as cardList">
+                    <select id="finalResult" aria-label="Select final result" [(ngModel)]="selectedResult">
+                      <option *ngIf="!cardList.includes(res.toString())" [value]="res" disabled hidden>
+                        {{ res }} (not in cards)
+                      </option>
+                      <option *ngFor="let card of cardList" [value]="card">
+                        {{ card }}
+                      </option>
+                    </select>
+                  </ng-container>
                 </ng-container>
-              </ng-container>
-            </div>
+              </div>
 
+          
             <div class="button-group">
-              <button class="success" (click)="handleAction('finishVoting', selectedResult)">
-                <i class="icon-check"></i>
-                Finalize Voting
-              </button>
-              <button class="neutral" (click)="handleAction('clearVotes')">
-                <i class="icon-refresh"></i>
-                Clear Votes
+              <button type="button" class="a-button a-button--success -without-icon"
+                (click)="handleAction('finishVoting', selectedResult)">
+                <span class="a-button__label">Finalize Voting</span>
               </button>
             </div>
+          </div>
+          
           </div>
 
           <!-- Voting completed -->
           <div *ngIf="session.status === 'COMPLETED'" class="controls-section">
-            <div class="success-message">
-              Voting completed successfully!
-            </div>
             <div class="button-group">
-              <button class="neutral" (click)="handleAction('clearVotes')">
-                <i class="icon-refresh"></i>
-                Clear Votes
+              <button type="button" class="a-button a-button--secondary -without-icon"
+                (click)="handleAction('clearVotes')">
+                <span class="a-button__label">Clear Votes</span>
               </button>
-              <button class="primary" (click)="handleAction('start')">
-                <i class="icon-next"></i>
-                Next Story
+
+              <button type="button" class="a-button a-button--primary -without-icon" (click)="handleAction('start')">
+                <span class="a-button__label">Next Story</span>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- No session available fallback -->
+        <!-- No session fallback -->
         <div *ngIf="!voteSession()" class="error-message">
           No active voting session!
         </div>
       </ng-container>
     </ng-container>
 
-    <!-- Error State -->
+    <!-- Error state -->
     <ng-container *ngIf="connectionState.error()">
       <div class="error-message">Eroare de conexiune!</div>
     </ng-container>
 
   </div>
-
-
 </ng-container>
-

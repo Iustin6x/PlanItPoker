@@ -1,9 +1,5 @@
 .players-container {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  padding: 1.5rem;
-  height: 100%;
+  background: var(--a-surface-default, #fff);
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -11,7 +7,6 @@
   .players-list {
     flex-grow: 1;
     overflow-y: auto;
-    padding-right: 0.5rem;
     max-height: 450px;
 
     &::-webkit-scrollbar {
@@ -20,58 +15,51 @@
 
     &::-webkit-scrollbar-thumb {
       background-color: #cbd5e1;
-      border-radius: 10px;
     }
   }
 }
 
 .player-card {
-  background: #f8fafc;
-  border-radius: 10px;
-  padding: 0.875rem;
-  margin-bottom: 0.75rem;
+  background: var(--a-surface-subtle, #f2f2f2);
+  padding: 1rem;
+  margin-bottom: 1rem;
   transition: all 0.2s ease;
-  border: 1px solid #e2e8f0;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
-  }
+  width: 100%;
 
   .player-info {
     display: flex;
     align-items: center;
     gap: 0.875rem;
-
+    position: relative; /* Permite poziționarea relativă pentru status */
+  
     .avatar {
       width: 42px;
       height: 42px;
-      border-radius: 50%; // rotund
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-weight: 600;
-      position: relative;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       font-size: 0.875rem;
       text-transform: uppercase;
+      position: relative; /* Asigură că statusul este poziționat relativ la avatar */
+    }
+  
+    /* Statusul va apărea în colțul din dreapta sus al avatarului */
+    .status {
+      position: absolute;
+      top: 0;
+      right: 0; /* Aliniază la colțul din dreapta sus al avatarului */
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #94a3b8;
+      box-shadow: 0 0 0 #00884a;
+      transition: background-color 0.2s ease;
 
-      .role-badge {
-        position: absolute;
-        bottom: -5px;
-        right: -5px;
-        background: white;
-        border-radius: 50%;
-        width: 18px;
-        height: 18px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.7rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        color: #64748b;
-        font-weight: 700;
+      &.online {
+        background: #10b981;
       }
     }
   }
@@ -85,33 +73,20 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.25rem;
+  }
 
-    .name {
-      font-weight: 500;
-      color: #1e293b;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 150px;
+  .name {
+    font-weight: 500;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
 
-      .role-text {
-        color: #64748b;
-        font-size: 0.75rem;
-        margin-left: 0.25rem;
-      }
-    }
-
-    .status {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #94a3b8;
-
-      &.online {
-        background: #10b981;
-        box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
-        animation: pulse 2s infinite;
-      }
+    .role-text {
+      color: #64748b;
+      font-size: 0.75rem;
+      margin-left: 0.25rem;
     }
   }
 
@@ -128,9 +103,8 @@
     }
 
     .vote-value {
-      font-weight: 600;
-      color: #3b82f6;
-      background: rgba(59, 130, 246, 0.1);
+      color: #ffffff;
+      background: #007bc0;
       padding: 0.125rem 0.5rem;
       border-radius: 12px;
       display: inline-block;
@@ -138,7 +112,8 @@
   }
 }
 
-.name-input, .role-select {
+.name-input,
+.role-select {
   font-size: 0.875rem;
   padding: 0.25rem 0.5rem;
   border: 1px solid #cbd5e1;
@@ -166,71 +141,31 @@
 .vote-status-bar {
   padding: 0.75rem 1rem;
   margin-bottom: 1rem;
-  border-left: 4px solid #f59e0b;
-  background-color: #fef3c7;
-  color: #92400e;
+  background-color: #007bc0;
+  color: #ffffff;
   font-weight: 500;
-  border-radius: 6px;
-  font-size: 0.875rem;
+  font-size: 1rem;
 }
 
 .invite-section {
-  margin-top: auto;
-  border-top: 1px solid #f1f5f9;
-  padding-top: 1.25rem;
-
   .invite-box {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
   }
 
-  .invite-button {
-    background: #3b82f6;
-    color: white;
-    border: none;
-    padding: 0.75rem;
-    border-radius: 8px;
-    cursor: pointer;
+  .a-button {
+    width: 100%;
+  }
+
+  .copied-feedback {
+    text-align: center;
+    font-size: 0.875rem;
     font-weight: 500;
-    transition: all 0.2s ease;
-
-    &:hover {
-      background: #2563eb;
-      transform: translateY(-1px);
-    }
+    color: #00512a;
+    background-color: #e2f5e7;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    transition: opacity 0.3s ease-in-out;
   }
-
-  .invite-link {
-    display: flex;
-    gap: 0.5rem;
-    background: #f8fafc;
-    border-radius: 8px;
-    padding: 0.25rem;
-    border: 1px solid #e2e8f0;
-
-    input {
-      flex-grow: 1;
-      border: none;
-      background: transparent;
-      padding: 0.5rem;
-      font-size: 0.875rem;
-      color: #475569;
-    }
-
-    button {
-      background: #e2e8f0;
-      border: none;
-      padding: 0.5rem;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-  }
-}
-
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }

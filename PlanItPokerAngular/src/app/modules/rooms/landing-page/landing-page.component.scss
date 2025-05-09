@@ -1,134 +1,106 @@
-/* Adaugă în fișierul de stiluri */
-.landing-container {
-  background: #f8fafc;
+@use '../../../../styles/variables' as bosch;
+
+.landing-page {
+  // Add header height compensation + vertical spacing
+  padding: calc(bosch.$baseline * 8 + bosch.$spacing-within-component-vertical) bosch.$grid-gutter bosch.$spacing-within-component-vertical;
+  background: bosch.$background-secondary;
   min-height: 100vh;
-}
+  box-sizing: border-box;
 
-.content-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.header-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e2e8f0;
-}
-
-.page-title {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: #1e293b;
-  margin: 0;
-}
-
-.new-room-button {
-  background: #3b82f6 !important;
-  color: white !important;
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 500;
-
-  &:hover {
-    background: #2563eb !important;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
-  }
-
-  mat-icon {
-    font-size: 1.25rem;
-    width: 24px;
-    height: 24px;
-  }
-}
-
-.loading-overlay {
-  display: flex;
-  justify-content: center;
-  padding: 2rem;
-  margin-top: 1rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-/* Stiluri pentru componenta rooms-list */
-::ng-deep app-rooms-list {
-  .rooms-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-
-    th {
-      background: #f8fafc;
-      color: #64748b;
-      font-weight: 600;
-      padding: 1rem;
-      border-bottom: 2px solid #e2e8f0;
-    }
-
-    td {
-      padding: 1rem;
-      border-bottom: 1px solid #e2e8f0;
-      color: #475569;
-    }
-
-    tr.clickable-row {
-      transition: background 0.2s ease;
-      cursor: pointer;
-
-      &:hover {
-        background: #f1f5f9;
-      }
-    }
-
-    .mat-icon-button {
-      color: #64748b;
-      transition: all 0.2s ease;
-
-      &:hover {
-        color: #3b82f6;
-        background: #f1f5f9 !important;
-      }
-    }
-  }
-}
-
-/* Adaptare pentru mobil */
-@media (max-width: 768px) {
   .content-container {
-    padding: 1rem;
+    max-width: bosch.$breakpoint-small-desktop;
+    margin: 0 auto;
+    
+    .content-card {
+      background: bosch.$background-primary;
+      // Medium spacing padding
+      padding: bosch.$spacing-within-component-vertical bosch.$spacing-within-component-horizontal;
+      position: relative;
+      
+      // Header separation line
+      &::before {
+        content: '';
+        position: absolute;
+        top: bosch.$baseline;
+        left: 0;
+        right: 0;
+        border-top: 1px solid bosch.$background-secondary;
+      }
+    }
   }
 
   .header-section {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start;
-  }
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: bosch.$grid-gutter;
+    margin-bottom: bosch.$spacing-between-components;
 
-  .page-title {
-    font-size: 1.5rem;
+    .page-title {
+      font-size: 1.5rem;
+      line-height: 2rem;
+      font-weight: 600;
+      color: bosch.$text-dark;
+      margin: 0;
+    }
+
+    .new-room-button {
+      background: bosch.$primary-blue;
+      color: bosch.$background-primary;
+      padding: bosch.$baseline calc(bosch.$baseline * 3);
+      border-radius: calc(bosch.$baseline * 0.5);
+      border: none;
+      font-weight: 500;
+      transition: all bosch.$transition-duration bosch.$easing-standard;
+
+      &:hover {
+        background: darken(bosch.$primary-blue, 10%);
+        box-shadow: bosch.$shadow-medium;
+      }
+
+      mat-icon {
+        margin-right: bosch.$baseline;
+      }
+    }
   }
 
   ::ng-deep app-rooms-list {
-    .rooms-table {
-      th, td {
-        padding: 0.75rem;
+    // Rooms list container
+    .card-container {
+      background: bosch.$background-secondary;
+      padding: bosch.$baseline;
+      border-radius: calc(bosch.$baseline * 0.5);
+      
+      // Individual room cards
+      .room-card {
+        background: bosch.$background-primary;
+        border-radius: calc(bosch.$baseline * 0.5);
+        box-shadow: bosch.$shadow-low;
+        padding: bosch.$spacing-within-component-horizontal;
+        margin-bottom: bosch.$grid-gutter;
+        transition: all bosch.$transition-duration bosch.$easing-standard;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: bosch.$shadow-medium;
+        }
       }
     }
+  }
+
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(bosch.$background-primary, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: bosch.$z-index-overlay;
   }
 }

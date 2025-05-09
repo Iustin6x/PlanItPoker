@@ -45,10 +45,10 @@ import { RoomListDTO } from '../../../shared/models/room';
 export class RoomsListComponent{
   @Input() rooms: RoomListDTO[] = [];
   @Input() isLoading = false;
-  @Output() delete = new EventEmitter<UUID>();
-  @Output() select = new EventEmitter<UUID>();
+  @Output() delete = new EventEmitter<string>();
+  @Output() select = new EventEmitter<string>();
   @Output() edit = new EventEmitter<RoomListDTO>();
-  @Output() leave = new EventEmitter<UUID>(); // New leave event
+  @Output() leave = new EventEmitter<string>(); // New leave event
 
   private datePipe = inject(DatePipe);
 
@@ -72,12 +72,12 @@ export class RoomsListComponent{
     return room.id!; // Assuming id is present for tracked rooms
   }
 
-  handleDelete(roomId: UUID): void {
+  handleDelete(roomId: string): void {
     this.delete.emit(roomId);
   }
 
   handleSelect(room: RoomListDTO): void {
-    if (room.id && isUUID(room.id)) {
+    if (room.id) {
       this.select.emit(room.id);
     } else {
       console.error('Invalid room ID:', room.id);
@@ -88,7 +88,7 @@ export class RoomsListComponent{
     this.edit.emit(room); // Emit the RoomListDTO directly
   }
 
-  handleLeave(roomId: UUID): void {
+  handleLeave(roomId: string): void {
     this.leave.emit(roomId); // Emit leave event
   }
 

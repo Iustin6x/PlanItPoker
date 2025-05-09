@@ -15,29 +15,25 @@
     <div class="players-list">
       <div class="player-card" *ngFor="let player of sortedPlayers()">
         <div class="player-info">
-          <div
-            class="avatar"
-            [style.backgroundColor]="'#' + player.id.slice(0, 6)"
-            (dblclick)="startEditRole(player)"
-          >
+          <div class="avatar" [ngStyle]="{ 'background-color': getAvatarColor(player.name) }" (dblclick)="startEditRole(player)">
             <div *ngIf="editingRolePlayerId() !== player.id; else editRole">
               {{ getAvatarInitials(player.name) }}
-              <div class="role-badge" *ngIf="player.role === PlayerRole.OBSERVER || player.role === PlayerRole.MODERATOR">
-                {{ getRoleBadge(player.role) }}
-              </div>
             </div>
 
             <ng-template #editRole>
-              <select
-                [(ngModel)]="player.role"
-                (change)="saveRole(player)"
-                (blur)="saveRole(player)"
-                class="role-select"
-              >
-                <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-              </select>
+              <div class="a-dropdown">
+                <select
+                  [(ngModel)]="player.role"
+                  (change)="saveRole(player)"
+                  (blur)="saveRole(player)"
+                  aria-label="Change player role"
+                >
+                  <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+                </select>
+              </div>
             </ng-template>
           </div>
+          <span class="status" [class.online]="player.connected"></span>
 
           <div class="details">
             <div class="name-status">
@@ -50,24 +46,24 @@
                 </span>
 
                 <ng-template #editName>
-                  <input
-                    type="text"
-                    [(ngModel)]="player.name"
-                    (blur)="saveName(player)"
-                    (keyup.enter)="saveName(player)"
-                    autofocus
-                    class="name-input"
-                  />
+                  <div class="a-text-field">
+                    <input
+                      type="text"
+                      [(ngModel)]="player.name"
+                      (blur)="saveName(player)"
+                      (keyup.enter)="saveName(player)"
+                      autofocus
+                      class="a-input__field"
+                    />
+                  </div>
                 </ng-template>
               </span>
-
-              <span class="status" [class.online]="player.connected"></span>
             </div>
 
             <div class="voting-info" *ngIf="player.connected && player.role !== PlayerRole.OBSERVER">
               <ng-container *ngIf="!voteState.voteSession()?.revealed">
                 <span class="vote-status" [class.voted]="votedMap().has(player.userId)">
-                  {{ votedMap().has(player.userId) ? '✓ Ready' : 'Waiting...' }}
+                  {{ votedMap().has(player.userId) ? 'Ready' : 'Waiting...' }}
                 </span>
               </ng-container>
 
@@ -84,15 +80,11 @@
 
     <div class="invite-section">
       <div class="invite-box">
-        <button class="invite-button" (click)="copyInviteLink()">
-          <span>📨 Invite Teammate</span>
-          <span class="copied-feedback" *ngIf="showCopiedFeedback">Copied!</span>
+        <button type="button" class="a-button a-button--secondary" (click)="copyInviteLink()">
+          <i class="a-icon a-button__icon boschicon-bosch-ic-paperplane"></i>
+          <span class="a-button__label">Invite Teammate</span>
         </button>
-
-        <div class="invite-link">
-          <input type="text" [value]="inviteLink()" readonly />
-          <button (click)="copyInviteLink()">📋</button>
-        </div>
+        <span class="copied-feedback" *ngIf="showCopiedFeedback">Link Copied!</span>
       </div>
     </div>
   </div>

@@ -1,11 +1,9 @@
-/* voting-card.component.scss */
+
 .cards-container {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   justify-content: center;
-  padding: 2rem 1rem;
-  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -13,10 +11,8 @@
   position: relative;
   width: 100px;
   height: 140px;
-  border-radius: 12px;
   background: white;
-  border: 2px solid #e2e8f0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #8a9097;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   display: flex;
@@ -46,18 +42,15 @@
   }
 
   &:hover:not(.selected):not(.disabled):not(.voted) {
+    background-color: #d1e4ff;
     transform: translateY(-8px) rotate(1deg);
     box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
-
-    &:after {
-      opacity: 0.4;
-    }
   }
 
   &.selected {
-    background-color: #3b82f6 !important;
+    background-color: #56b0ff !important;
     color: white !important;
-    border-color: #2563eb !important;
+    border-color: #004975 !important;
     transform: translateY(-5px) scale(1.05) !important;
     box-shadow: 
       0 15px 25px rgba(59, 130, 246, 0.3),
@@ -79,7 +72,7 @@
     transform: none !important;
   }
 
-  // Stil pentru voturi revelate
+
   .cards-container:not(.revealed) &.voted {
     border-color: transparent;
     box-shadow: none;
@@ -93,6 +86,7 @@
   font-weight: bold;
   padding: 8px;
   transition: color 0.2s ease;
+  color: #007bc0;
 
   &.top-left {
     top: 0;
@@ -110,6 +104,7 @@
   font-size: 2.25rem;
   font-weight: bold;
   transition: transform 0.2s ease;
+  color:  #101112;
 }
 
 @media (max-width: 768px) {

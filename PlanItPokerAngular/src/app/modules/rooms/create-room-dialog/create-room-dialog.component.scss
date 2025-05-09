@@ -1,175 +1,141 @@
-.dialog-header {
-  padding: 2rem 3rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-  background: #f8f9fa;
-  text-align: center;
-  
-  .mat-mdc-dialog-title {
-    margin: 0;
-    font-weight: 700;
-    font-size: 2rem;
-    color: #1a237e;
-    letter-spacing: -0.5px;
+.create-room-container {
+  font-family: 'Roboto', sans-serif;
+  color: #1a1a1a;
+  background: #ffffff;
+
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 500;
+    color: #00477D;
+    text-align: center;
+    margin-bottom: 1.5rem;
   }
-}
 
-.mat-mdc-dialog-container {
-  max-width: 600px !important; /* Mărește lățimea dialogului */
-  width: 100%;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-}
-
-.dialog-content {
-  padding: 3rem;
-}
-
-.form-section {
-  margin-bottom: 2rem;
-  
-  &:last-child {
-    margin-bottom: 1rem;
+  mat-dialog-content {
+    padding: 2rem;
+    background: #ffffff;
   }
-}
 
-mat-form-field {
-  width: 100%;
-}
+  mat-form-field {
+    width: 100%;
+    margin-bottom: 1.5rem;
 
-.config-option {
-  padding: 1rem 1.5rem;
-  margin: 0.5rem 0;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  
-  &:hover {
-    background: rgba(63, 81, 181, 0.1);
-  }
-  
-  .option-content {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    
-    .option-icon {
-      color: #3f51b5;
-      font-size: 1.5rem;
-      width: 40px;
-      height: 40px;
-      display: grid;
-      place-items: center;
-      background: rgba(63, 81, 181, 0.15);
-      border-radius: 6px;
+    .mat-form-field-label {
+      font-weight: 500;
     }
   }
-}
 
-.customization-panel {
-  margin-top: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  
-  .panel-header {
-    padding: 0 2rem;
-    height: 72px;
-    background: #f8f9fa;
-    
-    .panel-title {
+  mat-select {
+    background-color: white;
+  }
+
+  mat-expansion-panel {
+    margin-top: 1rem;
+    background: #f0f2f5;
+
+    mat-expansion-panel-header {
+      font-weight: 500;
+      color: #00477D;
+    }
+  }
+
+  .custom-cards-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+
+    .card-item {
       display: flex;
       align-items: center;
-      gap: 1.5rem;
-      font-size: 1.25rem;
-      font-weight: 500;
-      
-      .panel-icon {
-        color: #673ab7;
-        font-size: 1.75rem;
-        width: 48px;
-        height: 48px;
-        background: rgba(103, 58, 183, 0.1);
-        border-radius: 8px;
-        display: grid;
-        place-items: center;
+      background: #F5F5F5;
+      padding: 0.5rem 1rem;
+
+      .card-input {
+        border: none;
+        background: transparent;
+        font-size: 0.9rem;
+        margin-right: 0.5rem;
+        outline: none;
+        width: 100px;
+      }
+
+      button {
+        min-width: 32px;
+        min-height: 32px;
+
+        mat-icon {
+          color: #d32f2f;
+        }
+
+        &:hover {
+          background-color: rgba(211, 47, 47, 0.1);
+        }
       }
     }
   }
-}
 
-.card-editor {
-  padding: 2rem;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-  
-  .editor-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-start;
-    margin-bottom: 1rem;
-    
+  .actions {
+    margin-top: 1rem;
+
     button {
-      transition: all 0.2s ease;
-      
-      &:hover {
-        transform: scale(1.1);
+      font-weight: 500;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+
+      mat-icon {
+        font-size: 1rem;
       }
     }
   }
-  
-  .card-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.75rem;
-    
-    mat-form-field {
-      flex-grow: 1;
+
+  mat-checkbox {
+    display: block;
+    margin-top: 1rem;
+
+    .mat-checkbox-label {
+      font-size: 0.9rem;
     }
-    
-    .remove-button {
+  }
+
+  mat-dialog-actions {
+    padding: 1.5rem 2rem;
+    background: #f9f9f9;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+
+    button {
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0.6rem 1.25rem;
       transition: all 0.2s ease;
-      
-      &:hover {
-        transform: scale(1.15);
-        background: rgba(244, 67, 54, 0.1) !important;
+
+      &:first-child {
+        color: #4C4C4C;
+        background: transparent;
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.04);
+        }
       }
-      
-      mat-icon {
-        color: #d32f2f;
-        font-size: 1.5rem;
+
+      &:last-child {
+        background: #00477D;
+        color: white;
+
+        &:hover {
+          background: #003865;
+        }
       }
     }
   }
 }
 
-.dialog-actions {
-  padding: 1.5rem 3rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.12);
-  background: #f8f9fa;
-  display: flex;
-  justify-content: space-between;
-  
-  .cancel-button {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    border-radius: 6px;
-  }
-  
-  .submit-button {
-    min-width: 160px;
-    padding: 1rem 2rem;
-    font-size: 1.05rem;
-    font-weight: 500;
-    letter-spacing: 0.25px;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-    
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
-    }
-  }
+.mat-dialog-container {
+  border-radius: 0 !important; /* Elimină colțurile rotunjite */
+  box-shadow: none !important;  /* Elimină umbra */
 }

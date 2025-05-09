@@ -27,6 +27,8 @@ export class PlayersPanelComponent{
   private wsMessages = inject(WebSocketMessageService);
   protected showCopiedFeedback = false;
 
+  
+
   protected votedMap = computed(() => {
     return new Set(this.votes().map(v => v.userId));
   });
@@ -108,13 +110,7 @@ export class PlayersPanelComponent{
     return this.votedMap().has(playerId);
   }
 
-  getRoleBadge(role: PlayerRole): string {
-    switch(role) {
-      case PlayerRole.MODERATOR: return '👑';
-      case PlayerRole.OBSERVER: return '👀';
-      default: return '';
-    }
-  }
+
 
   startEditName(player: PlayerDTO): void {
     const userId = this.authService.getUserIdFromJWT();
@@ -130,6 +126,16 @@ export class PlayersPanelComponent{
       // this.wsMessages.changePlayerName(player.id, player.name.trim())
     }
     this.editingPlayerId.set(null);
+  }
+
+  getAvatarColor(name: string): string {
+    const BOSCH_COLORS = ['#ed1c24', '#003399', '#00a651', '#ffcc00', '#006778', '#3a3a3a'];
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % BOSCH_COLORS.length;
+    return BOSCH_COLORS[index];
   }
 
   startEditRole(player: PlayerDTO): void {

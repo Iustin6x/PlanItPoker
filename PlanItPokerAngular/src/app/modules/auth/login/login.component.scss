@@ -1,130 +1,100 @@
-/* signup.component.scss */
-/* Same as login.component.scss - duplicate intentionally created per requirements */
-.auth-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background-color: #f8fafc;
-  }
-  
-  .auth-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    padding: 40px;
-    width: 100%;
-    max-width: 440px;
-    border: 1px solid #e2e8f0;
-  }
-  
-  .auth-header {
-    text-align: center;
-    margin-bottom: 32px;
-  }
-  
-  .auth-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 8px;
-    
-    .title-highlight {
-      color: #3b82f6;
-    }
-  }
-  
-  .auth-subtitle {
-    font-size: 14px;
-    color: #64748b;
-  }
-  
-  .auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    width: 100%;
-    max-width: 400px; 
-    margin: 0 auto; 
-  }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .form-label {
-    font-size: 14px;
-    font-weight: 500;
-    color: #475569;
-  }
-  
-  .form-input {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: all 0.2s ease;
-    box-sizing: border-box; 
-  
-    &:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-  
-    &::placeholder {
-      color: #94a3b8;
-    }
-  }
-  
-  .submit-button {
-    width: 100%;
-    padding: 14px;
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    font-size: 14px;
-    box-sizing: border-box;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  
-    &:hover {
-      background-color: #2563eb;
-    }
-  }
-  
-  .toggle-text {
-    text-align: center;
-    font-size: 14px;
-    color: #64748b;
-    margin-top: 24px;
-  }
-  
-  .toggle-button {
-    color: #3b82f6;
-    font-weight: 500;
-    cursor: pointer;
-    text-decoration: none;
-    transition: color 0.2s ease;
-  
-    &:hover {
-      color: #2563eb;
-      text-decoration: underline;
-    }
-  }
+@use '../../../../styles/variables' as bosch;
 
-  .error-message {
-    color: #dc3545;
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    padding: 0.75rem 1.25rem;
-    margin-bottom: 1rem;
-    border-radius: 0.25rem;
-    font-size: 0.9rem;
+
+.subtitu {
+  display: flex;              /* Folosește flexbox */
+  flex-direction: row;        /* Așează elementele pe orizontală */
+  gap: 50px;                  /* Adaugă spațiu între elemente */
+  align-items: center;        /* Centrează elementele pe axa verticală */
+  margin-top: 20px;           /* Adaugă un spațiu în partea de sus al subsecțiunii */
+  margin-left:10px;
 }
+
+
+
+
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: bosch.$spacing-within-component-vertical bosch.$grid-gutter;
+  background-color: bosch.$background-secondary;
+}
+
+.auth-card {
+  background: bosch.$background-primary;
+  padding: bosch.$spacing-within-component-vertical bosch.$spacing-within-component-horizontal;
+  width: 100%;
+  max-width: 440px;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: bosch.$spacing-between-components;
+}
+
+.auth-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: bosch.$text-dark;
+  margin-bottom: bosch.$spacing-within-component-vertical;
+
+  .title-highlight {
+    color: bosch.$primary-blue;
+  }
+}
+
+.auth-subtitle {
+  font-size: 1rem;
+  // color: bosch.$text-light;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: bosch.$grid-gutter;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem
+}
+
+.form-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: bosch.$text-dark;
+}
+
+.toggle-text {
+  text-align: center;
+  font-size: 1rem;
+  // color: bosch.$text-light;
+  margin-top: bosch.$spacing-between-components;
+}
+
+.toggle-button {
+  color: bosch.$primary-blue;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: darken(bosch.$primary-blue, 10%);
+    text-decoration: underline;
+  }
+}
+
+.error-message {
+  color: bosch.$signal-danger;
+  margin-bottom: bosch.$grid-gutter;
+  font-size: 0.9rem;
+}
+
+

@@ -1,37 +1,43 @@
 <div class="quickplay-container">
-    <div class="quickplay-card">
-      <div class="quickplay-header">
-        <h1 class="quickplay-title">
-          <span class="title-highlight">Let's start!</span>
-        </h1>
-        <p class="quickplay-subtitle">Join the room</p>
-      </div>
-  
-      <form (ngSubmit)="handleJoin()" class="quickplay-form">
-        <div class="form-group">
-          <label class="form-label">Enter your name</label>
+  <div class="quickplay-card">
+    <div class="quickplay-header">
+      <h1 class="quickplay-title">
+        <span class="title-highlight">Let's start!</span>
+      </h1>
+      <p class="quickplay-subtitle">Join the room</p>
+    </div>
+
+    <form (ngSubmit)="handleJoin()" class="auth-form">
+      <div class="form-group">
+        <div class="a-text-field">
+          <label for="playerName">Enter your name</label>
           <input 
             type="text" 
+            id="playerName"
             [(ngModel)]="playerName" 
             name="playerName" 
             required
             class="form-input"
             placeholder="Player name"
-          >
+          />
         </div>
-  
-        <button type="submit" class="submit-button">Enter</button>
-  
-        <p class="toggle-text">
-          Already have an account?
-          <button 
-            type="button" 
-            (click)="router.navigateByUrl('/login')" 
-            class="toggle-button"
-          >
-            Login
-          </button>
-        </p>
-      </form>
-    </div>
+      </div>
+
+      <button type="submit" class="a-button a-button--primary -without-icon">
+        <span class="a-button__label">Enter</span>
+      </button>
+
+      <p class="toggle-text">
+        Already have an account?
+        
+        <button 
+          type="button" 
+          (click)="router.navigateByUrl('/login')" 
+          class="a-button a-button--tertiary"
+        >
+          Login
+        </button>
+      </p>
+    </form>
   </div>
+</div>

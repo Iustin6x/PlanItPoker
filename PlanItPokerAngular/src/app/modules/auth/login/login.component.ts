@@ -6,10 +6,15 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip'; 
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, FormsModule, HttpClientModule, RouterModule],
+  imports: [CommonModule, FormsModule, HttpClientModule, RouterModule, MatIconModule,       // Required for <mat-icon>
+    MatButtonModule,     // Required for <mat-icon-button>
+    MatTooltipModule],
   standalone: true,
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
