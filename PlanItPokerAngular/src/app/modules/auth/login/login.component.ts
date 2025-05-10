@@ -12,8 +12,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, FormsModule, HttpClientModule, RouterModule, MatIconModule,       // Required for <mat-icon>
-    MatButtonModule,     // Required for <mat-icon-button>
+  imports: [CommonModule, FormsModule, HttpClientModule, RouterModule, MatIconModule,
+    MatButtonModule,
     MatTooltipModule],
   standalone: true,
   templateUrl: './login.component.html',
@@ -21,8 +21,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 })
 export class LoginComponent{
   private authService = inject(AuthService);
-  private router = inject(Router);
+  router = inject(Router);
   private route = inject(ActivatedRoute);
+  
 
   protected returnUrl = this.authService.returnUrl;
   
@@ -34,13 +35,11 @@ export class LoginComponent{
 
   
   handleSubmit() {
-    this.errorMessage.set(null); // Resetare mesaj de eroare
-    
+    this.errorMessage.set(null); 
     const data = {
       email: this.email,
       password: this.password
     };
-    
     this.authService.login(data).subscribe({
       next: () => this.router.navigateByUrl(this.returnUrl().toString()),
       error: (err) => {

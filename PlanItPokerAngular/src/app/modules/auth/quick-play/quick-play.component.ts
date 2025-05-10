@@ -12,7 +12,7 @@ import { AuthService } from '../../../core/services/auth.service';
   styleUrls: ['./quick-play.component.scss']
 })
 export class QuickPlayComponent {
-  authService = inject(AuthService);
+  private authService = inject(AuthService);
   router = inject(Router);
   playerName = '';
   errorMessage = signal<string | null>(null);

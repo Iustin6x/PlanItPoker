@@ -6,6 +6,7 @@ import { StoryStateService } from './story-state.service';
 import { AuthService } from './auth.service';
 import { CardValue } from '../../shared/types';
 import { PlayerStateService } from './player-state.service';
+import { ConnectionStateService } from './connection-state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class VoteStateService {
   private ws = inject(WebSocketService);
   private storyState = inject(StoryStateService);
   private authService = inject(AuthService);
+  private connectionState = inject(ConnectionStateService);
 
   private _currentVote = signal<string | null>(null);
   readonly currentVote = this._currentVote.asReadonly();
@@ -150,7 +152,10 @@ export class VoteStateService {
         finalValue: finalValue
       } : null
     );
-    this.resetCurrentVote();  
+    this._result.set(finalValue);
+    console.log(this._result());
+    this.resetCurrentVote();
+    this.connectionState.setLoading(false);  
   }
 
 

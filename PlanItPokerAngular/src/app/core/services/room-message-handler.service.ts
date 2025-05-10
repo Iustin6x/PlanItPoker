@@ -126,6 +126,7 @@ export class RoomMessageHandlerService {
         break;
 
       case 'voteEnded':
+        this.connectionState.setLoading(true);
         this.voteState.endSession(message.finalValue);
         this.storyState.updateStory(message.story);
         break;

@@ -7,7 +7,6 @@
     </div>
   }
 
-  <!-- Error state -->
   @if (showError && error()) {
     <div class="error-message">
       <div class="error-content bosch-card">
@@ -26,12 +25,10 @@
 
   <app-header></app-header>
 
-  <div class="main-container">
+  <div class="main-container ">
     <div class="bosch-grid-layout">
-      <!-- Left Column (2/3 width) -->
       <div class="left-column">
-        <!-- Voting Section -->
-        <div class="bosch-card-section voting-section">
+        <div class="bosch-card-section voting-section -light-mode">
           @if (!isRevealed()) {
             <app-voting-card></app-voting-card>
           } @else {
@@ -39,23 +36,18 @@
           }
         </div>
 
-        <!-- Story List (under voting) -->
-        <div class="bosch-card-section story-section">
+        <div class="bosch-card-section story-section -light-mode">
           <app-story-list></app-story-list>
         </div>
       </div>
 
-      <!-- Right Column (1/3 width) -->
       <div class="right-column">
-        <!-- Moderator Panel (only for moderators) -->
         @if (playerRole() === PlayerRole.MODERATOR) {
-          <div class="bosch-card-section moderator-section">
+          <div class="bosch-card-section moderator-section -light-mode">
             <app-moderator-panel></app-moderator-panel>
           </div>
         }
-
-
-        <div class="bosch-card-section players-section">
+        <div class="bosch-card-section players-section -light-mode">
           <app-players-panel></app-players-panel>
         </div>
       </div>

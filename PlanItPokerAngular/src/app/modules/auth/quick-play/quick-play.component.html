@@ -1,43 +1,50 @@
-<div class="quickplay-container">
-  <div class="quickplay-card">
-    <div class="quickplay-header">
+<main class="quickplay-container">
+  <article class="quickplay-card -light-mode">
+    <header class="quickplay-header">
       <h1 class="quickplay-title">
         <span class="title-highlight">Let's start!</span>
       </h1>
       <p class="quickplay-subtitle">Join the room</p>
-    </div>
+    </header>
 
-    <form (ngSubmit)="handleJoin()" class="auth-form">
-      <div class="form-group">
-        <div class="a-text-field">
-          <label for="playerName">Enter your name</label>
-          <input 
-            type="text" 
-            id="playerName"
-            [(ngModel)]="playerName" 
-            name="playerName" 
-            required
-            class="form-input"
-            placeholder="Player name"
-          />
-        </div>
-      </div>
-
-      <button type="submit" class="a-button a-button--primary -without-icon">
-        <span class="a-button__label">Enter</span>
-      </button>
-
-      <p class="toggle-text">
-        Already have an account?
+    <form (ngSubmit)="handleJoin()" class="auth-form" aria-labelledby="quickplay-heading">
+        <legend id="quickplay-heading" hidden>Join Room Form</legend>
         
+        <div class="form-group">
+          <div class="a-text-field" role="group">
+            <label for="playerName">Enter your name</label>
+            <input 
+              type="text" 
+              id="playerName"
+              [(ngModel)]="playerName" 
+              name="playerName" 
+              required
+              class="form-input"
+              placeholder="Player name"
+              aria-required="true"
+            />
+          </div>
+        </div>
+
         <button 
-          type="button" 
-          (click)="router.navigateByUrl('/login')" 
-          class="a-button a-button--tertiary"
+          type="submit" 
+          class="a-button a-button--primary -without-icon"
+          aria-label="Join the room"
         >
-          Login
+          <span class="a-button__label">Enter</span>
         </button>
-      </p>
+
+        <p class="toggle-text">
+          Already have an account?
+          <button 
+            type="button" 
+            (click)="router.navigateByUrl('/login')" 
+            class="a-button a-button--tertiary"
+            aria-label="Navigate to login page"
+          >
+            Login
+          </button>
+        </p>
     </form>
-  </div>
-</div>
+  </article>
+</main>

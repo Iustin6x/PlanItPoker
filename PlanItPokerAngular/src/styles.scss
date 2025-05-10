@@ -43,7 +43,11 @@ body {
   padding: 0 bosch.$grid-gutter;
 }
 
-.mat-dialog-container {
-  border-radius: 0 !important; 
-  box-shadow: none !important; 
+.no-radius-dialog .mat-dialog-container {
+  border-radius: 0 !important;
+  background: #fdd !important;
+}
+
+.custom-dialog{
+  border-radius: 0 !important;
 }

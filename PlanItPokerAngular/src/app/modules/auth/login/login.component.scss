@@ -1,25 +1,10 @@
 @use '../../../../styles/variables' as bosch;
 
-
-.subtitu {
-  display: flex;              /* Folosește flexbox */
-  flex-direction: row;        /* Așează elementele pe orizontală */
-  gap: 50px;                  /* Adaugă spațiu între elemente */
-  align-items: center;        /* Centrează elementele pe axa verticală */
-  margin-top: 20px;           /* Adaugă un spațiu în partea de sus al subsecțiunii */
-  margin-left:10px;
-}
-
-
-
-
 .auth-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: bosch.$spacing-within-component-vertical bosch.$grid-gutter;
-  background-color: bosch.$background-secondary;
 }
 
 .auth-card {
@@ -41,7 +26,7 @@
   margin-bottom: bosch.$spacing-within-component-vertical;
 
   .title-highlight {
-    color: bosch.$primary-blue;
+    color: --bosch-blue-50;
   }
 }
 
@@ -73,8 +58,6 @@
 
 .toggle-text {
   text-align: center;
-  font-size: 1rem;
-  // color: bosch.$text-light;
   margin-top: bosch.$spacing-between-components;
 }
 

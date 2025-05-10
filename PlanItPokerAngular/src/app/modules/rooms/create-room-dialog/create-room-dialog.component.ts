@@ -30,7 +30,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
   templateUrl: './create-room-dialog.component.html',
   styleUrls: ['./create-room-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None, 
 })
 export class CreateRoomDialogComponent {
   protected dialogRef = inject(MatDialogRef<CreateRoomDialogComponent>);

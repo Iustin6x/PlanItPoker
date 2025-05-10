@@ -51,8 +51,6 @@ export class ModeratorPanelComponent{
       const availableCards = this.cards();    
       if (!availableCards || availableCards.length === 0) return;
       if (currentResult == null) return;
-
-    
       const exactMatch = availableCards.find(c => c === currentResult);
       if (exactMatch) {
         this.selectedResult = exactMatch.toString();

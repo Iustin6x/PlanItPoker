@@ -13,82 +13,16 @@
     
     .content-card {
       background: bosch.$background-primary;
-      // Medium spacing padding
       padding: bosch.$spacing-within-component-vertical bosch.$spacing-within-component-horizontal;
       position: relative;
-      
-      // Header separation line
-      &::before {
-        content: '';
-        position: absolute;
-        top: bosch.$baseline;
-        left: 0;
-        right: 0;
-        border-top: 1px solid bosch.$background-secondary;
-      }
     }
   }
 
-  .header-section {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: bosch.$grid-gutter;
-    margin-bottom: bosch.$spacing-between-components;
-
-    .page-title {
-      font-size: 1.5rem;
-      line-height: 2rem;
-      font-weight: 600;
-      color: bosch.$text-dark;
-      margin: 0;
-    }
-
-    .new-room-button {
-      background: bosch.$primary-blue;
-      color: bosch.$background-primary;
-      padding: bosch.$baseline calc(bosch.$baseline * 3);
-      border-radius: calc(bosch.$baseline * 0.5);
-      border: none;
-      font-weight: 500;
-      transition: all bosch.$transition-duration bosch.$easing-standard;
-
-      &:hover {
-        background: darken(bosch.$primary-blue, 10%);
-        box-shadow: bosch.$shadow-medium;
-      }
-
-      mat-icon {
-        margin-right: bosch.$baseline;
-      }
-    }
-  }
-
-  ::ng-deep app-rooms-list {
-    // Rooms list container
-    .card-container {
-      background: bosch.$background-secondary;
-      padding: bosch.$baseline;
-      border-radius: calc(bosch.$baseline * 0.5);
-      
-      // Individual room cards
-      .room-card {
-        background: bosch.$background-primary;
-        border-radius: calc(bosch.$baseline * 0.5);
-        box-shadow: bosch.$shadow-low;
-        padding: bosch.$spacing-within-component-horizontal;
-        margin-bottom: bosch.$grid-gutter;
-        transition: all bosch.$transition-duration bosch.$easing-standard;
-
-        &:last-child {
-          margin-bottom: 0;
-        }
-
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: bosch.$shadow-medium;
-        }
-      }
-    }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    margin-bottom: 2rem;
   }
 
   .loading-overlay {

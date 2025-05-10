@@ -88,7 +88,7 @@ export class LandingPageComponent implements OnInit{
     const dialogRef = this.dialog.open(CreateRoomDialogComponent, {
       width: '600px',
       disableClose: true,
-      data: initialData
+      data: initialData,
     });
   
     dialogRef.afterClosed()

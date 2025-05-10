@@ -69,6 +69,7 @@ export class WebSocketMessageService {
   }
 
   endVoteSession(sessionId: string, finalValue: string): void {
+    console.log("endvote "+ finalValue)
     this.ws.send({ type: 'endVoteSession', sessionId, finalValue });
   }
 

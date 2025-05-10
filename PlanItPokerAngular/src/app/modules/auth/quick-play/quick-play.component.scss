@@ -25,17 +25,13 @@
 .quickplay-title {
   font-size: 2rem;
   font-weight: 700;
-  color: bosch.$text-dark;
+  color: --bosch-blue-35;
   margin-bottom: bosch.$spacing-within-component-vertical;
 
-  .title-highlight {
-    color: bosch.$primary-blue;
-  }
 }
 
 .quickplay-subtitle {
   font-size: 1rem;
-  // color: bosch.$text-light;
 }
 
 .auth-form {

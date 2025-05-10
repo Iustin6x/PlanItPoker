@@ -1,59 +1,73 @@
-<div class="auth-container">
-  <div class="auth-card">
-    <div class="auth-header">
+<main class="auth-container">
+  <article class="auth-card -light-mode">
+    <header class="auth-header">
       <h1 class="auth-title">
         <span class="title-highlight">Planning</span> Poker
       </h1>
       <p class="auth-subtitle">Sign in to continue</p>
-    </div>
+    </header>
 
-    <form (ngSubmit)="handleSubmit()" class="auth-form">
-      <div class="form-group">
-        <div class="a-text-field">
-          <label for="email">Email Address</label>
-          <input 
-            type="email" 
-            id="email" 
-            [(ngModel)]="email" 
-            name="email" 
-            required
-            class="form-input"
-            placeholder="your@email.com"
-          />
+    <form (ngSubmit)="handleSubmit()" class="auth-form" aria-labelledby="signin-heading">
+        <legend id="signin-heading" hidden>Sign In Form</legend>
+        <div class="form-group">
+          <section class="a-text-field">
+            <label for="email">Email Address</label>
+            <input 
+              type="email" 
+              id="email" 
+              [(ngModel)]="email" 
+              name="email" 
+              required
+              class="form-input"
+              placeholder="your@email.com"
+              aria-required="true"
+            />
+          </section>
         </div>
-      </div>
 
-      <div class="form-group">
-        <div class="a-text-field">
-          <label for="password">Password</label>
-          <input 
-            type="password" 
-            id="password"
-            [(ngModel)]="password" 
-            name="password" 
-            required
-            class="form-input"
-            placeholder="••••••••"
-          />
+        <div class="form-group">
+          <section class="a-text-field">
+            <label for="password">Password</label>
+            <input 
+              type="password" 
+              id="password"
+              [(ngModel)]="password" 
+              name="password" 
+              required
+              class="form-input"
+              placeholder="••••••••"
+              aria-required="true"
+            />
+          </section>
         </div>
-      </div>
 
-      <div *ngIf="errorMessage()" class="error-message">
-        {{ errorMessage() }}
-      </div>
+        <div 
+          *ngIf="errorMessage()" 
+          class="error-message"
+          role="alert"
+          aria-live="assertive"
+        >
+          {{ errorMessage() }}
+        </div>
 
-      <button type="submit" class="a-button a-button--primary -without-icon">
-        <span class="a-button__label">Sign in</span>
-      </button>
-
+        <button 
+          type="submit" 
+          class="a-button a-button--primary -without-icon"
+          aria-label="Sign in to your account"
+        >
+          <span class="a-button__label">Sign in</span>
+        </button>
       <p class="toggle-text">
         Don't have an account?
-        <a routerLink="/signup" class="toggle-button">
-          Sign up
-        </a>
+        <button 
+          type="button" 
+          (click)="router.navigateByUrl('/signup')" 
+          class="a-button a-button--tertiary"
+          aria-label="Navigate to sign up page"
+        >
+          Login
+        </button>
       </p>
     </form>
-    
-  </div>
-</div>
-
+  </article>
+</main>
