@@ -1,10 +1,12 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
-import { PublicRoute } from "./PublicRoute"; 
+import { PublicRoute } from "./PublicRoute";
 import Login from "../pages/auth/Login";
 import Signup from "../pages/auth/SignUp";
 import Logout from "../pages/auth/Logout";
 import Home from "../pages/Home";
+import Rooms from "../pages/rooms/Rooms";
+import Room from "../pages/rooms/Room"
 import PublicHome from "../pages/PublicHome";
 import ErrorPage from "../pages/ErrorPage";
 
@@ -12,7 +14,7 @@ const Routes = () => {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <PublicRoute />, 
+      element: <PublicRoute />,
       errorElement: <ErrorPage />,
       children: [
         {
@@ -27,18 +29,10 @@ const Routes = () => {
           path: "signup",
           element: <Signup />,
         },
-        {
-          path: "about-us",
-          element: <div>About Us</div>,
-        },
-        {
-          path: "service",
-          element: <div>Service Page</div>,
-        },
       ],
     },
     {
-      element: <ProtectedRoute />, // Rută protejată principală
+      element: <ProtectedRoute />,
       children: [
         {
           path: "dashboard",
@@ -47,6 +41,19 @@ const Routes = () => {
         {
           path: "profile",
           element: <div>User Profile</div>,
+        },
+        {
+          path: "rooms",
+          children: [
+            {
+              index: true,
+              element: <Rooms />,
+            },
+            {
+              path: ":roomId",
+              element: <Room />,
+            },
+          ],
         },
         {
           path: "logout",

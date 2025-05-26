@@ -37,7 +37,6 @@
         </button>
       </ng-container>
 
-      <!-- Player Actions -->
       <ng-container *ngIf="room.userRole === 'player'">
         <button mat-icon-button 
                 (click)="handleLeave(room.id); $event.stopPropagation()"

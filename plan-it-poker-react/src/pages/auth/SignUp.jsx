@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../../provider/authProvider';
+import { useAuth } from "../../provider/authProvider";
 import axios from "axios";
 
 const Signup = () => {
@@ -25,7 +25,7 @@ const Signup = () => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/signup`,
-        { name, email, password }
+        { name, email, password },
       );
 
       // Dacă vrei autologin după signup

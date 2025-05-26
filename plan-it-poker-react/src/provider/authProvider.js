@@ -4,42 +4,39 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // Starea pentru token și erori
-  const [token, setToken_] = useState(localStorage.getItem("token"));
+  const [token, setToken_] = useState(localStorage.getItem("jwt"));
   const [error, setError] = useState(null);
 
-  // Funcție pentru actualizarea token-ului
   const setToken = (newToken) => {
     try {
       setToken_(newToken);
+      localStorage.setItem("jwt", newToken);
       setError(null);
     } catch (err) {
-      setError("Eroare la gestionarea token-ului");
+      setError("Token error");
     }
   };
 
-  // Actualizează headerul Axios și localStorage la schimbarea token-ului
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      localStorage.setItem("token", token);
+      localStorage.setItem("jwt", token);
     } else {
       delete axios.defaults.headers.common["Authorization"];
-      localStorage.removeItem("token");
+      localStorage.removeItem("jwt");
     }
   }, [token]);
 
-  // Interceptor pentru răspunsuri neautorizate
   useEffect(() => {
     const responseInterceptor = axios.interceptors.response.use(
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
           setToken(null);
-          localStorage.removeItem("token");
+          localStorage.removeItem("jwt");
         }
         return Promise.reject(error);
-      }
+      },
     );
 
     // Curăță interceptorul la demontare
@@ -55,16 +52,13 @@ export const AuthProvider = ({ children }) => {
       setToken,
       error,
     }),
-    [token, error]
+    [token, error],
   );
 
   return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };
-
 
 export const useAuth = () => {
   const context = useContext(AuthContext);

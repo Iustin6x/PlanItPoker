@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../../provider/authProvider'; 
+import { useAuth } from "../../provider/authProvider";
 import axios from "axios";
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,15 +14,15 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/login`,
-        { email, password }
+        { email, password },
       );
-      
-      setToken(response.data.token);
-      navigate("/home");
+      console.log("token primit", response.data.jwt);
+      setToken(response.data.jwt);
+      navigate("/dashboard");
     } catch (err) {
       console.error("Eroare autentificare:", err);
     } finally {

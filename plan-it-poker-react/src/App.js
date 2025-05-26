@@ -1,9 +1,7 @@
-import './App.css';
-import { AuthProvider } from './provider/authProvider';
+import "./App.css";
+import { AuthProvider } from "./provider/authProvider";
 import Routes from "./routes";
-import '@bosch/frontend.kit-npm/dist/frontend-kit.complete.css';
-
-
+import "@bosch/frontend.kit-npm/dist/frontend-kit.complete.css";
 
 function App() {
   return (
