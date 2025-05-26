@@ -23,7 +23,7 @@
     "@angular/platform-server": "^19.2.3",
     "@angular/router": "^19.2.3",
     "@angular/ssr": "^19.2.4",
-    "@bosch/frontend.kit-npm": "3.10.0",
+    "@bosch/frontend.kit-npm": "4.0.1",
     "@stomp/stompjs": "^7.1.1",
     "bootstrap": "^5.3.6",
     "buffer": "^6.0.3",
